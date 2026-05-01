@@ -1,0 +1,142 @@
+@page
+@model AboutModel
+@{
+    ViewData["Title"] = "À Propos - SeminaPro";
+}
+
+<div class="about-container">
+    <!-- Hero Section -->
+    <section class="about-hero">
+        <div class="container-lg py-5">
+            <div class="row align-items-center">
+                <div class="col-lg-6 text-center">
+                    <img src="/images/logo semina.png" alt="SeminaPro Logo" class="about-logo-main">
+                </div>
+                <div class="col-lg-6">
+                    <h1 class="about-title">À Propos de SeminaPro</h1>
+                    <p class="about-subtitle">La plateforme de référence pour la gestion moderne de séminaires professionnels</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Description Section -->
+    <section class="about-section bg-light py-5">
+        <div class="container-lg">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h2 class="section-title text-center mb-4">Qui Sommes-Nous ?</h2>
+                    <p class="about-text">
+                        SeminaPro est une plateforme innovante dédiée à la gestion complète de séminaires professionnels. 
+                        Nous connectons les organisateurs de séminaires avec les participants, facilitant les inscriptions, 
+                        la gestion administrative et le suivi des événements.
+                    </p>
+                    <p class="about-text">
+                        Notre mission est de simplifier l'organisation et la participation aux séminaires professionnels, 
+                        en offrant une expérience utilisateur fluide et intuitive pour tous nos utilisateurs.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Engagement & Values Section -->
+    <section class="engagement-section py-5">
+        <div class="container-lg">
+            <h2 class="section-title text-center mb-5">Notre Engagement</h2>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="engagement-card">
+                        <div class="engagement-icon">
+                            <i class="bi bi-star-fill"></i>
+                        </div>
+                        <h3>Excellence</h3>
+                        <p>Fournir des outils de qualité supérieure pour une gestion optimale de vos séminaires.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="engagement-card">
+                        <div class="engagement-icon">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <h3>Fiabilité</h3>
+                        <p>Garantir une plateforme stable et sécurisée pour vos données et transactions.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="engagement-card">
+                        <div class="engagement-icon">
+                            <i class="bi bi-lightbulb"></i>
+                        </div>
+                        <h3>Innovation</h3>
+                        <p>Développer continuellement de nouvelles fonctionnalités pour rester à la pointe de la technologie.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="engagement-card">
+                        <div class="engagement-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <h3>Accessibilité</h3>
+                        <p>Rendre nos services accessibles à tous, indépendamment de la taille de votre organisation.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="engagement-card">
+                        <div class="engagement-icon">
+                            <i class="bi bi-heart"></i>
+                        </div>
+                        <h3>Support Client</h3>
+                        <p>Vous accompagner à chaque étape avec un support réactif et professionnel.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="engagement-card">
+                        <div class="engagement-icon">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                        <h3>Croissance</h3>
+                        <p>Accompagner la croissance de vos événements avec des outils évolutifs.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Logo Section with Description -->
+    <section class="logo-section py-5 bg-light">
+        <div class="container-lg">
+            <h2 class="section-title text-center mb-5">Notre Identité</h2>
+            <div class="row align-items-center">
+                <div class="col-lg-6 text-center">
+                    <img src="/images/logo semina.png" alt="SeminaPro Logo" class="about-logo-identity">
+                </div>
+                <div class="col-lg-6">
+                    <h3 class="mb-3">Le Logo SeminaPro</h3>
+                    <p class="about-text">
+                        Notre logo représente l'union entre la formation professionnelle et la technologie moderne. 
+                        Les couleurs choisies symbolisent la confiance (bleu), la professionnalité (or) et l'innovation (gris).
+                    </p>
+                    <p class="about-text">
+                        Chaque élément a été conçu avec soin pour refléter nos valeurs fondamentales d'excellence 
+                        et de modernité dans le domaine de la gestion de séminaires.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section py-5">
+        <div class="container-lg text-center">
+            <h2 class="mb-4">Rejoignez Notre Communauté</h2>
+            <p class="mb-4">Commencez dès maintenant à gérer vos séminaires de manière professionnelle et efficace.</p>
+            <a href="/Seminaires/Index" class="btn btn-primary btn-lg me-3">
+                <i class="bi bi-book"></i> Découvrir les Séminaires
+            </a>
+            <a href="/Contact" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-envelope"></i> Nous Contacter
+            </a>
+        </div>
+    </section>
+</div>

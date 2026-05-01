@@ -1,0 +1,382 @@
+/* ========================================
+   HERO SECTION - ENHANCED DESIGN
+   ======================================== */
+
+/* Float animation for icons */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+/* Hero Logo Styling */
+.hero-logo {
+    max-width: 100%;
+    width: 400px;
+    height: auto;
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+}
+
+.hero {
+    background: #000;
+    color: white;
+    padding: 60px 40px;
+    text-align: center;
+    border-radius: 0;
+    margin: 0;
+    width: 100%;
+    position: relative;
+    box-shadow: none;
+    overflow: hidden;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Hero Video Background */
+.hero-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    opacity: 1;
+}
+
+/* Hero Overlay for better text readability */
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.55) 50%, rgba(0, 0, 0, 0.65) 100%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Hero Content - Centré sur la vidéo */
+.hero-content {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+    text-shadow: 4px 4px 12px rgba(0, 0, 0, 0.8);
+    color: white;
+    letter-spacing: -1px;
+    word-wrap: break-word;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    opacity: 1;
+    margin-bottom: 2.5rem;
+    color: #ffffff;
+    line-height: 1.7;
+    font-weight: 300;
+    letter-spacing: 0.3px;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+}
+
+/* Enhanced Button Styles */
+.hero .btn {
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    font-size: 1rem;
+    border: 2px solid transparent;
+    display: inline-block;
+    width: auto;
+    white-space: nowrap;
+    margin: 0.5rem;
+    cursor: pointer;
+}
+
+.btn-light {
+    background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+    color: #1a1a2e;
+    border: 2px solid white;
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
+}
+
+.btn-light:hover {
+    background: linear-gradient(135deg, #0066ff 0%, #0052cc 100%);
+    color: white;
+    border-color: #0066ff;
+    box-shadow: 0 10px 30px rgba(0, 102, 255, 0.4);
+    transform: translateY(-3px);
+}
+
+.btn-outline-light {
+    border: 2px solid white;
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: white;
+    color: white;
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+    transform: translateY(-3px);
+}
+
+/* Ripple effect on button click */
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+    pointer-events: none;
+}
+
+.btn:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* ========================================
+   SECTION - IMPROVED SPACING & CONTRAST
+   ======================================== */
+
+section {
+    scroll-margin-top: 80px;
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    animation: slideInUp 0.6s ease backwards;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.card-title {
+    color: #1a1a2e;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.card-text {
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Better contrast for text */
+.text-muted {
+    color: #666 !important;
+}
+
+/* ========================================
+   SERVICES SECTION - ENHANCED
+   ======================================== */
+
+.row:has(.card) {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.col-md-4:has(.card) {
+    margin-bottom: 1.5rem;
+}
+
+.card .card-body {
+    padding: 2rem 1.5rem;
+}
+
+/* ========================================
+   ANIMATIONS - ENHANCED
+   ======================================== */
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Stagger animations */
+.card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+/* ========================================
+   RESPONSIVE IMPROVEMENTS
+   ======================================== */
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 80px 20px;
+    }
+
+    .hero-logo {
+        width: 300px;
+    }
+        margin: 20px 10px;
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .hero .btn {
+        display: inline-block;
+        width: auto;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    @media (max-width: 1200px) {
+        .hero h1 {
+            font-size: 2.8rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+        }
+
+        .hero-content {
+            max-width: 700px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero {
+            padding: 40px 20px;
+            min-height: 450px;
+        }
+
+        .hero h1 {
+            font-size: 2.2rem;
+        }
+
+        .hero p {
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero .btn {
+            display: inline-block;
+            width: auto;
+            padding: 0.65rem 1.5rem;
+            font-size: 0.9rem;
+            margin: 0.3rem;
+        }
+
+        .hero-content {
+            max-width: 600px;
+        }
+
+        .card {
+            margin-bottom: 1.5rem;
+        }
+
+        section {
+            padding: 2rem 1rem !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .hero {
+            padding: 30px 15px;
+            min-height: 400px;
+        }
+
+        .hero h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero .btn {
+            display: inline-block;
+            width: auto;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.8rem;
+            margin: 0.25rem;
+        }
+
+        .hero-content {
+            max-width: 100%;
+        }
+
+        .hero-logo {
+            width: 200px;
+        }
+    }

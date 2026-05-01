@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace SeminaPro.Models
 {
     public class ErrorViewModel

@@ -1,0 +1,87 @@
+@page
+@model SeminaPro.Pages.Admin.SettingsModel
+@{
+    ViewData["Title"] = "Paramètres";
+}
+
+<div class="welcome-header mb-4">
+    <h1><i class="bi bi-gear-fill"></i> Paramètres</h1>
+    <p>Gérez les configurations de votre plateforme</p>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-dark text-white">
+        <h5 class="mb-0"><i class="bi bi-info-circle"></i> Informations générales</h5>
+    </div>
+    <div class="card-body">
+        @if (!string.IsNullOrEmpty(ViewData["Message"]?.ToString()))
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @ViewData["Message"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">Nom de la plateforme</label>
+                <input class="form-control" asp-for="PlatformName" placeholder="Ex: SeminaPro" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email de contact</label>
+                <input class="form-control" asp-for="ContactEmail" type="email" placeholder="Ex: info@seminapro.com" />
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-circle"></i> Enregistrer
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="bi bi-bell"></i> Préférences</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" asp-page-handler="Preferences">
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" asp-for="EnableNotifications" />
+                        <label class="form-check-label">Activer les notifications</label>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" asp-for="UseDarkTheme" />
+                        <label class="form-check-label">Thème sombre</label>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Sauvegarder
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="bi bi-shield-lock"></i> Sécurité</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" asp-page-handler="Security">
+                    <div class="mb-3">
+                        <label class="form-label">Nouveau mot de passe</label>
+                        <input type="password" class="form-control" asp-for="NewPassword" placeholder="••••••••" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Confirmer le mot de passe</label>
+                        <input type="password" class="form-control" asp-for="ConfirmPassword" placeholder="••••••••" />
+                    </div>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-lock"></i> Mettre à jour le mot de passe
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,194 @@
+/* ========================================
+   IMPROVED LAYOUT & SPACING
+   ======================================== */
+
+/* Remove extra padding from body and main container */
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Full-width main container */
+main {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.container-lg {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+/* ========================================
+   IMPROVED HERO SECTION
+   ======================================== */
+
+.hero {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+}
+
+.hero .container-lg {
+    max-width: 100%;
+    padding: 0 40px;
+}
+
+/* ========================================
+   IMPROVED SECTIONS
+   ======================================== */
+
+section:not(.hero) {
+    width: 100%;
+    margin: 0;
+    padding: 60px 20px;
+}
+
+section:not(.hero) .container-lg {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ========================================
+   IMPROVED CARDS & HOVER EFFECTS
+   ======================================== */
+
+.hover-effect {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-effect:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ========================================
+   RESPONSIVE IMPROVEMENTS
+   ======================================== */
+
+@media (max-width: 1200px) {
+    .hero .container-lg {
+        padding: 0 30px;
+    }
+
+    .hero h1 {
+        font-size: 3.5rem;
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .container-lg {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .hero {
+        padding: 80px 20px;
+    }
+
+    .hero .container-lg {
+        padding: 0 20px;
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero p {
+        font-size: 1.1rem;
+    }
+
+    .hero .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    section:not(.hero) {
+        padding: 40px 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero {
+        padding: 60px 15px;
+    }
+
+    .hero h1 {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .d-flex {
+        flex-direction: column;
+    }
+
+    .d-flex.gap-3 {
+        gap: 1rem !important;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}
+
+/* ========================================
+   SMOOTH SCROLLING & ACCESSIBILITY
+   ======================================== */
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* Remove default button outlines but keep accessibility */
+button:focus-visible,
+a:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+/* ========================================
+   IMPROVED TEXT CONTRAST
+   ======================================== */
+
+p, a, li {
+    color: inherit;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.5px;
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+.full-width {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+}
+
+.no-margin {
+    margin: 0 !important;
+}
+
+.no-padding {
+    padding: 0 !important;
+}

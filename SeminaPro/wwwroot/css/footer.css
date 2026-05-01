@@ -1,0 +1,202 @@
+/* ========================================
+   FOOTER - MODERN DESIGN WITH GOLD
+   ======================================== */
+
+.footer-modern {
+    background: linear-gradient(180deg, var(--dark) 0%, #1a1a2e 100%);
+    color: #e0e0e0;
+    padding: 3rem 0 1rem;
+    border-top: 3px solid var(--gold);
+    margin-top: 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.footer-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(212, 165, 116, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(212, 165, 116, 0.02) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.footer-section {
+    position: relative;
+    z-index: 1;
+}
+
+.footer-title {
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-bottom: 0.8rem;
+}
+
+.footer-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 30px;
+    height: 3px;
+    background: var(--gold);
+    border-radius: 2px;
+}
+
+.footer-text {
+    color: #a0a0a0;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin-bottom: 0.6rem;
+}
+
+.footer-links a {
+    color: #a0a0a0;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.footer-links a::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--gold);
+    transition: width 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--gold);
+    padding-left: 5px;
+}
+
+.footer-links a:hover::before {
+    width: 100%;
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(212, 165, 116, 0.1);
+    border: 2px solid transparent;
+    border-radius: 50%;
+    color: var(--gold);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.social-link:hover {
+    background: var(--gold);
+    color: var(--dark);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+}
+
+.footer-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.footer-icon {
+    color: var(--gold);
+    margin-right: 0.6rem;
+    font-size: 1.1rem;
+}
+
+.footer-contact a {
+    color: #a0a0a0;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.footer-contact a:hover {
+    color: var(--gold);
+}
+
+.footer-divider {
+    border-color: rgba(212, 165, 116, 0.2);
+    margin: 2rem 0;
+}
+
+.footer-copyright {
+    color: #808080;
+    font-size: 0.95rem;
+}
+
+.footer-brand {
+    color: var(--gold);
+    font-weight: 700;
+}
+
+/* Responsive Footer */
+@@media (max-width: 768px) {
+    .footer-modern {
+        padding: 2rem 0 1rem;
+        margin-top: 2rem;
+    }
+
+    .footer-title {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .footer-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .social-links {
+        gap: 0.8rem;
+    }
+
+    .social-link {
+        width: 35px;
+        height: 35px;
+        font-size: 0.95rem;
+    }
+}
+
+/* Body Layout - Ensure Footer at Bottom */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+/* Animations pour le footer */
+.footer-modern {
+    animation: slideInUp 0.8s ease 0.5s both;
+}

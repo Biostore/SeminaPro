@@ -1,0 +1,255 @@
+@page
+@model SeminaPro.Pages.IndexModel
+@{
+    ViewData["Title"] = "SeminaPro - Accueil";
+}
+
+<!-- Hero Section with Video Background -->
+<section class="hero">
+    <!-- Video Background -->
+    <video autoplay muted loop class="hero-video">
+        <source src="/videos/vidéo seminar.mp4" type="video/mp4">
+    </video>
+
+    <!-- Overlay -->
+    <div class="hero-overlay"></div>
+
+    <!-- Content -->
+    <div class="hero-content">
+        <div class="container-lg">
+            <div class="row align-items-center">
+                <div class="col-lg-12">
+                    <h1 class="display-3 fw-bold mb-4">🚀 Bienvenue sur<br>SeminaPro</h1>
+                    <p class="lead mb-4">La plateforme révolutionnaire pour découvrir et participer aux meilleurs séminaires professionnels</p>
+                    <div class="d-flex gap-3 flex-wrap">
+                        @if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserEmail")))
+                        {
+                            <a href="/Account/Register" class="btn btn-light">
+                                <i class="bi bi-person-plus"></i> S'inscrire
+                            </a>
+                            <a href="/Seminaires/Index" class="btn btn-outline-light">
+                                <i class="bi bi-search"></i> Voir les séminaires
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="/Seminaires/Index" class="btn btn-light">
+                                <i class="bi bi-search"></i> Parcourir
+                            </a>
+                            <a href="/Dashboard/Index" class="btn btn-outline-light">
+                                <i class="bi bi-speedometer2"></i> Mon tableau
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="py-5">
+    <div class="container-lg">
+        <h2 class="text-center mb-5 fw-bold">🎯 Nos Services</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 text-center shadow-sm hover-effect">
+                    <div class="card-body">
+                        <div style="font-size: 3rem;">🔍</div>
+                        <h5 class="card-title">Recherche Avancée</h5>
+                        <p class="card-text text-muted">Trouvez les séminaires parfaits selon vos critères : prix, spécialité, date</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center shadow-sm hover-effect">
+                    <div class="card-body">
+                        <div style="font-size: 3rem;">✍️</div>
+                        <h5 class="card-title">Inscription Facile</h5>
+                        <p class="card-text text-muted">Inscrivez-vous en quelques clics et gérez vos participations</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center shadow-sm hover-effect">
+                    <div class="card-body">
+                        <div style="font-size: 3rem;">📊</div>
+                        <h5 class="card-title">Statistiques</h5>
+                        <p class="card-text text-muted">Suivez vos inscriptions et consultez vos notifications</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; margin: 40px 0;">
+    <div class="container-lg text-center">
+        <h3 class="fw-bold mb-4">Prêt à explorer les meilleurs séminaires?</h3>
+        <p class="lead mb-4">Rejoignez des milliers de participants satisfaits</p>
+        @if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserEmail")))
+        {
+            <a href="/Account/Register" class="btn btn-light btn-lg">
+                <i class="bi bi-rocket"></i> Commencer maintenant
+            </a>
+        }
+        else
+        {
+            <a href="/Seminaires/Index" class="btn btn-light btn-lg">
+                <i class="bi bi-search"></i> Chercher un séminaire
+            </a>
+        }
+    </div>
+</section>
+
+<!-- Séminaires Récents Section -->
+<section class="py-5 bg-light">
+    <div class="container-lg">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <h2 class="fw-bold">📅 Séminaires à Venir</h2>
+            <a href="/Seminaires/Index" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-right"></i> Voir tous
+            </a>
+        </div>
+
+        @if (Model.SeminairesRecents?.Count > 0)
+        {
+            <div class="row g-4">
+                @foreach (var seminaire in Model.SeminairesRecents.Take(6))
+                {
+                    <div class="col-md-4 col-lg-4">
+                        <div class="card h-100 shadow-sm hover-effect" style="transition: all 0.3s ease;">
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <span class="badge bg-primary"><i class="bi bi-tag"></i> @seminaire.Code</span>
+                                    <span class="badge bg-success">@seminaire.Tarif.ToString("C")</span>
+                                </div>
+                                <h5 class="card-title fw-bold mb-2">@seminaire.Titre</h5>
+                                <div class="d-flex flex-column gap-2 flex-grow-1">
+                                    <small class="text-muted">
+                                        <i class="bi bi-geo-alt"></i> @seminaire.Lieu
+                                    </small>
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar-event"></i> @seminaire.DateSeminaire.ToString("dd/MM/yyyy")
+                                    </small>
+                                    <small class="text-muted">
+                                        <i class="bi bi-people"></i> @(seminaire.Inscriptions?.Count ?? 0) / @seminaire.NombreMaximal inscrits
+                                    </small>
+                                </div>
+                                <div class="mt-3">
+                                    <a href="/Seminaires/Inscription?id=@seminaire.Id" class="btn btn-primary btn-sm w-100">
+                                        <i class="bi bi-check-circle"></i> S'inscrire
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info text-center">
+                <i class="bi bi-info-circle"></i> Aucun séminaire disponible pour le moment.
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Séminaires Populaires Section -->
+<section class="py-5">
+    <div class="container-lg">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <h2 class="fw-bold">🔥 Les Plus Populaires</h2>
+            <a href="/Seminaires/Index" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-right"></i> Voir tous
+            </a>
+        </div>
+
+        @if (Model.SeminairesMostPopular?.Count > 0)
+        {
+            <div class="row g-4">
+                @foreach (var seminaire in Model.SeminairesMostPopular.Take(6))
+                {
+                    <div class="col-md-4 col-lg-4">
+                        <div class="card h-100 shadow-sm hover-effect" style="transition: all 0.3s ease;">
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <span class="badge bg-info"><i class="bi bi-fire"></i> @(seminaire.Inscriptions?.Count ?? 0) inscrits</span>
+                                    <span class="badge bg-success">@seminaire.Tarif.ToString("C")</span>
+                                </div>
+                                <h5 class="card-title fw-bold mb-2">@seminaire.Titre</h5>
+                                <div class="d-flex flex-column gap-2 flex-grow-1">
+                                    <small class="text-muted">
+                                        <i class="bi bi-geo-alt"></i> @seminaire.Lieu
+                                    </small>
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar-event"></i> @seminaire.DateSeminaire.ToString("dd/MM/yyyy")
+                                    </small>
+                                    <small class="text-muted">
+                                        <i class="bi bi-people"></i> @(seminaire.Inscriptions?.Count ?? 0) / @seminaire.NombreMaximal inscrits
+                                    </small>
+                                </div>
+                                <div class="mt-3">
+                                    <a href="/Seminaires/Inscription?id=@seminaire.Id" class="btn btn-primary btn-sm w-100">
+                                        <i class="bi bi-check-circle"></i> S'inscrire
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info text-center">
+                <i class="bi bi-info-circle"></i> Aucun séminaire populaire pour le moment.
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Features -->
+<section class="py-5 bg-white rounded-lg shadow-sm">
+    <div class="container-lg">
+        <h2 class="text-center mb-5 fw-bold">✨ Pourquoi SeminaPro?</h2>
+        <div class="row g-4 align-items-center">
+            <div class="col-md-6">
+                <div class="d-flex mb-4" style="gap: 1.5rem;">
+                    <div style="font-size: 2rem;">🎓</div>
+                    <div>
+                        <h5 class="fw-bold">Formations Qualifiantes</h5>
+                        <p class="text-muted">Des séminaires reconnus par les professionnels</p>
+                    </div>
+                </div>
+                <div class="d-flex mb-4" style="gap: 1.5rem;">
+                    <div style="font-size: 2rem;">👥</div>
+                    <div>
+                        <h5 class="fw-bold">Réseau Professionnel</h5>
+                        <p class="text-muted">Connectez-vous avec d'autres professionnels</p>
+                    </div>
+                </div>
+                <div class="d-flex" style="gap: 1.5rem;">
+                    <div style="font-size: 2rem;">🏆</div>
+                    <div>
+                        <h5 class="fw-bold">Certificats Officiels</h5>
+                        <p class="text-muted">Obtenez des certificats pour votre CV</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 text-center">
+                <div style="font-size: 5rem;">🌟</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@if (User?.Identity?.IsAuthenticated != true)
+{
+    <div class="d-flex gap-2 justify-content-center">
+        <a class="btn btn-primary btn-lg" href="/Identity/Account/Register">S'inscrire</a>
+        <a class="btn btn-outline-primary btn-lg" href="/seminaires">Voir les séminaires</a>
+    </div>
+}

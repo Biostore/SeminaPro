@@ -1,23 +1,26 @@
-﻿@model ErrorViewModel
+﻿@using SeminaPro.Models
+@model SeminaPro.Models.ErrorViewModel
 @{
-    ViewData["Title"] = "Error";
+    ViewData["Title"] = "Erreur";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
-
-@if (Model.ShowRequestId)
-{
-    <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
-    </p>
-}
-
-<h3>Development Mode</h3>
-<p>
-    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p>
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">⚠️ Une erreur s'est produite</h4>
+                <p>Une erreur inattendue est survenue. Veuillez réessayer plus tard.</p>
+                @if (Model.ShowRequestId)
+                {
+                    <hr>
+                    <p><strong>ID de la demande:</strong> <code>@Model.RequestId</code></p>
+                }
+                <hr>
+                <p class="mb-0"><a href="/" class="btn btn-primary">Retour à l'accueil</a></p>
+            </div>
+        </div>
+    </div>
+</div>
     <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
     It can result in displaying sensitive information from exceptions to end users.
     For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>

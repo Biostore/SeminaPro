@@ -1,0 +1,311 @@
+/* ========================================
+   ADMIN TABLES - Styles optimisés
+   ======================================== */
+
+/* TABLE HEADER - Simplifié (texte seul, pas d'icônes) */
+.admin-table thead th {
+    background: linear-gradient(135deg, var(--admin-dark) 0%, #252f4a 100%);
+    color: white;
+    font-weight: 700;
+    border: none;
+    padding: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.85rem;
+    vertical-align: middle;
+}
+
+/* TABLE BODY - Meilleur espacement */
+.admin-table tbody td {
+    padding: 1rem 1.2rem;
+    vertical-align: middle;
+    border-color: #e8eef5;
+    font-size: 0.95rem;
+}
+
+.admin-table tbody tr {
+    border-bottom: 1px solid #e8eef5;
+    transition: background-color 0.2s ease;
+}
+
+.admin-table tbody tr:hover {
+    background: rgba(99, 102, 241, 0.03);
+}
+
+/* CODE SEMINAIRE - Badge styled */
+.seminar-code {
+    display: inline-block;
+    background: #f0f2f7;
+    color: #4a5578;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+/* PRIX - Format lisible */
+.price-cell {
+    font-weight: 700;
+    color: var(--admin-success);
+    font-size: 0.95rem;
+}
+
+/* BADGE INSCRIPTIONS - Dynamique avec couleur */
+.inscriptions-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+/* Dynamique selon le remplissage */
+.inscriptions-badge.low {
+    background: #e8f5e9;
+    color: #388e3c;
+}
+
+.inscriptions-badge.medium {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.inscriptions-badge.high {
+    background: #ffebee;
+    color: #c62828;
+}
+
+/* ACTIONS BUTTONS - Réduction agressivité */
+.btn-action {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 600;
+}
+
+/* Éditer - Bouton principal */
+.btn-edit {
+    background: linear-gradient(135deg, var(--admin-accent) 0%, var(--admin-accent-light) 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.btn-edit:hover {
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    transform: translateY(-2px);
+    color: white;
+}
+
+/* Supprimer - Secondaire (outline rouge doux) */
+.btn-delete {
+    background: transparent;
+    color: #ef4444;
+    border: 1.5px solid #fecaca;
+    font-size: 0.8rem;
+    padding: 0.45rem 0.8rem;
+}
+
+.btn-delete:hover {
+    background: #fef2f2;
+    border-color: #f87171;
+    color: #dc2626;
+}
+
+/* Icône seule pour supprimer sur mobile */
+.btn-delete i {
+    margin: 0;
+}
+
+/* ACTIONS COLUMN */
+.actions-column {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+}
+
+/* PAGE HEADER - Bouton Ajouter amélioré */
+.admin-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 2rem;
+}
+
+.admin-page-header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--admin-dark);
+    margin: 0;
+}
+
+.admin-page-header p {
+    margin: 0.5rem 0 0 0;
+    color: #666;
+    font-size: 1rem;
+}
+
+/* Bouton "Ajouter" - Amélioration visibilité */
+.btn-add-action {
+    background: linear-gradient(135deg, var(--admin-success) 0%, #059669 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    white-space: nowrap;
+    border: none;
+}
+
+.btn-add-action:hover {
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+    transform: translateY(-3px);
+    color: white;
+}
+
+.btn-add-action i {
+    font-size: 1.1rem;
+}
+
+/* SEARCH & FILTER BAR */
+.admin-search-filter {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.admin-search-filter input,
+.admin-search-filter select {
+    padding: 0.7rem 1rem;
+    border: 1.5px solid #e8eef5;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.admin-search-filter input:focus,
+.admin-search-filter select:focus {
+    outline: none;
+    border-color: var(--admin-accent);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.admin-search-filter input::placeholder {
+    color: #999;
+}
+
+.admin-search-filter .search-box {
+    flex: 1;
+    min-width: 250px;
+}
+
+.admin-search-filter .filter-box {
+    flex: 1;
+    min-width: 150px;
+}
+
+/* TABLE WRAPPER */
+.table-responsive {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    background: white;
+}
+
+/* EMPTY STATE */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #999;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+}
+
+/* PAGINATION */
+.admin-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+}
+
+.admin-pagination .page-link {
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    border: 1px solid #e8eef5;
+    color: var(--admin-dark);
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.admin-pagination .page-link:hover {
+    background: var(--admin-accent);
+    border-color: var(--admin-accent);
+    color: white;
+}
+
+.admin-pagination .page-link.active {
+    background: var(--admin-accent);
+    border-color: var(--admin-accent);
+    color: white;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .admin-table thead th {
+        padding: 0.8rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .admin-table tbody td {
+        padding: 0.8rem 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .actions-column {
+        flex-direction: column;
+    }
+
+    .btn-action {
+        width: 100%;
+        justify-content: center;
+        padding: 0.5rem;
+    }
+
+    .admin-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .admin-page-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .admin-search-filter {
+        flex-direction: column;
+    }
+
+    .admin-search-filter .search-box,
+    .admin-search-filter .filter-box {
+        min-width: unset;
+        width: 100%;
+    }
+}

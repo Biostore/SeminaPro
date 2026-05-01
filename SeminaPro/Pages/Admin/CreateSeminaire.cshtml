@@ -1,0 +1,85 @@
+@page
+@model SeminaPro.Pages.Admin.CreateSeminaireModel
+@{
+    ViewData["Title"] = "Ajouter un Séminaire";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="bi bi-plus-circle"></i> Ajouter un Séminaire</h4>
+                </div>
+                <div class="card-body p-5">
+                    <form method="post">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="code" class="form-label">Code *</label>
+                                <input type="text" class="form-control" id="code" name="code" 
+                                       asp-for="Seminaire.Code" required>
+                                <span class="text-danger" asp-validation-for="Seminaire.Code"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="titre" class="form-label">Titre *</label>
+                                <input type="text" class="form-control" id="titre" name="titre" 
+                                       asp-for="Seminaire.Titre" required>
+                                <span class="text-danger" asp-validation-for="Seminaire.Titre"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="lieu" class="form-label">Lieu *</label>
+                            <input type="text" class="form-control" id="lieu" name="lieu" 
+                                   asp-for="Seminaire.Lieu" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="tarif" class="form-label">Tarif *</label>
+                                <input type="number" step="0.01" class="form-control" id="tarif" name="tarif" 
+                                       asp-for="Seminaire.Tarif" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="nombreMaximal" class="form-label">Nombre Max *</label>
+                                <input type="number" class="form-control" id="nombreMaximal" name="nombreMaximal" 
+                                       asp-for="Seminaire.NombreMaximal" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="dateSeminaire" class="form-label">Date du Séminaire *</label>
+                            <input type="datetime-local" class="form-control" id="dateSeminaire" name="dateSeminaire" 
+                                   asp-for="Seminaire.DateSeminaire" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="specialiteId" class="form-label">Spécialité *</label>
+                            <select class="form-select" id="specialiteId" name="specialiteId" 
+                                    asp-for="Seminaire.SpecialiteId" required>
+                                <option value="">-- Sélectionner --</option>
+                                @foreach (var specialite in Model.Specialites ?? new List<Specialite>())
+                                {
+                                    <option value="@specialite.Id">@specialite.Libelle</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i> Ajouter
+                            </button>
+                            <a href="/Admin/Seminaires" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Retour
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

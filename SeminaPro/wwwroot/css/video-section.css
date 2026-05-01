@@ -1,0 +1,158 @@
+/* ========================================
+   VIDEO SECTION STYLING
+   ======================================== */
+
+.video-section {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+    padding: 80px 20px !important;
+}
+
+.video-section h2 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--dark);
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.video-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: var(--gold);
+    border-radius: 2px;
+}
+
+.video-container {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    animation: slideInUp 0.6s ease;
+}
+
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+}
+
+.video-wrapper video,
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 10px;
+}
+
+.video-wrapper video {
+    background: #000;
+}
+
+/* Video Controls Styling */
+video::-webkit-media-controls-panel {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+video::-webkit-media-controls-play-button {
+    background-color: white;
+    border-radius: 50%;
+}
+
+.video-features {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    margin-top: 40px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.video-features h5 {
+    color: var(--dark);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.video-features p {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.video-features i {
+    transition: all 0.3s ease;
+}
+
+.video-features .col-md-4:hover i {
+    color: var(--gold) !important;
+    transform: scale(1.1);
+}
+
+/* ========================================
+   RESPONSIVE VIDEO SECTION
+   ======================================== */
+
+@media (max-width: 768px) {
+    .video-section {
+        padding: 60px 15px !important;
+    }
+
+    .video-section h2 {
+        font-size: 1.8rem;
+    }
+
+    .video-container {
+        padding: 15px;
+    }
+
+    .video-features {
+        padding: 20px;
+        margin-top: 30px;
+    }
+
+    .video-features .col-md-4 {
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .video-section {
+        padding: 40px 10px !important;
+    }
+
+    .video-section h2 {
+        font-size: 1.5rem;
+    }
+
+    .video-container {
+        padding: 10px;
+    }
+
+    .video-features {
+        padding: 15px;
+    }
+
+    .video-features i {
+        font-size: 1.5rem !important;
+    }
+
+    .video-features h5 {
+        font-size: 0.95rem;
+    }
+
+    .video-features p {
+        font-size: 0.85rem;
+    }
+}

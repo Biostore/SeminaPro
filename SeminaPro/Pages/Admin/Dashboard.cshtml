@@ -1,0 +1,167 @@
+@page
+@model SeminaPro.Pages.Admin.DashboardAdminModel
+@using Microsoft.AspNetCore.Http
+@{
+    ViewData["Title"] = "Tableau de Bord Admin";
+    var userRole = HttpContext.Session.GetString("UserRole");
+}
+
+<!-- PAGE CONTENT -->
+<div class="page-content">
+    <!-- WELCOME HEADER -->
+    <div class="welcome-header mb-5">
+        <h1><i class="bi bi-speedometer2"></i> Tableau de Bord</h1>
+        <p>Bienvenue, Administrateur ! Voici un aperçu de votre plateforme.</p>
+    </div>
+
+    <!-- STATISTIQUES CARDS -->
+    <div class="row mb-4 g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card stat-card-seminaires">
+                <div class="stat-icon">
+                    <i class="bi bi-book-fill"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>@Model.TotalSeminaires</h3>
+                    <p>Séminaires</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card stat-card-participants">
+                <div class="stat-icon">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>@Model.TotalParticipants</h3>
+                    <p>Participants</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card stat-card-inscriptions">
+                <div class="stat-icon">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>@Model.TotalInscriptions</h3>
+                    <p>Inscriptions</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card stat-card-specialites">
+                <div class="stat-icon">
+                    <i class="bi bi-tag-fill"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>@Model.TotalSpecialites</h3>
+                    <p>Spécialités</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DEUX SECTIONS : DERNIERS SÉMINAIRES & ACTIONS RAPIDES -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card card-modern">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-calendar-event"></i> Derniers Séminaires</h5>
+                    <a href="/Admin/Seminaires" class="btn btn-sm btn-light">Voir tout</a>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.DerniersSeminaires != null && Model.DerniersSeminaires.Count > 0)
+                    {
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Titre</th>
+                                    <th>Date</th>
+                                    <th>Lieu</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var seminaire in Model.DerniersSeminaires.Take(5))
+                                {
+                                    <tr>
+                                        <td class="fw-500">@seminaire.Titre</td>
+                                        <td>
+                                            <small class="text-muted">
+                                                @seminaire.DateSeminaire.ToString("dd/MM/yyyy")
+                                            </small>
+                                        </td>
+                                        <td>@seminaire.Lieu</td>
+                                        <td>
+                                            <a href="/Admin/Seminaires" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info m-3 mb-0">
+                            <i class="bi bi-info-circle"></i> Aucun séminaire créé pour le moment.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card card-modern h-100">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-lightning"></i> Actions Rapides</h5>
+                </div>
+                <div class="card-body d-flex flex-column gap-2">
+                    <a href="/Admin/CreateSeminaire" class="btn btn-primary btn-sm d-flex align-items-center gap-2"><i class="bi bi-plus-circle"></i> Créer un Séminaire</a>
+                    <a href="/Admin/Seminaires" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"><i class="bi bi-pencil-square"></i> Modifier Séminaires</a>
+                    <a href="/Admin/Settings" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2"><i class="bi bi-gear"></i> Paramètres</a>
+                    <a href="/Admin/Profile" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2"><i class="bi bi-person"></i> Profil</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STATISTIQUES DÉTAILLÉES -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card card-modern">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-graph-up"></i> Vue d'ensemble</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Taux de participation</span>
+                        <strong>@(Model.TotalSeminaires > 0 ? Math.Round((double)Model.TotalInscriptions / (Model.TotalSeminaires * 10) * 100) : 0)%</strong>
+                    </div>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: @(Model.TotalSeminaires > 0 ? Math.Round((double)Model.TotalInscriptions / (Model.TotalSeminaires * 10) * 100) : 0)%"></div>
+                    </div>
+                    <p class="text-muted small"><i class="bi bi-info-circle"></i> Basé sur le nombre total d'inscriptions.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card card-modern">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Informations système</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2"><span>Version</span><strong>1.0.0</strong></div>
+                    <div class="d-flex justify-content-between mb-2"><span>Plateforme</span><strong>.NET 10 / Razor Pages</strong></div>
+                    <div class="d-flex justify-content-between"><span>Dernier accès</span><strong>@DateTime.Now.ToString("dd/MM/yyyy HH:mm")</strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

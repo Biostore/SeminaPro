@@ -1,0 +1,149 @@
+@page
+@model SeminaPro.Pages.Account.RegisterModel
+@{
+    ViewData["Title"] = "Inscription";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="bi bi-person-plus"></i> Créer un compte</h4>
+                </div>
+                <div class="card-body p-5">
+                    <form method="post">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="FirstName" class="form-label">Prénom</label>
+                                <input type="text" class="form-control" id="FirstName" name="FirstName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="LastName" class="form-label">Nom</label>
+                                <input type="text" class="form-control" id="LastName" name="LastName" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="Email" name="Email" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Phone" class="form-label">Téléphone</label>
+                            <input type="tel" class="form-control" id="Phone" name="Phone">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="Password" class="form-label">Mot de passe</label>
+                                <input type="password" class="form-control" id="Password" name="Password" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="ConfirmPassword" class="form-label">Confirmer le mot de passe</label>
+                                <input type="password" class="form-control" id="ConfirmPassword" name="ConfirmPassword" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="ParticipantType" class="form-label">Type de participant</label>
+                            <select class="form-select" id="ParticipantType" name="ParticipantType" required>
+                                <option value="">-- Sélectionner --</option>
+                                <option value="Universitaire">Universitaire</option>
+                                <option value="Industriel">Industriel</option>
+                            </select>
+                        </div>
+
+                        <div id="universitaireFields" style="display:none;">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="Niveau" class="form-label">Niveau d'études <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="Niveau" name="Niveau">
+                                    <span asp-validation-for="Niveau" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="NomUniversite" class="form-label">Nom de l'université</label>
+                                    <input type="text" class="form-control" id="NomUniversite" name="NomUniversite">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="industrielFields" style="display:none;">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="Fonction" class="form-label">Fonction <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="Fonction" name="Fonction">
+                                    <span asp-validation-for="Fonction" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="NomEntreprise" class="form-label">Nom de l'entreprise</label>
+                                    <input type="text" class="form-control" id="NomEntreprise" name="NomEntreprise">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="Accept" name="Accept" value="true">
+                            <label class="form-check-label" for="Accept">
+                                J'accepte les conditions d'utilisation
+                            </label>
+                            <span asp-validation-for="Accept" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 mb-3">
+                            <i class="bi bi-check-circle"></i> S'inscrire
+                        </button>
+                    </form>
+
+                    <hr>
+
+                    <p class="text-center mb-0">
+                        Vous avez déjà un compte ? 
+                        <a href="/Account/Login" class="btn btn-link p-0">Se connecter ici</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('ParticipantType').addEventListener('change', function() {
+    document.getElementById('universitaireFields').style.display = this.value === 'Universitaire' ? 'block' : 'none';
+    document.getElementById('industrielFields').style.display = this.value === 'Industriel' ? 'block' : 'none';
+
+    // Mettre à jour les validations
+    const niveauInput = document.getElementById('Niveau');
+    const fonctionInput = document.getElementById('Fonction');
+
+    if (this.value === 'Universitaire') {
+        niveauInput.required = true;
+        fonctionInput.required = false;
+    } else if (this.value === 'Industriel') {
+        fonctionInput.required = true;
+        niveauInput.required = false;
+    } else {
+        niveauInput.required = false;
+        fonctionInput.required = false;
+    }
+});
+
+// Validation du formulaire avant soumission
+document.querySelector('form').addEventListener('submit', function(e) {
+    const participantType = document.getElementById('ParticipantType').value;
+    const niveau = document.getElementById('Niveau').value.trim();
+    const fonction = document.getElementById('Fonction').value.trim();
+
+    if (participantType === 'Universitaire' && !niveau) {
+        e.preventDefault();
+        alert('Veuillez entrer le niveau d\'études');
+        return false;
+    }
+
+    if (participantType === 'Industriel' && !fonction) {
+        e.preventDefault();
+        alert('Veuillez entrer votre fonction');
+        return false;
+    }
+});
+</script>

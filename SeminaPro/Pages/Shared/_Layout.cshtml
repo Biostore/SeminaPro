@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SeminaPro</title>
+    <!-- Poppins Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/animations.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/footer.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/enhanced-design.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/about-contact.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/layout-improvements.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/video-section.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/modern-design.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin-modern-design.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin-seminaires.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark sticky-top navbar-modern">
+            <div class="container-lg">
+                <a class="navbar-brand" href="/">
+                    <img src="/images/logo semina.png" alt="SeminaPro Logo" height="80" class="d-inline-block align-text-top logo-img">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse">
+                    <ul class="navbar-nav ms-auto flex-nowrap">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">
+                                <i class="bi bi-house"></i> Accueil
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Seminaires/Index">
+                                <i class="bi bi-book"></i> Séminaires
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/About">
+                                <i class="bi bi-info-circle"></i> À Propos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Contact">
+                                <i class="bi bi-envelope"></i> Contact
+                            </a>
+                        </li>
+                        @if (!string.IsNullOrEmpty(Context.Session.GetString("UserEmail")))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Dashboard/Index">
+                                    <i class="bi bi-speedometer2"></i> Mon Tableau
+                                </a>
+                            </li>
+                            @if (Context.Session.GetString("UserRole") == "Admin")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/Admin/Dashboard">
+                                        <i class="bi bi-gear"></i> Admin
+                                    </a>
+                                </li>
+                            }
+                        }
+                    </ul>
+                    <div class="d-flex align-items-center ms-3 gap-2">
+                        @if (!string.IsNullOrEmpty(Context.Session.GetString("UserEmail")))
+                        {
+                            <span class="text-white me-2">
+                                <small>Connecté : <strong>@(Context.Session.GetString("UserRole") == "Admin" ? "👨‍💼 Admin" : "👤 Participant")</strong></small>
+                            </span>
+                            <a href="/Account/Logout" class="btn btn-sm btn-outline-light">
+                                <i class="bi bi-box-arrow-right"></i> Déconnexion
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="/Account/Login" class="btn btn-sm btn-login">
+                                <i class="bi bi-box-arrow-in-right"></i> Connexion
+                            </a>
+                            <a href="/Account/Register" class="btn btn-sm btn-signup">
+                                <i class="bi bi-person-plus"></i> Inscription
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container-lg" style="flex: 1; padding: 0;">
+        <main>
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer-modern">
+        <div class="container-lg py-5">
+            <div class="row g-4 mb-5">
+                <!-- Colonne 1 : À Propos -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-section">
+                        <h5 class="footer-title mb-3">
+                            <img src="/images/logo semina.png" alt="Logo" height="30" class="me-2 logo-img">
+                            SeminaPro
+                        </h5>
+                        <p class="footer-text">La plateforme référence pour la gestion de séminaires professionnels. Connectez-vous, apprenez et progressez.</p>
+                        <div class="social-links mt-3">
+                            <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="social-link"><i class="bi bi-twitter"></i></a>
+                            <a href="#" class="social-link"><i class="bi bi-linkedin"></i></a>
+                            <a href="#" class="social-link"><i class="bi bi-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Colonne 2 : Navigation -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-section">
+                        <h5 class="footer-title mb-3">Navigation</h5>
+                        <ul class="footer-links">
+                            <li><a href="/">Accueil</a></li>
+                            <li><a href="/Seminaires/Index">Tous les Séminaires</a></li>
+                            <li><a href="/Account/Register">S'Inscrire</a></li>
+                            <li><a href="/Account/Login">Se Connecter</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Colonne 3 : Ressources -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-section">
+                        <h5 class="footer-title mb-3">Ressources</h5>
+                        <ul class="footer-links">
+                            <li><a href="#">Centre d'Aide</a></li>
+                            <li><a href="#">FAQ</a></li>
+                            <li><a href="#">Conditions d'Utilisation</a></li>
+                            <li><a href="#">Politique de Confidentialité</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Colonne 4 : Contact -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-section">
+                        <h5 class="footer-title mb-3">Contact</h5>
+                        <div class="footer-contact">
+                            <p class="footer-text mb-2">
+                                <i class="bi bi-envelope footer-icon"></i>
+                                <a href="mailto:info@seminapro.com">info@seminapro.com</a>
+                            </p>
+                            <p class="footer-text mb-2">
+                                <i class="bi bi-telephone footer-icon"></i>
+                                <a href="tel:+1234567890">+1 (234) 567-890</a>
+                            </p>
+                            <p class="footer-text">
+                                <i class="bi bi-geo-alt footer-icon"></i>
+                                123 Avenue Principale<br>
+                                75000 Paris, France
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <hr class="footer-divider">
+
+            <!-- Bottom Section -->
+            <div class="row align-items-center">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <p class="footer-copyright mb-0">
+                        &copy; 2025 <span class="footer-brand">SeminaPro</span>. Tous droits réservés.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="footer-text small mb-0">
+                        Conçu avec <i class="bi bi-heart-fill" style="color: #d4a574;"></i> pour vos formations
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

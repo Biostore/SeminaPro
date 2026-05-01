@@ -1,0 +1,124 @@
+@page
+@model SeminaPro.Pages.Dashboard.IndexModel
+@{
+    ViewData["Title"] = "Mon Tableau de Bord";
+}
+
+<link rel="stylesheet" href="~/css/dashboard-improvements.css" asp-append-version="true" />
+
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <h5 class="fw-bold mb-3">Menu</h5>
+        <a href="/Dashboard/Index" class="sidebar-item active"><i class="bi bi-speedometer2"></i><span>Tableau</span></a>
+        <a href="/Seminaires/Index" class="sidebar-item"><i class="bi bi-search"></i><span>Chercher</span></a>
+        <hr>
+        <a href="/Account/Logout" class="sidebar-item" style="color:#ff3b30;"><i class="bi bi-box-arrow-right"></i><span>Déconnexion</span></a>
+    </aside>
+
+    <div class="main-content">
+        <div class="content-area">
+            <div class="welcome-header">
+                <h1>Bienvenue</h1>
+                <p>Votre espace personnel — résumé rapide et actions.</p>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="stat-card" data-href="/Seminaires/Index" title="Voir mes inscriptions">
+                        <i class="bi bi-check-circle"></i>
+                        <div class="stat-number">@Model.TotalInscriptions</div>
+                        <div class="stat-label">Inscriptions</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card success" data-href="/Seminaires/Index?filter=upcoming" title="À venir">
+                        <i class="bi bi-calendar-check"></i>
+                        <div class="stat-number">@Model.InscriptionsAVenir</div>
+                        <div class="stat-label">À Venir</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card info" data-href="/Seminaires/Index?filter=past" title="Passés">
+                        <i class="bi bi-clock-history"></i>
+                        <div class="stat-number">@Model.InscriptionsPasses</div>
+                        <div class="stat-label">Passés</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-lg-7">
+                    <div class="card chart-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0"><i class="bi bi-graph-up"></i> Tendances</h6>
+                            <small class="text-muted">Répartition</small>
+                        </div>
+                        <div class="card-body p-2">
+                            <canvas id="inscriptionsChart" height="120" data-upcoming="@Model.InscriptionsAVenir" data-past="@Model.InscriptionsPasses" data-total="@Model.TotalInscriptions"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header"><h6 class="mb-0"><i class="bi bi-calendar-event"></i> Calendrier</h6></div>
+                        <div class="card-body p-2"><div id="calendar" class="calendar-view"><div class="calendar-header"><button class="btn btn-sm btn-outline-primary" id="prevMonth"><i class="bi bi-chevron-left"></i></button><h6 class="mb-0" id="monthYear"></h6><button class="btn btn-sm btn-outline-primary" id="nextMonth"><i class="bi bi-chevron-right"></i></button></div><div class="calendar-grid" id="calendarGrid"></div></div></div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center"><h6 class="mb-0"><i class="bi bi-activity"></i> Activités récentes</h6><a href="/Seminaires/Index" class="small text-muted">Voir tout</a></div>
+                        <div class="card-body p-2">
+                            <div class="recent-activities">
+                                @if (Model.MesInscriptions != null && Model.MesInscriptions.Count > 0)
+                                {
+                                    foreach (var ins in Model.MesInscriptions.Take(6))
+                                    {
+                                        <div class="activity"><div><div class="fw-600">@ins.Seminaire?.Titre</div><div class="meta">Inscrit le @ins.DateInscription.ToString("dd/MM/yyyy")</div></div><div class="meta text-end"><div>@ins.Seminaire?.DateSeminaire.ToString("dd/MM/yyyy")</div><div class="status-badge">@((ins.Seminaire != null && ins.Seminaire.DateSeminaire > DateTime.Now) ? "À venir" : "Passé")</div></div></div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="text-center py-3 empty-state"><i class="bi bi-inbox" style="font-size: 2rem;"></i><div class="text-muted mt-2">Aucune activité récente.</div></div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3"><div class="card-header"><h6 class="mb-0"><i class="bi bi-info-circle"></i> À propos</h6></div><div class="card-body p-2 small text-muted">Vous êtes connecté en tant que <strong>@Model.UserEmail</strong></div></div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a href="/Seminaires/Index" class="btn btn-primary btn-sm">Voir mes inscriptions</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.stat-card[data-href]').forEach(function (el) { el.addEventListener('click', function () { var href = el.getAttribute('data-href'); if (href) window.location.href = href; }); });
+
+            var canvas = document.getElementById('inscriptionsChart');
+            if (canvas) {
+                var upcoming = parseInt(canvas.dataset.upcoming || '0');
+                var past = parseInt(canvas.dataset.past || '0');
+                var total = parseInt(canvas.dataset.total || '0');
+                var other = Math.max(0, total - (upcoming + past));
+                new Chart(canvas, {
+                    type: 'doughnut',
+                    data: { labels: ['À venir','Passés','Autres'], datasets: [{ data: [upcoming, past, other], backgroundColor: ['#4ade80','#60a5fa','#c7c7c7'] }] },
+                    options: { plugins: { legend: { position: 'bottom' } }, maintainAspectRatio: false }
+                });
+            }
+        });
+    </script>
+    <script src="~/js/dashboard-calendar.js" asp-append-version="true"></script>
+}
+
+<style>
+    .welcome-header { margin-bottom: 1rem; }
+</style>

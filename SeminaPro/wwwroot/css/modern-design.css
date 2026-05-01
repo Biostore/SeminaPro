@@ -1,0 +1,248 @@
+/* ========================================
+   MODERN DESIGN - BUTTONS & HERO ONLY
+   ======================================== */
+
+/* Global Typography */
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ========================================
+   NAVBAR - SIMPLE (NO MODIFICATIONS)
+   ======================================== */
+
+/* Nav Links Styling - MINIMAL */
+.navbar-nav .nav-link {
+    transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #ffd54f !important;
+}
+
+/* ========================================
+   BUTTONS MODERN STYLE (KEEP)
+   ======================================== */
+
+/* Primary CTA Button (Inscription - Violet/Indigo) */
+.btn-signup,
+.btn.btn-success {
+    background: linear-gradient(135deg, #6200ea 0%, #7c4dff 100%) !important;
+    border: none !important;
+    border-radius: 25px;
+    padding: 10px 24px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #fff !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(98, 0, 234, 0.3);
+    letter-spacing: 0.5px;
+}
+
+.btn-signup:hover,
+.btn.btn-success:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(98, 0, 234, 0.5);
+    color: #fff !important;
+}
+
+/* Secondary CTA Button (Connexion - Blue) */
+.btn-login,
+.btn.btn-primary {
+    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
+    border: none !important;
+    border-radius: 25px;
+    padding: 10px 24px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #fff !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+    letter-spacing: 0.5px;
+}
+
+.btn-login:hover,
+.btn.btn-primary:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(25, 118, 210, 0.5);
+    color: #fff !important;
+}
+
+/* Outline Button */
+.btn-outline-light {
+    border: 2px solid white !important;
+    color: white !important;
+    background: transparent !important;
+    border-radius: 25px;
+    padding: 8px 22px;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: #ffd54f !important;
+    color: #ffd54f !important;
+    transform: translateY(-2px);
+}
+
+/* ========================================
+   HERO SECTION MODERN DESIGN
+   ======================================== */
+
+.hero {
+    position: relative;
+    background: #000;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.7) 100%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* ========================================
+   MODERN CARD EFFECTS
+   ======================================== */
+
+.card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+}
+
+.card-title {
+    font-weight: 700;
+    color: #1a1a2e;
+}
+
+/* ========================================
+   TEXT EFFECTS & SHADOWS
+   ======================================== */
+
+.text-shadow-light {
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.text-shadow-medium {
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.text-shadow-strong {
+    text-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* ========================================
+   ACCENT COLORS
+   ======================================== */
+
+.text-accent-green {
+    color: #00c853;
+}
+
+.text-accent-blue {
+    color: #1976d2;
+}
+
+.text-accent-yellow {
+    color: #ffd54f;
+}
+
+.text-accent-cyan {
+    color: #00e5ff;
+}
+
+/* ========================================
+   SECTIONS SPACING
+   ======================================== */
+
+section {
+    padding: 60px 20px;
+}
+
+@media (max-width: 768px) {
+    section {
+        padding: 40px 15px;
+    }
+
+    .navbar-nav {
+        gap: 5px;
+    }
+
+    .navbar-nav .nav-link {
+        font-size: 0.85rem;
+        padding: 0.5rem 0.8rem !important;
+    }
+
+    .btn-signup,
+    .btn-login {
+        padding: 8px 20px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-nav {
+        gap: 0;
+    }
+
+    .navbar-nav .nav-link {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.6rem !important;
+    }
+
+    .btn-signup,
+    .btn-login {
+        padding: 6px 16px;
+        font-size: 0.8rem;
+    }
+}
+
+/* ========================================
+   SMOOTH TRANSITIONS
+   ======================================== */
+
+a,
+button,
+input,
+textarea,
+select {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========================================
+   ANIMATION UTILITY CLASSES
+   ======================================== */
+
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.hover-glow {
+    transition: all 0.3s ease;
+}
+
+.hover-glow:hover {
+    box-shadow: 0 0 20px rgba(98, 0, 234, 0.4);
+}

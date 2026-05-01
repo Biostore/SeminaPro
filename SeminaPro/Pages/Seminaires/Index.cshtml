@@ -1,0 +1,146 @@
+@page
+@using SeminaPro.Pages.Seminaires
+@model SeminairesModel
+@{
+    ViewData["Title"] = "Séminaires";
+}
+
+<div class="container-lg py-5">
+    <!-- HEADER -->
+    <div class="welcome-header">
+        <h1><i class="bi bi-book"></i> Découvrez nos Séminaires</h1>
+        <p>Trouvez et inscrivez-vous aux meilleures formations professionnelles</p>
+    </div>
+
+    <!-- FILTRES -->
+    <div class="card mb-5">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-funnel"></i> Filtres de Recherche</h5>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label for="searchTitle" class="form-label">Titre</label>
+                    <input type="text" class="form-control" id="searchTitle" name="searchTitle" 
+                           value="@Model.SearchTitle" placeholder="Rechercher...">
+                </div>
+                <div class="col-md-3">
+                    <label for="minPrice" class="form-label">Prix Min</label>
+                    <input type="number" class="form-control" id="minPrice" name="minPrice" 
+                           value="@Model.MinPrice" placeholder="0">
+                </div>
+                <div class="col-md-3">
+                    <label for="maxPrice" class="form-label">Prix Max</label>
+                    <input type="number" class="form-control" id="maxPrice" name="maxPrice" 
+                           value="@Model.MaxPrice" placeholder="10000">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Filtrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SÉMINAIRES EN CARDS -->
+    @if (Model.Seminaires?.Count > 0)
+    {
+        <div class="seminaires-grid">
+            @foreach (var seminaire in Model.Seminaires)
+            {
+                <div class="seminaire-card fade-in">
+                    <!-- HEADER -->
+                    <div class="seminaire-header">
+                        <span class="seminaire-code">@seminaire.Code</span>
+                        <h3 class="seminaire-title">@seminaire.Titre</h3>
+                    </div>
+
+                    <!-- BODY -->
+                    <div class="seminaire-body">
+                        <div class="seminaire-info">
+                            <i class="bi bi-geo-alt"></i>
+                            <span>@seminaire.Lieu</span>
+                        </div>
+                        <div class="seminaire-info">
+                            <i class="bi bi-calendar"></i>
+                            <span>@seminaire.DateSeminaire.ToString("dd MMMM yyyy HH:mm")</span>
+                        </div>
+                        <div class="seminaire-info">
+                            <i class="bi bi-people"></i>
+                            <span>@(seminaire.Inscriptions?.Count ?? 0)/@seminaire.NombreMaximal participants</span>
+                        </div>
+
+                        <div class="progress mt-3 mb-3" style="height: 6px;">
+                            <div class="progress-bar" role="progressbar" 
+                                 style="width: @((seminaire.Inscriptions?.Count ?? 0) * 100 / seminaire.NombreMaximal)%" 
+                                 aria-valuenow="@(seminaire.Inscriptions?.Count ?? 0)" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="@seminaire.NombreMaximal"></div>
+                        </div>
+
+                        <div class="seminaire-price">
+                            @seminaire.Tarif.ToString("C")
+                        </div>
+                    </div>
+
+                    <!-- FOOTER -->
+                    <div class="seminaire-footer">
+                        <a class="btn btn-primary btn-sm" asp-page="Details" asp-route-id="@seminaire.Id">
+                            <i class="bi bi-eye"></i> Détails
+                        </a>
+                        @if (!string.IsNullOrEmpty(HttpContext.Session.GetString("UserEmail")))
+                        {
+                            <a class="btn btn-success btn-sm" asp-page="Inscription" asp-route-id="@seminaire.Id">
+                                <i class="bi bi-check-circle"></i> S'inscrire
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-secondary btn-sm" href="/Account/Login">
+                                <i class="bi bi-lock"></i> Se connecter
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center py-5">
+            <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+            <p class="mt-3 mb-0">Aucun séminaire disponible pour le moment.</p>
+        </div>
+    }
+</div>
+
+<style>
+    .seminaires-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2rem;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .fade-in {
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .seminaires-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
