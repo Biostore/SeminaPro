@@ -1,0 +1,163 @@
+@page
+@model SeminaPro.Pages.Admin.InscriptionsModel
+@{
+    ViewData["Title"] = "Gérer les Inscriptions";
+}
+
+<link rel="stylesheet" href="~/css/admin-seminaires.css" asp-append-version="true" />
+
+<div class="admin-container">
+    <!-- Header -->
+    <div class="admin-header">
+        <h1><i class="bi bi-check-circle-fill"></i> Gestion des Inscriptions</h1>
+        <p>Ajouter, modifier ou supprimer des inscriptions</p>
+    </div>
+
+    <!-- Messages -->
+    @if (!string.IsNullOrEmpty(TempData["Message"]?.ToString()))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(TempData["Error"]?.ToString()))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Formulaire -->
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0"><i class="bi bi-plus-circle"></i> Ajouter Inscription</h6>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-page-handler="Save">
+                        <input type="hidden" asp-for="Inscription.Id" />
+
+                        <div class="mb-3">
+                            <label asp-for="Inscription.ParticipantId" class="form-label">Participant</label>
+                            <select class="form-control" asp-for="Inscription.ParticipantId" required>
+                                <option value="">Sélectionner un participant</option>
+                                @foreach (var participant in Model.Participants ?? new List<SeminaPro.Models.Participant>())
+                                {
+                                    <option value="@participant.Id">@participant.Nom @participant.Prenom (@participant.Email)</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Inscription.SeminaireId" class="form-label">Séminaire</label>
+                            <select class="form-control" asp-for="Inscription.SeminaireId" required>
+                                <option value="">Sélectionner un séminaire</option>
+                                @foreach (var seminaire in Model.Seminaires ?? new List<SeminaPro.Models.Seminaire>())
+                                {
+                                    <option value="@seminaire.Id">@seminaire.Titre - @seminaire.DateSeminaire.ToString("dd/MM/yyyy")</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Inscription.DateInscription" class="form-label">Date d'inscription</label>
+                            <input type="datetime-local" class="form-control" asp-for="Inscription.DateInscription" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" asp-for="Inscription.AffichageConfirmation" />
+                                <label class="form-check-label" asp-for="Inscription.AffichageConfirmation">
+                                    Afficher confirmation
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-check"></i> Enregistrer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liste des Inscriptions -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h6 class="mb-0"><i class="bi bi-list-ul"></i> Liste des Inscriptions (@Model.Inscriptions?.Count ?? 0)</h6>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.Inscriptions != null && Model.Inscriptions.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Participant</th>
+                                        <th>Email</th>
+                                        <th>Séminaire</th>
+                                        <th>Date Séminaire</th>
+                                        <th>Date Inscription</th>
+                                        <th>Confirmation</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var inscription in Model.Inscriptions)
+                                    {
+                                        <tr>
+                                            <td><strong>@inscription.Participant?.Nom @inscription.Participant?.Prenom</strong></td>
+                                            <td><small>@inscription.Participant?.Email</small></td>
+                                            <td>@inscription.Seminaire?.Titre</td>
+                                            <td>
+                                                <span class="badge bg-info">@inscription.Seminaire?.DateSeminaire.ToString("dd/MM/yyyy")</span>
+                                            </td>
+                                            <td><small>@inscription.DateInscription.ToString("dd/MM/yyyy HH:mm")</small></td>
+                                            <td>
+                                                @if (inscription.AffichageConfirmation)
+                                                {
+                                                    <span class="badge bg-success"><i class="bi bi-check"></i> Oui</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning"><i class="bi bi-x"></i> Non</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a href="?id=@inscription.Id" class="btn btn-sm btn-outline-primary" title="Modifier">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <form method="post" asp-page-handler="Delete" asp-route-id="@inscription.Id" style="display:inline;" 
+                                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette inscription ?')">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info m-3 mb-0">
+                            <i class="bi bi-info-circle"></i> Aucune inscription enregistrée.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .admin-container { padding: 2rem 0; }
+    .admin-header { margin-bottom: 2rem; }
+    .admin-header h1 { font-size: 1.8rem; font-weight: 700; }
+    .admin-header p { color: #6c757d; }
+    .table-hover tbody tr:hover { background-color: rgba(0, 123, 255, 0.05); }
+</style>

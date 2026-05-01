@@ -24,7 +24,7 @@ namespace SeminaPro.Pages.Admin
         public void OnGet()
         {
             CheckAdmin();
-            Specialites = _context.Specialites.ToList();
+            Specialites = _context.Specialites.ToList();    
         }
 
         public IActionResult OnPost()

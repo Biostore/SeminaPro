@@ -1,0 +1,148 @@
+@page
+@model SeminaPro.Pages.Admin.ParticipantsModel
+@{
+    ViewData["Title"] = "Gérer les Participants";
+}
+
+<link rel="stylesheet" href="~/css/admin-seminaires.css" asp-append-version="true" />
+
+<div class="admin-container">
+    <!-- Header -->
+    <div class="admin-header">
+        <h1><i class="bi bi-people-fill"></i> Gestion des Participants</h1>
+        <p>Ajouter, modifier ou supprimer des participants</p>
+    </div>
+
+    <!-- Messages -->
+    @if (!string.IsNullOrEmpty(TempData["Message"]?.ToString()))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(TempData["Error"]?.ToString()))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Formulaire -->
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0"><i class="bi bi-person-plus"></i> @(Model.Participant?.Id == 0 ? "Ajouter" : "Modifier") Participant</h6>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-page-handler="Save">
+                        <input type="hidden" asp-for="Participant.Id" />
+
+                        <div class="mb-3">
+                            <label asp-for="Participant.Nom" class="form-label">Nom</label>
+                            <input type="text" class="form-control" asp-for="Participant.Nom" required />
+                            <span class="text-danger" asp-validation-for="Participant.Nom"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Participant.Prenom" class="form-label">Prénom</label>
+                            <input type="text" class="form-control" asp-for="Participant.Prenom" required />
+                            <span class="text-danger" asp-validation-for="Participant.Prenom"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Participant.Email" class="form-label">Email</label>
+                            <input type="email" class="form-control" asp-for="Participant.Email" required />
+                            <span class="text-danger" asp-validation-for="Participant.Email"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Participant.NumeroTelephone" class="form-label">Téléphone</label>
+                            <input type="tel" class="form-control" asp-for="Participant.NumeroTelephone" />
+                            <span class="text-danger" asp-validation-for="Participant.NumeroTelephone"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Participant.SpecialiteId" class="form-label">Spécialité</label>
+                            <select class="form-control" asp-for="Participant.SpecialiteId" asp-items="@(new SelectList(Model.Specialites, "Id", "Libelle"))" required>
+                                <option value="">Sélectionner une spécialité</option>
+                            </select>
+                            <span class="text-danger" asp-validation-for="Participant.SpecialiteId"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-check"></i> Enregistrer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liste des Participants -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h6 class="mb-0"><i class="bi bi-list-ul"></i> Liste des Participants (@Model.Participants?.Count ?? 0)</h6>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.Participants != null && Model.Participants.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Prénom</th>
+                                        <th>Email</th>
+                                        <th>Téléphone</th>
+                                        <th>Spécialité</th>
+                                        <th>Inscriptions</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var participant in Model.Participants)
+                                    {
+                                        <tr>
+                                            <td><strong>@participant.Nom</strong></td>
+                                            <td>@participant.Prenom</td>
+                                            <td><small>@participant.Email</small></td>
+                                            <td>@(string.IsNullOrEmpty(participant.NumeroTelephone) ? "-" : participant.NumeroTelephone)</td>
+                                            <td><span class="badge bg-info">@participant.Specialite?.Libelle</span></td>
+                                            <td><span class="badge bg-success">@participant.Inscriptions.Count</span></td>
+                                            <td>
+                                                <a href="?id=@participant.Id" class="btn btn-sm btn-outline-primary" title="Modifier">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <form method="post" asp-page-handler="Delete" asp-route-id="@participant.Id" style="display:inline;" 
+                                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce participant ?')">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info m-3 mb-0">
+                            <i class="bi bi-info-circle"></i> Aucun participant enregistré.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .admin-container { padding: 2rem 0; }
+    .admin-header { margin-bottom: 2rem; }
+    .admin-header h1 { font-size: 1.8rem; font-weight: 700; }
+    .admin-header p { color: #6c757d; }
+    .table-hover tbody tr:hover { background-color: rgba(0, 123, 255, 0.05); }
+</style>

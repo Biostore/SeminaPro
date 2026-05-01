@@ -1,0 +1,153 @@
+@page
+@model SeminaPro.Pages.Admin.SpecialitesModel
+@{
+    ViewData["Title"] = "Gérer les Spécialités";
+}
+
+<link rel="stylesheet" href="~/css/admin-seminaires.css" asp-append-version="true" />
+
+<div class="admin-container">
+    <!-- Header -->
+    <div class="admin-header">
+        <h1><i class="bi bi-tag-fill"></i> Gestion des Spécialités</h1>
+        <p>Ajouter, modifier ou supprimer des spécialités</p>
+    </div>
+
+    <!-- Messages -->
+    @if (!string.IsNullOrEmpty(TempData["Message"]?.ToString()))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(TempData["Error"]?.ToString()))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Formulaire -->
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0"><i class="bi bi-tag-plus"></i> @(Model.Specialite?.Id == 0 ? "Ajouter" : "Modifier") Spécialité</h6>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-page-handler="Save">
+                        <input type="hidden" asp-for="Specialite.Id" />
+
+                        <div class="mb-3">
+                            <label asp-for="Specialite.Libelle" class="form-label">Libellé</label>
+                            <input type="text" class="form-control" asp-for="Specialite.Libelle" required />
+                            <span class="text-danger" asp-validation-for="Specialite.Libelle"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Specialite.Abrevaition" class="form-label">Abréviation</label>
+                            <input type="text" class="form-control" asp-for="Specialite.Abrevaition" maxlength="10" />
+                            <span class="text-danger" asp-validation-for="Specialite.Abrevaition"></span>
+                            <small class="text-muted">Max. 10 caractères</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Specialite.Description" class="form-label">Description</label>
+                            <textarea class="form-control" asp-for="Specialite.Description" rows="3" maxlength="500"></textarea>
+                            <span class="text-danger" asp-validation-for="Specialite.Description"></span>
+                            <small class="text-muted">Max. 500 caractères</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-check"></i> Enregistrer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liste des Spécialités -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h6 class="mb-0"><i class="bi bi-list-ul"></i> Liste des Spécialités (@Model.Specialites?.Count ?? 0)</h6>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.Specialites != null && Model.Specialites.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Libellé</th>
+                                        <th>Abréviation</th>
+                                        <th>Description</th>
+                                        <th>Participants</th>
+                                        <th>Séminaires</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var specialite in Model.Specialites)
+                                    {
+                                        <tr>
+                                            <td><strong>@specialite.Libelle</strong></td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(specialite.Abrevaition))
+                                                {
+                                                    <span class="badge bg-secondary">@specialite.Abrevaition</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(specialite.Description))
+                                                {
+                                                    <small>@specialite.Description.Substring(0, Math.Min(50, specialite.Description.Length))...</small>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td><span class="badge bg-info">@specialite.Participants.Count</span></td>
+                                            <td><span class="badge bg-success">@specialite.Seminaires.Count</span></td>
+                                            <td>
+                                                <a href="?id=@specialite.Id" class="btn btn-sm btn-outline-primary" title="Modifier">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <form method="post" asp-page-handler="Delete" asp-route-id="@specialite.Id" style="display:inline;" 
+                                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette spécialité ?')">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer" 
+                                                            @((specialite.Participants.Count > 0 || specialite.Seminaires.Count > 0) ? "disabled" : "")>
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info m-3 mb-0">
+                            <i class="bi bi-info-circle"></i> Aucune spécialité enregistrée.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .admin-container { padding: 2rem 0; }
+    .admin-header { margin-bottom: 2rem; }
+    .admin-header h1 { font-size: 1.8rem; font-weight: 700; }
+    .admin-header p { color: #6c757d; }
+    .table-hover tbody tr:hover { background-color: rgba(0, 123, 255, 0.05); }
+</style>

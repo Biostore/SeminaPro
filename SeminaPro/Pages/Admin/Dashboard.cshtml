@@ -17,7 +17,7 @@
     <!-- STATISTIQUES CARDS -->
     <div class="row mb-4 g-4">
         <div class="col-md-6 col-lg-3">
-            <div class="stat-card stat-card-seminaires">
+            <a href="/Admin/Seminaires" class="stat-card stat-card-seminaires" style="text-decoration: none; color: inherit;">
                 <div class="stat-icon">
                     <i class="bi bi-book-fill"></i>
                 </div>
@@ -25,11 +25,11 @@
                     <h3>@Model.TotalSeminaires</h3>
                     <p>Séminaires</p>
                 </div>
-            </div>
+            </a>
         </div>
 
         <div class="col-md-6 col-lg-3">
-            <div class="stat-card stat-card-participants">
+            <a href="/Admin/Participants" class="stat-card stat-card-participants" style="text-decoration: none; color: inherit;">
                 <div class="stat-icon">
                     <i class="bi bi-people-fill"></i>
                 </div>
@@ -37,11 +37,11 @@
                     <h3>@Model.TotalParticipants</h3>
                     <p>Participants</p>
                 </div>
-            </div>
+            </a>
         </div>
 
         <div class="col-md-6 col-lg-3">
-            <div class="stat-card stat-card-inscriptions">
+            <a href="/Admin/Inscriptions" class="stat-card stat-card-inscriptions" style="text-decoration: none; color: inherit;">
                 <div class="stat-icon">
                     <i class="bi bi-check-circle-fill"></i>
                 </div>
@@ -49,11 +49,11 @@
                     <h3>@Model.TotalInscriptions</h3>
                     <p>Inscriptions</p>
                 </div>
-            </div>
+            </a>
         </div>
 
         <div class="col-md-6 col-lg-3">
-            <div class="stat-card stat-card-specialites">
+            <a href="/Admin/Specialites" class="stat-card stat-card-specialites" style="text-decoration: none; color: inherit;">
                 <div class="stat-icon">
                     <i class="bi bi-tag-fill"></i>
                 </div>
@@ -61,7 +61,7 @@
                     <h3>@Model.TotalSpecialites</h3>
                     <p>Spécialités</p>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 
@@ -122,10 +122,12 @@
                     <h5 class="mb-0"><i class="bi bi-lightning"></i> Actions Rapides</h5>
                 </div>
                 <div class="card-body d-flex flex-column gap-2">
-                    <a href="/Admin/CreateSeminaire" class="btn btn-primary btn-sm d-flex align-items-center gap-2"><i class="bi bi-plus-circle"></i> Créer un Séminaire</a>
-                    <a href="/Admin/Seminaires" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"><i class="bi bi-pencil-square"></i> Modifier Séminaires</a>
+                    <a href="/Admin/CreateSeminaire" class="btn btn-primary btn-sm d-flex align-items-center gap-2"><i class="bi bi-plus-circle"></i> Créer Séminaire</a>
+                    <a href="/Admin/Seminaires" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"><i class="bi bi-calendar-event"></i> Séminaires</a>
+                    <a href="/Admin/Participants" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"><i class="bi bi-people-fill"></i> Participants</a>
+                    <a href="/Admin/Inscriptions" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"><i class="bi bi-check-circle"></i> Inscriptions</a>
+                    <a href="/Admin/Specialites" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"><i class="bi bi-tag-fill"></i> Spécialités</a>
                     <a href="/Admin/Settings" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2"><i class="bi bi-gear"></i> Paramètres</a>
-                    <a href="/Admin/Profile" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2"><i class="bi bi-person"></i> Profil</a>
                 </div>
             </div>
         </div>
