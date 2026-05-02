@@ -109,16 +109,32 @@ namespace SeminaPro.Pages.Admin
 
         private void LoadParticipants()
         {
-            Participants = _context.Participants
-                .Include(p => p.Specialite)
-                .Include(p => p.Inscriptions)
-                .OrderBy(p => p.Nom)
-                .ToList();
+            try
+            {
+                Participants = _context.Participants
+                    .Include(p => p.Specialite)
+                    .Include(p => p.Inscriptions)
+                    .OrderBy(p => p.Nom)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors du chargement des participants");
+                Participants = new List<Participant>();
+            }
         }
 
         private void LoadSpecialites()
         {
-            Specialites = _context.Specialites.OrderBy(s => s.Libelle).ToList();
+            try
+            {
+                Specialites = _context.Specialites.OrderBy(s => s.Libelle).ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors du chargement des spécialités");
+                Specialites = new List<Specialite>();
+            }
         }
 
         private void CheckAdmin()

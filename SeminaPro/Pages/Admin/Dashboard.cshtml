@@ -1,5 +1,5 @@
 @page
-@model SeminaPro.Pages.Admin.DashboardAdminModel
+@model SeminaPro.Pages.Admin.DashboardModel
 @using Microsoft.AspNetCore.Http
 @{
     ViewData["Title"] = "Tableau de Bord Admin";
@@ -82,22 +82,22 @@
                                     <th>Titre</th>
                                     <th>Date</th>
                                     <th>Lieu</th>
-                                    <th>Actions</th>
+                                    <th class="text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var seminaire in Model.DerniersSeminaires.Take(5))
                                 {
-                                    <tr>
-                                        <td class="fw-500">@seminaire.Titre</td>
+                                    <tr class="align-middle">
+                                        <td class="fw-600">@seminaire.Titre</td>
                                         <td>
                                             <small class="text-muted">
                                                 @seminaire.DateSeminaire.ToString("dd/MM/yyyy")
                                             </small>
                                         </td>
                                         <td>@seminaire.Lieu</td>
-                                        <td>
-                                            <a href="/Admin/Seminaires" class="btn btn-sm btn-outline-primary">
+                                        <td class="text-center">
+                                            <a href="/Admin/Seminaires" class="btn btn-sm btn-outline-primary" title="Modifier">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
                                         </td>
@@ -108,8 +108,15 @@
                     }
                     else
                     {
-                        <div class="alert alert-info m-3 mb-0">
-                            <i class="bi bi-info-circle"></i> Aucun séminaire créé pour le moment.
+                        <div class="empty-state-box p-5 text-center">
+                            <div class="empty-icon mb-3">
+                                <i class="bi bi-book"></i>
+                            </div>
+                            <h6 class="text-muted mb-2">Aucun séminaire créé</h6>
+                            <p class="small text-muted mb-3">Commencez en créant votre premier séminaire</p>
+                            <a href="/Admin/CreateSeminaire" class="btn btn-primary btn-sm">
+                                <i class="bi bi-plus-circle"></i> Créer Séminaire
+                            </a>
                         </div>
                     }
                 </div>
@@ -148,6 +155,7 @@
                     <div class="progress mb-3">
                         <div class="progress-bar bg-success" role="progressbar" style="width: @(Model.TotalSeminaires > 0 ? Math.Round((double)Model.TotalInscriptions / (Model.TotalSeminaires * 10) * 100) : 0)%"></div>
                     </div>
+
                     <p class="text-muted small"><i class="bi bi-info-circle"></i> Basé sur le nombre total d'inscriptions.</p>
                 </div>
             </div>
@@ -158,6 +166,14 @@
                 <div class="card-header bg-dark text-white">
                     <h5 class="mb-0"><i class="bi bi-info-circle"></i> Informations système</h5>
                 </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2"><span>Version</span><strong>1.0.0</strong></div>
+                    <div class="d-flex justify-content-between mb-2"><span>Plateforme</span><strong>.NET 10 / Razor Pages</strong></div>
+                    <div class="d-flex justify-content-between"><span>Dernier accès</span><strong>@DateTime.Now.ToString("dd/MM/yyyy HH:mm")</strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between mb-2"><span>Version</span><strong>1.0.0</strong></div>
                     <div class="d-flex justify-content-between mb-2"><span>Plateforme</span><strong>.NET 10 / Razor Pages</strong></div>

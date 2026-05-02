@@ -68,6 +68,10 @@ namespace SeminaPro.Data
                 .HasIndex(s => s.Libelle)
                 .IsUnique();
 
+            // Ignorer la colonne Abbreviation qui n'existe pas dans la BD
+            modelBuilder.Entity<Specialite>()
+                .Ignore(s => s.Abbreviation);
+
             // Ignorer les propriétés de navigation non mappées
             modelBuilder.Entity<Universitaire>().ToTable("Participants");
             modelBuilder.Entity<Industriel>().ToTable("Participants");

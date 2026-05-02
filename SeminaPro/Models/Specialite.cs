@@ -12,7 +12,7 @@ namespace SeminaPro.Models
         public string Libelle { get; set; } = string.Empty;
 
         [StringLength(10, ErrorMessage = "L'abréviation ne doit pas dépasser 10 caractères")]
-        public string? Abrevaition { get; set; }
+        public string? Abbreviation { get; set; }
 
         [StringLength(500)]
         public string? Description { get; set; }

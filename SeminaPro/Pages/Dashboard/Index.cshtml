@@ -8,88 +8,162 @@
 
 <div class="dashboard-container">
     <aside class="sidebar">
-        <h5 class="fw-bold mb-3">Menu</h5>
-        <a href="/Dashboard/Index" class="sidebar-item active"><i class="bi bi-speedometer2"></i><span>Tableau</span></a>
-        <a href="/Seminaires/Index" class="sidebar-item"><i class="bi bi-search"></i><span>Chercher</span></a>
+        <h5>Menu Participant</h5>
+        <a href="/Dashboard/Index" class="sidebar-item active" data-path="/Dashboard/Index">
+            <i class="bi bi-speedometer2"></i>
+            <span>Tableau de Bord</span>
+        </a>
+        <a href="/Seminaires/Index" class="sidebar-item" data-path="/Seminaires/Index">
+            <i class="bi bi-search"></i>
+            <span>Chercher</span>
+        </a>
         <hr>
-        <a href="/Account/Logout" class="sidebar-item" style="color:#ff3b30;"><i class="bi bi-box-arrow-right"></i><span>Déconnexion</span></a>
+        <a href="/Account/Logout" class="sidebar-item" style="color:#ff3b30;">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Déconnexion</span>
+        </a>
     </aside>
 
     <div class="main-content">
         <div class="content-area">
-            <div class="welcome-header">
-                <h1>Bienvenue</h1>
-                <p>Votre espace personnel — résumé rapide et actions.</p>
+            <div class="welcome-header mb-5">
+                <h1><i class="bi bi-speedometer2 me-2"></i>Tableau de Bord Personnel</h1>
+                <p class="text-muted">Votre espace personnel — résumé rapide et actions</p>
             </div>
 
-            <div class="row g-3 mb-4">
+            <div class="row g-3 mb-5">
                 <div class="col-md-4">
-                    <div class="stat-card" data-href="/Seminaires/Index" title="Voir mes inscriptions">
-                        <i class="bi bi-check-circle"></i>
+                    <div class="stat-card stat-card-primary" data-href="/Seminaires/Index" title="Voir toutes vos inscriptions" style="cursor: pointer;">
+                        <div class="stat-icon">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
                         <div class="stat-number">@Model.TotalInscriptions</div>
                         <div class="stat-label">Inscriptions</div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="stat-card success" data-href="/Seminaires/Index?filter=upcoming" title="À venir">
-                        <i class="bi bi-calendar-check"></i>
+                    <div class="stat-card stat-card-success" data-href="/Seminaires/Index?filter=upcoming" title="Séminaires à venir" style="cursor: pointer;">
+                        <div class="stat-icon">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
                         <div class="stat-number">@Model.InscriptionsAVenir</div>
                         <div class="stat-label">À Venir</div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="stat-card info" data-href="/Seminaires/Index?filter=past" title="Passés">
-                        <i class="bi bi-clock-history"></i>
+                    <div class="stat-card stat-card-info" data-href="/Seminaires/Index?filter=past" title="Séminaires passés" style="cursor: pointer;">
+                        <div class="stat-icon">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
                         <div class="stat-number">@Model.InscriptionsPasses</div>
                         <div class="stat-label">Passés</div>
                     </div>
                 </div>
             </div>
 
-            <div class="row g-3">
+            <div class="row g-4">
                 <div class="col-lg-7">
-                    <div class="card chart-card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0"><i class="bi bi-graph-up"></i> Tendances</h6>
-                            <small class="text-muted">Répartition</small>
+                    <div class="card card-modern shadow-sm">
+                        <div class="card-header bg-gradient-primary text-white border-0">
+                            <h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>Tendances et Répartition</h6>
                         </div>
-                        <div class="card-body p-2">
-                            <canvas id="inscriptionsChart" height="120" data-upcoming="@Model.InscriptionsAVenir" data-past="@Model.InscriptionsPasses" data-total="@Model.TotalInscriptions"></canvas>
+                        <div class="card-body p-3">
+                            <canvas id="inscriptionsChart" height="100" data-upcoming="@Model.InscriptionsAVenir" data-past="@Model.InscriptionsPasses" data-total="@Model.TotalInscriptions"></canvas>
                         </div>
                     </div>
 
-                    <div class="card mt-3">
-                        <div class="card-header"><h6 class="mb-0"><i class="bi bi-calendar-event"></i> Calendrier</h6></div>
-                        <div class="card-body p-2"><div id="calendar" class="calendar-view"><div class="calendar-header"><button class="btn btn-sm btn-outline-primary" id="prevMonth"><i class="bi bi-chevron-left"></i></button><h6 class="mb-0" id="monthYear"></h6><button class="btn btn-sm btn-outline-primary" id="nextMonth"><i class="bi bi-chevron-right"></i></button></div><div class="calendar-grid" id="calendarGrid"></div></div></div>
+                    <div class="card card-modern shadow-sm mt-4">
+                        <div class="card-header bg-gradient-info text-white border-0">
+                            <h6 class="mb-0"><i class="bi bi-calendar-event me-2"></i>Calendrier</h6>
+                        </div>
+                        <div class="card-body p-3">
+                            <div id="calendar" class="calendar-view">
+                                <div class="calendar-header d-flex justify-content-between align-items-center mb-3">
+                                    <button class="btn btn-sm btn-outline-primary" id="prevMonth"><i class="bi bi-chevron-left"></i></button>
+                                    <h6 class="mb-0" id="monthYear"></h6>
+                                    <button class="btn btn-sm btn-outline-primary" id="nextMonth"><i class="bi bi-chevron-right"></i></button>
+                                </div>
+                                <div class="calendar-grid" id="calendarGrid"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="col-lg-5">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center"><h6 class="mb-0"><i class="bi bi-activity"></i> Activités récentes</h6><a href="/Seminaires/Index" class="small text-muted">Voir tout</a></div>
-                        <div class="card-body p-2">
+                    <div class="card card-modern shadow-sm">
+                        <div class="card-header bg-gradient-success text-white border-0 d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0"><i class="bi bi-activity me-2"></i>Activités Récentes</h6>
+                            <a href="/Seminaires/Index" class="btn btn-sm btn-light">Voir tout →</a>
+                        </div>
+                        <div class="card-body p-0">
                             <div class="recent-activities">
                                 @if (Model.MesInscriptions != null && Model.MesInscriptions.Count > 0)
                                 {
                                     foreach (var ins in Model.MesInscriptions.Take(6))
                                     {
-                                        <div class="activity"><div><div class="fw-600">@ins.Seminaire?.Titre</div><div class="meta">Inscrit le @ins.DateInscription.ToString("dd/MM/yyyy")</div></div><div class="meta text-end"><div>@ins.Seminaire?.DateSeminaire.ToString("dd/MM/yyyy")</div><div class="status-badge">@((ins.Seminaire != null && ins.Seminaire.DateSeminaire > DateTime.Now) ? "À venir" : "Passé")</div></div></div>
+                                        var isUpcoming = ins.Seminaire != null && ins.Seminaire.DateSeminaire > DateTime.Now;
+                                        <div class="activity-item p-3">
+                                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                                <div class="flex-grow-1">
+                                                    <div class="fw-600 text-dark">@ins.Seminaire?.Titre</div>
+                                                    <div class="text-muted small mt-1">
+                                                        <i class="bi bi-calendar-check me-1"></i>
+                                                        Inscrit le @ins.DateInscription.ToString("dd/MM/yyyy")
+                                                    </div>
+                                                </div>
+                                                <div class="text-end">
+                                                    <div class="text-muted small mb-2">@ins.Seminaire?.DateSeminaire.ToString("dd/MM/yyyy")</div>
+                                                    <span class="badge @(isUpcoming ? "bg-success" : "bg-secondary")">
+                                                        @(isUpcoming ? "À venir" : "Passé")
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     }
                                 }
                                 else
                                 {
-                                    <div class="text-center py-3 empty-state"><i class="bi bi-inbox" style="font-size: 2rem;"></i><div class="text-muted mt-2">Aucune activité récente.</div></div>
+                                    <div class="empty-state-box p-5 text-center">
+                                        <div class="empty-icon mb-3">
+                                            <i class="bi bi-inbox"></i>
+                                        </div>
+                                        <h6 class="text-muted mb-2">Aucune inscription</h6>
+                                        <p class="small text-muted mb-3">Vous n'avez aucune inscription pour le moment</p>
+                                        <a href="/Seminaires/Index" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-search me-1"></i>Chercher des séminaires
+                                        </a>
+                                    </div>
                                 }
                             </div>
                         </div>
                     </div>
 
-                    <div class="card mt-3"><div class="card-header"><h6 class="mb-0"><i class="bi bi-info-circle"></i> À propos</h6></div><div class="card-body p-2 small text-muted">Vous êtes connecté en tant que <strong>@Model.UserEmail</strong></div></div>
+                    <div class="card card-modern shadow-sm mt-4">
+                        <div class="card-header bg-gradient-warning text-white border-0">
+                            <h6 class="mb-0"><i class="bi bi-person-circle me-2"></i>Mon Profil</h6>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="avatar-circle">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-600">@Model.UserEmail</div>
+                                    <div class="small text-muted">Participant</div>
+                                </div>
+                            </div>
+                            <a href="/Account/Logout" class="btn btn-outline-danger btn-sm w-100">
+                                <i class="bi bi-box-arrow-right me-1"></i>Déconnexion
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="mt-4">
-                <a href="/Seminaires/Index" class="btn btn-primary btn-sm">Voir mes inscriptions</a>
+                <a href="/Seminaires/Index" class="btn btn-primary">
+                    <i class="bi bi-search me-2"></i>Parcourir tous les séminaires
+                </a>
             </div>
 
         </div>

@@ -39,11 +39,11 @@ using (var scope = app.Services.CreateScope())
     {
         // Ajouter les spécialités
             db.Specialites.AddRange(
-                new SeminaPro.Models.Specialite { Libelle = "Informatique", Abrevaition = "INFO", Description = "Spécialité en informatique et développement" },
-                new SeminaPro.Models.Specialite { Libelle = "Gestion", Abrevaition = "GEST", Description = "Spécialité en gestion et management" },
-                new SeminaPro.Models.Specialite { Libelle = "Marketing", Abrevaition = "MKT", Description = "Spécialité en marketing et communication" },
-                new SeminaPro.Models.Specialite { Libelle = "Ressources Humaines", Abrevaition = "RH", Description = "Spécialité en ressources humaines" }
-            );
+                    new SeminaPro.Models.Specialite { Libelle = "Informatique", Abbreviation = "INFO", Description = "Spécialité en informatique et développement" },
+                    new SeminaPro.Models.Specialite { Libelle = "Gestion", Abbreviation = "GEST", Description = "Spécialité en gestion et management" },
+                    new SeminaPro.Models.Specialite { Libelle = "Marketing", Abbreviation = "MKT", Description = "Spécialité en marketing et communication" },
+                    new SeminaPro.Models.Specialite { Libelle = "Ressources Humaines", Abbreviation = "RH", Description = "Spécialité en ressources humaines" }
+                );
         db.SaveChanges();
 
         // Ajouter des séminaires de test

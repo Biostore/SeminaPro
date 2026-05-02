@@ -47,9 +47,9 @@
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Specialite.Abrevaition" class="form-label">Abréviation</label>
-                            <input type="text" class="form-control" asp-for="Specialite.Abrevaition" maxlength="10" />
-                            <span class="text-danger" asp-validation-for="Specialite.Abrevaition"></span>
+                            <label asp-for="Specialite.Abbreviation" class="form-label">Abréviation</label>
+                            <input type="text" class="form-control" asp-for="Specialite.Abbreviation" maxlength="10" />
+                            <span class="text-danger" asp-validation-for="Specialite.Abbreviation"></span>
                             <small class="text-muted">Max. 10 caractères</small>
                         </div>
 
@@ -93,9 +93,9 @@
                                         <tr>
                                             <td><strong>@specialite.Libelle</strong></td>
                                             <td>
-                                                @if (!string.IsNullOrEmpty(specialite.Abrevaition))
+                                                @if (!string.IsNullOrEmpty(specialite.Abbreviation))
                                                 {
-                                                    <span class="badge bg-secondary">@specialite.Abrevaition</span>
+                                                    <span class="badge bg-secondary">@specialite.Abbreviation</span>
                                                 }
                                                 else
                                                 {

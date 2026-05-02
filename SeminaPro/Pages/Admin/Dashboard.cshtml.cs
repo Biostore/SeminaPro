@@ -5,10 +5,10 @@ using SeminaPro.Models;
 
 namespace SeminaPro.Pages.Admin
 {
-    public class DashboardAdminModel : PageModel
+    public class DashboardModel : PageModel
     {
         private readonly ApplicationDbContext _context;
-        private readonly ILogger<DashboardAdminModel> _logger;
+        private readonly ILogger<DashboardModel> _logger;
 
         public int TotalSeminaires { get; set; }
         public int TotalParticipants { get; set; }
@@ -17,7 +17,7 @@ namespace SeminaPro.Pages.Admin
         public List<Seminaire>? DerniersSeminaires { get; set; }
         public List<Participant>? DerniersParticipants { get; set; }
 
-        public DashboardAdminModel(ApplicationDbContext context, ILogger<DashboardAdminModel> logger)
+        public DashboardModel(ApplicationDbContext context, ILogger<DashboardModel> logger)
         {
             _context = context;
             _logger = logger;
