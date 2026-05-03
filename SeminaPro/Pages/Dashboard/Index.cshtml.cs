@@ -12,10 +12,13 @@ namespace SeminaPro.Pages.Dashboard
         private readonly ILogger<IndexModel> _logger;
 
         public string? UserEmail { get; set; }
+        public Participant? CurrentParticipant { get; set; }
         public List<Inscription>? MesInscriptions { get; set; }
+        public List<Seminaire>? MesSeminaires { get; set; }
         public int TotalInscriptions { get; set; }
         public int InscriptionsAVenir { get; set; }
         public int InscriptionsPasses { get; set; }
+        public int TotalSeminairesDisponibles { get; set; }
 
         public IndexModel(ApplicationDbContext context, ILogger<IndexModel> logger)
         {
@@ -33,12 +36,12 @@ namespace SeminaPro.Pages.Dashboard
 
             try
             {
-                // Récupérer les inscriptions avec les séminaires en eager loading
-                var participant = _context.Participants.FirstOrDefault(p => p.Email == UserEmail);
-                if (participant != null)
+                // Récupérer le participant courant
+                CurrentParticipant = _context.Participants.FirstOrDefault(p => p.Email == UserEmail);
+                if (CurrentParticipant != null)
                 {
                     MesInscriptions = _context.Inscriptions
-                        .Where(i => i.ParticipantId == participant.Id)
+                        .Where(i => i.ParticipantId == CurrentParticipant.Id)
                         .Include(i => i.Seminaire)
                         .OrderByDescending(i => i.DateInscription)
                         .ToList();
@@ -46,16 +49,30 @@ namespace SeminaPro.Pages.Dashboard
                     TotalInscriptions = MesInscriptions.Count;
                     InscriptionsAVenir = MesInscriptions.Count(i => i.Seminaire != null && i.Seminaire.DateSeminaire > DateTime.Now);
                     InscriptionsPasses = MesInscriptions.Count(i => i.Seminaire != null && i.Seminaire.DateSeminaire <= DateTime.Now);
+
+                    // Récupérer les 5 derniers séminaires auxquels l'utilisateur est inscrit
+                    MesSeminaires = _context.Inscriptions
+                        .Where(i => i.ParticipantId == CurrentParticipant.Id)
+                        .Include(i => i.Seminaire)
+                        .OrderByDescending(i => i.Seminaire.DateSeminaire)
+                        .Select(i => i.Seminaire)
+                        .Take(5)
+                        .ToList();
+
+                    // Total des séminaires disponibles
+                    TotalSeminairesDisponibles = _context.Seminaires.Count();
                 }
                 else
                 {
                     MesInscriptions = new List<Inscription>();
+                    MesSeminaires = new List<Seminaire>();
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erreur lors du chargement des inscriptions");
                 MesInscriptions = new List<Inscription>();
+                MesSeminaires = new List<Seminaire>();
             }
 
             return Page();
