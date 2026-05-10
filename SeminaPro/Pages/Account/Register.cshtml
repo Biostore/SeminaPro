@@ -1,5 +1,6 @@
 @page
 @model SeminaPro.Pages.Account.RegisterModel
+@using Microsoft.AspNetCore.Mvc.Rendering
 
 @{
     Layout = null;
@@ -10,10 +11,11 @@
 <html lang="fr">
 
 <head>
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>@ViewData["Title"] - SeminaPro</title>
+    <title>Inscription - SeminaPro</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -24,297 +26,223 @@
 
     <style>
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-
-            min-height: 100vh;
-
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
-            /* BLEU PLUS CLAIR */
-            background: linear-gradient(135deg, #163b73, #2f5fa7, #4b7fd1);
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            padding: 40px 15px;
-        }
-
-        .register-container {
-
-            width: 100%;
-            max-width: 850px;
-        }
-
-        .register-card {
-
-            background: rgba(255,255,255,0.98);
-
-            border-radius: 24px;
-
-            overflow: hidden;
-
-            box-shadow: 0 20px 45px rgba(0,0,0,0.35);
-
-            animation: fadeIn 0.8s ease;
-        }
-
-        /* HEADER */
-
-        .register-header {
-
-            background: linear-gradient(135deg, #000814, #001d3d);
-
-            color: white;
-
-            text-align: center;
-
-            padding: 40px 25px;
-
-            position: relative;
-        }
-
-        .register-header::after {
-
-            content: "";
-
-            position: absolute;
-
-            bottom: -40px;
-            left: 0;
-
-            width: 100%;
-            height: 80px;
-
-            background: white;
-
-            border-radius: 50%;
-        }
-
-        .logo-circle {
-
-            width: 90px;
-            height: 90px;
-
-            margin: auto;
-
-            border-radius: 50%;
-
-            background: rgba(255,255,255,0.12);
-
-            border: 1px solid rgba(255,255,255,0.15);
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            margin-bottom: 20px;
-        }
-
-        .logo-circle i {
-
-            font-size: 42px;
-        }
-
-        .register-header h2 {
-
-            font-weight: 700;
-
-            margin-bottom: 8px;
-        }
-
-        .register-header p {
-
-            opacity: 0.85;
-
-            margin: 0;
-        }
-
-        /* BODY */
-
-        .register-body {
-
-            padding: 60px 35px 35px;
-        }
-
-        .form-label {
-
-            font-weight: 600;
-
-            color: #001d3d;
-
-            margin-bottom: 8px;
-        }
-
-        .input-group {
-
-            margin-bottom: 22px;
-        }
-
-        .input-group-text {
-
-            background: #f1f5f9;
-
-            border: 1px solid #dbe4ee;
-            border-right: none;
-
-            border-radius: 12px 0 0 12px;
-
-            color: #001d3d;
-        }
-
-        .form-control,
-        .form-select {
-
-            height: 52px;
-
-            border: 1px solid #dbe4ee;
-
-            background: #f8fafc;
-
-            transition: 0.3s;
-        }
-
-        .form-control {
-
-            border-left: none;
-
-            border-radius: 0 12px 12px 0;
-        }
-
-        .form-select {
-
-            border-radius: 12px;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-
-            border-color: #001d3d;
-
-            box-shadow: none;
-
-            background: white;
-        }
-
-        .form-check-label {
-
-            color: #555;
-        }
-
-        .dynamic-box {
-
-            background: #f8fafc;
-
-            border: 1px solid #e2e8f0;
-
-            border-radius: 16px;
-
-            padding: 20px;
-
-            margin-bottom: 20px;
-        }
-
-        /* BUTTON */
-
-        .btn-register {
-
-            width: 100%;
-
-            height: 54px;
-
-            border: none;
-
-            border-radius: 14px;
-
-            background: linear-gradient(135deg, #001d3d, #000814);
-
-            color: white;
-
-            font-weight: 700;
-
-            font-size: 16px;
-
-            transition: 0.3s;
-
-            margin-top: 10px;
-        }
-
-        .btn-register:hover {
-
-            background: linear-gradient(135deg, #000814, #001d3d);
-
-            transform: translateY(-2px);
-
-            box-shadow: 0 10px 20px rgba(0,0,0,0.35);
-        }
-
-        .login-link {
-
-            text-align: center;
-
-            margin-top: 25px;
-
-            color: #555;
-        }
-
-        .login-link a {
-
-            color: #001d3d;
-
-            font-weight: 700;
-
-            text-decoration: none;
-        }
-
-        .login-link a:hover {
-
-            text-decoration: underline;
-        }
-
-        .alert {
-
-            border-radius: 12px;
-        }
-
-        /* ANIMATION */
-
-        @@keyframes fadeIn {
-
-            from {
-                opacity: 0;
-                transform: translateY(25px);
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
             }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
+            body {
+                min-height: 100vh;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background: linear-gradient(135deg, #020617, #0f172a, #1e3a8a, #2563eb);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 40px 15px;
             }
-        }
 
-        /* RESPONSIVE */
-
-        @@media(max-width: 768px) {
-
-            .register-body {
-
-                padding: 55px 20px 25px;
+            .register-container {
+                width: 100%;
+                max-width: 950px;
             }
+
+            .register-card {
+                background: rgba(255,255,255,0.98);
+                border-radius: 28px;
+                overflow: hidden;
+                box-shadow: 0 25px 60px rgba(0,0,0,0.45);
+                animation: fadeIn 0.8s ease;
+            }
+
+            /* HEADER */
+
+            .register-header {
+                background: linear-gradient(135deg, #020617, #0f172a);
+                color: white;
+                text-align: center;
+                padding: 45px 25px;
+                position: relative;
+            }
+
+                .register-header::after {
+                    content: "";
+                    position: absolute;
+                    bottom: -45px;
+                    left: 0;
+                    width: 100%;
+                    height: 90px;
+                    background: white;
+                    border-radius: 50%;
+                }
 
             .logo-circle {
-
-                width: 75px;
-                height: 75px;
+                width: 95px;
+                height: 95px;
+                margin: auto;
+                border-radius: 50%;
+                background: rgba(255,255,255,0.12);
+                border: 1px solid rgba(255,255,255,0.15);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 20px;
             }
-        }
+
+                .logo-circle i {
+                    font-size: 42px;
+                }
+
+            .register-header h2 {
+                font-weight: 800;
+                margin-bottom: 8px;
+            }
+
+            .register-header p {
+                opacity: 0.85;
+                margin: 0;
+            }
+
+            /* BODY */
+
+            .register-body {
+                padding: 65px 35px 35px;
+            }
+
+            .form-label {
+                font-weight: 600;
+                color: #0f172a;
+                margin-bottom: 8px;
+            }
+
+            .input-group {
+                margin-bottom: 22px;
+            }
+
+            .input-group-text {
+                background: #eff6ff;
+                border: 1px solid #dbe4ee;
+                border-right: none;
+                border-radius: 12px 0 0 12px;
+                color: #1e3a8a;
+            }
+
+            .form-control,
+            .form-select {
+                height: 52px;
+                border: 1px solid #dbe4ee;
+                background: #f8fafc;
+                transition: 0.3s;
+            }
+
+            .form-control {
+                border-left: none;
+                border-radius: 0 12px 12px 0;
+            }
+
+            .form-select {
+                border-radius: 12px;
+            }
+
+                .form-control:focus,
+                .form-select:focus {
+                    border-color: #2563eb;
+                    box-shadow: 0 0 0 4px rgba(37,99,235,0.15);
+                    background: white;
+                }
+
+            /* DYNAMIC BOX */
+
+            .dynamic-box {
+                background: #f8fafc;
+                border: 1px solid #dbe4ee;
+                border-radius: 18px;
+                padding: 22px;
+                margin-bottom: 22px;
+            }
+
+            /* CHECKBOX */
+
+            .form-check-input:checked {
+                background-color: #1e3a8a;
+                border-color: #1e3a8a;
+            }
+
+            /* BUTTON */
+
+            .btn-register {
+                width: 100%;
+                height: 56px;
+                border: none;
+                border-radius: 16px;
+                background: linear-gradient(135deg, #1e3a8a, #2563eb);
+                color: white;
+                font-weight: 700;
+                font-size: 16px;
+                transition: 0.3s;
+                margin-top: 12px;
+            }
+
+                .btn-register:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 12px 25px rgba(37,99,235,0.35);
+                }
+
+            /* LOGIN LINK */
+
+            .login-link {
+                text-align: center;
+                margin-top: 28px;
+                color: #64748b;
+            }
+
+                .login-link a {
+                    color: #1e3a8a;
+                    font-weight: 700;
+                    text-decoration: none;
+                }
+
+                    .login-link a:hover {
+                        text-decoration: underline;
+                    }
+
+            /* ALERT */
+
+            .alert {
+                border-radius: 14px;
+            }
+
+            /* ANIMATION */
+
+            @@keyframes fadeIn {
+
+                from {
+                    opacity: 0;
+                    transform: translateY(25px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* RESPONSIVE */
+
+            @@media(max-width: 768px) {
+
+                .register-body {
+                    padding: 55px 20px 25px;
+                }
+
+                .logo-circle {
+                    width: 75px;
+                    height: 75px;
+                }
+            }
 
     </style>
+
 </head>
 
 <body>
@@ -343,6 +271,20 @@
 
             <div class="register-body">
 
+                @if (!string.IsNullOrEmpty(Model.Message))
+                {
+                    <div class="alert alert-success">
+                        @Model.Message
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.Error))
+                {
+                    <div class="alert alert-danger">
+                        @Model.Error
+                    </div>
+                }
+
                 <form method="post">
 
                     <!-- NAMES -->
@@ -359,10 +301,8 @@
                                     <i class="bi bi-person-fill"></i>
                                 </span>
 
-                                <input type="text"
+                                <input asp-for="FirstName"
                                        class="form-control"
-                                       id="FirstName"
-                                       name="FirstName"
                                        required>
 
                             </div>
@@ -379,10 +319,8 @@
                                     <i class="bi bi-person-fill"></i>
                                 </span>
 
-                                <input type="text"
+                                <input asp-for="LastName"
                                        class="form-control"
-                                       id="LastName"
-                                       name="LastName"
                                        required>
 
                             </div>
@@ -401,10 +339,9 @@
                             <i class="bi bi-envelope-fill"></i>
                         </span>
 
-                        <input type="email"
+                        <input asp-for="Email"
+                               type="email"
                                class="form-control"
-                               id="Email"
-                               name="Email"
                                required>
 
                     </div>
@@ -419,10 +356,8 @@
                             <i class="bi bi-telephone-fill"></i>
                         </span>
 
-                        <input type="tel"
-                               class="form-control"
-                               id="Phone"
-                               name="Phone">
+                        <input asp-for="Phone"
+                               class="form-control">
 
                     </div>
 
@@ -440,10 +375,9 @@
                                     <i class="bi bi-lock-fill"></i>
                                 </span>
 
-                                <input type="password"
+                                <input asp-for="Password"
+                                       type="password"
                                        class="form-control"
-                                       id="Password"
-                                       name="Password"
                                        required>
 
                             </div>
@@ -460,10 +394,9 @@
                                     <i class="bi bi-shield-lock-fill"></i>
                                 </span>
 
-                                <input type="password"
+                                <input asp-for="ConfirmPassword"
+                                       type="password"
                                        class="form-control"
-                                       id="ConfirmPassword"
-                                       name="ConfirmPassword"
                                        required>
 
                             </div>
@@ -472,114 +405,27 @@
 
                     </div>
 
-                    <!-- PARTICIPANT -->
+                    <!-- SPECIALITE -->
 
-                    <label class="form-label">Type de participant</label>
+                    <label class="form-label">Spécialité</label>
 
-                    <select class="form-select mb-4"
-                            id="ParticipantType"
-                            name="ParticipantType"
+                    <select asp-for="SpecialiteId"
+                            asp-items="@(new SelectList(Model.Specialites, "Id", "Libelle"))"
+                            class="form-select mb-4"
                             required>
 
-                        <option value="">-- Sélectionner --</option>
-
-                        <option value="Universitaire">
-                            Universitaire
-                        </option>
-
-                        <option value="Industriel">
-                            Industriel
-                        </option>
+                        <option value="">-- Sélectionner une spécialité --</option>
 
                     </select>
-
-                    <!-- UNIVERSITAIRE -->
-
-                    <div id="universitaireFields"
-                         class="dynamic-box"
-                         style="display:none;">
-
-                        <div class="row">
-
-                            <div class="col-md-6">
-
-                                <label class="form-label">
-                                    Niveau d'études
-                                </label>
-
-                                <input type="text"
-                                       class="form-control mb-3"
-                                       id="Niveau"
-                                       name="Niveau">
-
-                            </div>
-
-                            <div class="col-md-6">
-
-                                <label class="form-label">
-                                    Université
-                                </label>
-
-                                <input type="text"
-                                       class="form-control mb-3"
-                                       id="NomUniversite"
-                                       name="NomUniversite">
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <!-- INDUSTRIEL -->
-
-                    <div id="industrielFields"
-                         class="dynamic-box"
-                         style="display:none;">
-
-                        <div class="row">
-
-                            <div class="col-md-6">
-
-                                <label class="form-label">
-                                    Fonction
-                                </label>
-
-                                <input type="text"
-                                       class="form-control mb-3"
-                                       id="Fonction"
-                                       name="Fonction">
-
-                            </div>
-
-                            <div class="col-md-6">
-
-                                <label class="form-label">
-                                    Entreprise
-                                </label>
-
-                                <input type="text"
-                                       class="form-control mb-3"
-                                       id="NomEntreprise"
-                                       name="NomEntreprise">
-
-                            </div>
-
-                        </div>
-
-                    </div>
 
                     <!-- ACCEPT -->
 
                     <div class="form-check mb-3">
 
-                        <input type="checkbox"
-                               class="form-check-input"
-                               id="Accept"
-                               name="Accept"
-                               value="true">
+                        <input asp-for="Accept"
+                               class="form-check-input">
 
-                        <label class="form-check-label" for="Accept">
+                        <label class="form-check-label">
 
                             J'accepte les conditions d'utilisation
 
@@ -618,67 +464,5 @@
 
     </div>
 
-    <script>
-
-        document.getElementById('ParticipantType').addEventListener('change', function () {
-
-            document.getElementById('universitaireFields').style.display =
-                this.value === 'Universitaire' ? 'block' : 'none';
-
-            document.getElementById('industrielFields').style.display =
-                this.value === 'Industriel' ? 'block' : 'none';
-
-            const niveauInput = document.getElementById('Niveau');
-            const fonctionInput = document.getElementById('Fonction');
-
-            if (this.value === 'Universitaire') {
-
-                niveauInput.required = true;
-                fonctionInput.required = false;
-
-            } else if (this.value === 'Industriel') {
-
-                fonctionInput.required = true;
-                niveauInput.required = false;
-
-            } else {
-
-                niveauInput.required = false;
-                fonctionInput.required = false;
-            }
-        });
-
-        document.querySelector('form').addEventListener('submit', function (e) {
-
-            const participantType =
-                document.getElementById('ParticipantType').value;
-
-            const niveau =
-                document.getElementById('Niveau').value.trim();
-
-            const fonction =
-                document.getElementById('Fonction').value.trim();
-
-            if (participantType === 'Universitaire' && !niveau) {
-
-                e.preventDefault();
-
-                alert('Veuillez entrer le niveau d\\'études');
-
-                return false;
-            }
-
-            if (participantType === 'Industriel' && !fonction) {
-
-                e.preventDefault();
-
-                alert('Veuillez entrer votre fonction');
-
-                return false;
-            }
-        });
-
-    </script>
-
-</body>
-</html>
+    </body>
+    </html>
