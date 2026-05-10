@@ -1,185 +1,277 @@
 @page
 @model SeminaPro.Pages.Admin.DashboardModel
-@using Microsoft.AspNetCore.Http
 @{
-    ViewData["Title"] = "Tableau de Bord Admin";
-    var userRole = HttpContext.Session.GetString("UserRole");
+    ViewData["Title"] = "Dashboard";
 }
 
-<!-- PAGE CONTENT -->
-<div class="page-content">
-    <!-- WELCOME HEADER -->
-    <div class="welcome-header mb-5">
-        <h1><i class="bi bi-speedometer2"></i> Tableau de Bord</h1>
-        <p>Bienvenue, Administrateur ! Voici un aperçu de votre plateforme.</p>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    body {
+        background: #f6f8fc;
+        font-family: "Segoe UI", sans-serif;
+        color: #0f172a;
+    }
+
+    .page {
+        padding: 24px;
+        animation: fadeIn 0.4s ease;
+    }
+
+    @@keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* HEADER */
+    .header h1 {
+        font-size: 24px;
+        font-weight: 800;
+    }
+
+    .header p {
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    /* STATS */
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin: 16px 0;
+    }
+
+    @@media (max-width: 900px) {
+        .stats { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @@media (max-width: 600px) {
+        .stats { grid-template-columns: 1fr; }
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 12px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        border: 1px solid #eef2f7;
+        transition: 0.2s;
+    }
+
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+    }
+
+    .icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 14px;
+    }
+
+    .blue { background: #3b82f6; }
+    .green { background: #10b981; }
+    .purple { background: #8b5cf6; }
+    .orange { background: #f59e0b; }
+
+    .info h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .info span {
+        font-size: 11px;
+        color: #64748b;
+    }
+
+    /* CHARTS */
+    .charts {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    @@media (max-width: 900px) {
+        .charts { grid-template-columns: 1fr; }
+    }
+
+    .box {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #eef2f7;
+        padding: 12px;
+    }
+
+    .box h4 {
+        margin-bottom: 8px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    canvas {
+        max-height: 180px !important; /* 🔥 IMPORTANT : réduit taille */
+    }
+
+    /* LIST */
+    .item {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 13px;
+    }
+
+    .item:last-child { border: none; }
+
+    .btn {
+        background: #3b82f6;
+        color: white;
+        padding: 5px 8px;
+        border-radius: 6px;
+        font-size: 11px;
+        text-decoration: none;
+    }
+
+    .btn-soft {
+        background: #f1f5f9;
+        color: #0f172a;
+    }
+</style>
+
+<div class="page">
+
+    <!-- HEADER -->
+    <div class="header">
+        <h1>Dashboard</h1>
+        <p>Vue globale de votre plateforme</p>
     </div>
 
-    <!-- STATISTIQUES CARDS -->
-    <div class="row mb-4 g-4">
-        <div class="col-md-6 col-lg-3">
-            <a href="/Admin/Seminaires" class="stat-card stat-card-seminaires" style="text-decoration: none; color: inherit;">
-                <div class="stat-icon">
-                    <i class="bi bi-book-fill"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>@Model.TotalSeminaires</h3>
-                    <p>Séminaires</p>
-                </div>
-            </a>
-        </div>
+    <!-- STATS -->
+    <div class="stats">
 
-        <div class="col-md-6 col-lg-3">
-            <a href="/Admin/Participants" class="stat-card stat-card-participants" style="text-decoration: none; color: inherit;">
-                <div class="stat-icon">
-                    <i class="bi bi-people-fill"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>@Model.TotalParticipants</h3>
-                    <p>Participants</p>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-6 col-lg-3">
-            <a href="/Admin/Inscriptions" class="stat-card stat-card-inscriptions" style="text-decoration: none; color: inherit;">
-                <div class="stat-icon">
-                    <i class="bi bi-check-circle-fill"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>@Model.TotalInscriptions</h3>
-                    <p>Inscriptions</p>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-6 col-lg-3">
-            <a href="/Admin/Specialites" class="stat-card stat-card-specialites" style="text-decoration: none; color: inherit;">
-                <div class="stat-icon">
-                    <i class="bi bi-tag-fill"></i>
-                </div>
-                <div class="stat-content">
-                    <h3>@Model.TotalSpecialites</h3>
-                    <p>Spécialités</p>
-                </div>
-            </a>
-        </div>
-    </div>
-
-    <!-- DEUX SECTIONS : DERNIERS SÉMINAIRES & ACTIONS RAPIDES -->
-    <div class="row mb-4">
-        <div class="col-lg-8">
-            <div class="card card-modern">
-                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="bi bi-calendar-event"></i> Derniers Séminaires</h5>
-                    <a href="/Admin/Seminaires" class="btn btn-sm btn-light">Voir tout</a>
-                </div>
-                <div class="card-body p-0">
-                    @if (Model.DerniersSeminaires != null && Model.DerniersSeminaires.Count > 0)
-                    {
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Titre</th>
-                                    <th>Date</th>
-                                    <th>Lieu</th>
-                                    <th class="text-center">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var seminaire in Model.DerniersSeminaires.Take(5))
-                                {
-                                    <tr class="align-middle">
-                                        <td class="fw-600">@seminaire.Titre</td>
-                                        <td>
-                                            <small class="text-muted">
-                                                @seminaire.DateSeminaire.ToString("dd/MM/yyyy")
-                                            </small>
-                                        </td>
-                                        <td>@seminaire.Lieu</td>
-                                        <td class="text-center">
-                                            <a href="/Admin/Seminaires" class="btn btn-sm btn-outline-primary" title="Modifier">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    }
-                    else
-                    {
-                        <div class="empty-state-box p-5 text-center">
-                            <div class="empty-icon mb-3">
-                                <i class="bi bi-book"></i>
-                            </div>
-                            <h6 class="text-muted mb-2">Aucun séminaire créé</h6>
-                            <p class="small text-muted mb-3">Commencez en créant votre premier séminaire</p>
-                            <a href="/Admin/CreateSeminaire" class="btn btn-primary btn-sm">
-                                <i class="bi bi-plus-circle"></i> Créer Séminaire
-                            </a>
-                        </div>
-                    }
-                </div>
+        <div class="card">
+            <div class="icon blue"><i class="bi bi-book"></i></div>
+            <div class="info">
+                <h3>@Model.TotalSeminaires</h3>
+                <span>Séminaires</span>
             </div>
         </div>
 
-        <div class="col-lg-4">
-            <div class="card card-modern h-100">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0"><i class="bi bi-lightning"></i> Actions Rapides</h5>
-                </div>
-                <div class="card-body d-flex flex-column gap-2">
-                    <a href="/Admin/CreateSeminaire" class="btn btn-primary btn-sm d-flex align-items-center gap-2"><i class="bi bi-plus-circle"></i> Créer Séminaire</a>
-                    <a href="/Admin/Seminaires" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"><i class="bi bi-calendar-event"></i> Séminaires</a>
-                    <a href="/Admin/Participants" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"><i class="bi bi-people-fill"></i> Participants</a>
-                    <a href="/Admin/Inscriptions" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"><i class="bi bi-check-circle"></i> Inscriptions</a>
-                    <a href="/Admin/Specialites" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"><i class="bi bi-tag-fill"></i> Spécialités</a>
-                    <a href="/Admin/Settings" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2"><i class="bi bi-gear"></i> Paramètres</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- STATISTIQUES DÉTAILLÉES -->
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card card-modern">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0"><i class="bi bi-graph-up"></i> Vue d'ensemble</h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between mb-3">
-                        <span>Taux de participation</span>
-                        <strong>@(Model.TotalSeminaires > 0 ? Math.Round((double)Model.TotalInscriptions / (Model.TotalSeminaires * 10) * 100) : 0)%</strong>
-                    </div>
-                    <div class="progress mb-3">
-                        <div class="progress-bar bg-success" role="progressbar" style="width: @(Model.TotalSeminaires > 0 ? Math.Round((double)Model.TotalInscriptions / (Model.TotalSeminaires * 10) * 100) : 0)%"></div>
-                    </div>
-
-                    <p class="text-muted small"><i class="bi bi-info-circle"></i> Basé sur le nombre total d'inscriptions.</p>
-                </div>
+        <div class="card">
+            <div class="icon green"><i class="bi bi-people"></i></div>
+            <div class="info">
+                <h3>@Model.TotalParticipants</h3>
+                <span>Participants</span>
             </div>
         </div>
 
-        <div class="col-md-6">
-            <div class="card card-modern">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Informations système</h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between mb-2"><span>Version</span><strong>1.0.0</strong></div>
-                    <div class="d-flex justify-content-between mb-2"><span>Plateforme</span><strong>.NET 10 / Razor Pages</strong></div>
-                    <div class="d-flex justify-content-between"><span>Dernier accès</span><strong>@DateTime.Now.ToString("dd/MM/yyyy HH:mm")</strong></div>
-                </div>
+        <div class="card">
+            <div class="icon purple"><i class="bi bi-check2-circle"></i></div>
+            <div class="info">
+                <h3>@Model.TotalInscriptions</h3>
+                <span>Inscriptions</span>
             </div>
         </div>
-    </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between mb-2"><span>Version</span><strong>1.0.0</strong></div>
-                    <div class="d-flex justify-content-between mb-2"><span>Plateforme</span><strong>.NET 10 / Razor Pages</strong></div>
-                    <div class="d-flex justify-content-between"><span>Dernier accès</span><strong>@DateTime.Now.ToString("dd/MM/yyyy HH:mm")</strong></div>
-                </div>
+
+        <div class="card">
+            <div class="icon orange"><i class="bi bi-tags"></i></div>
+            <div class="info">
+                <h3>@Model.TotalSpecialites</h3>
+                <span>Spécialités</span>
             </div>
         </div>
+
     </div>
+
+    <!-- CHARTS -->
+    <div class="charts">
+
+        <!-- BAR -->
+        <div class="box">
+            <h4>Statistiques générales</h4>
+            <canvas id="barChart"></canvas>
+        </div>
+
+        <!-- LINE (différent graphe ✔) -->
+        <div class="box">
+            <h4>Évolution (simulation)</h4>
+            <canvas id="lineChart"></canvas>
+        </div>
+
+    </div>
+
+    <!-- CONTENT -->
+    <div class="box">
+
+        <h4>Derniers séminaires</h4>
+
+        @foreach (var s in Model.DerniersSeminaires.Take(5))
+        {
+            <div class="item">
+                <div>
+                    <strong>@s.Titre</strong><br />
+                    <small style="color:#64748b">@s.DateSeminaire.ToString("dd/MM/yyyy")</small>
+                </div>
+
+                <a class="btn" href="/Admin/EditSeminaire?id=@s.Id">Edit</a>
+            </div>
+        }
+
+    </div>
+
 </div>
+
+<!-- JS CHARTS -->
+<script>
+    /* BAR CHART */
+    new Chart(document.getElementById('barChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Séminaires', 'Participants', 'Inscriptions', 'Spécialités'],
+            datasets: [{
+                data: [
+                    @Model.TotalSeminaires,
+                    @Model.TotalParticipants,
+                    @Model.TotalInscriptions,
+                    @Model.TotalSpecialites
+                ],
+                backgroundColor: ['#3b82f6','#10b981','#8b5cf6','#f59e0b']
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            responsive: true
+        }
+    });
+
+    /* LINE CHART (différent ✔) */
+    new Chart(document.getElementById('lineChart'), {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Activité',
+                data: [5, 12, 8, 15, 20, @Model.TotalSeminaires],
+                borderColor: '#3b82f6',
+                tension: 0.4,
+                fill: true,
+                backgroundColor: 'rgba(59,130,246,0.1)'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } }
+        }
+    });
+</script>

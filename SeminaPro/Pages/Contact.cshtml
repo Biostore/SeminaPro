@@ -4,184 +4,287 @@
     ViewData["Title"] = "Contact - SeminaPro";
 }
 
-<div class="contact-container">
-    <!-- Hero Section -->
-    <section class="contact-hero">
-        <div class="container-lg py-5">
-            <h1 class="contact-title">Nous Contacter</h1>
-            <p class="contact-subtitle">Vous avez des questions ? Nous sommes là pour vous aider !</p>
-        </div>
-    </section>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <div class="container-lg py-5">
-        <div class="row g-4">
-            <!-- Contact Information Cards -->
-            <div class="col-lg-5">
-                <div class="contact-info-section">
-                    <h2 class="mb-4">Coordonnées</h2>
+<style>
+    body {
+        margin: 0;
+        background: #f8fafc;
+        font-family: "Segoe UI", sans-serif;
+        color: #0f172a;
+    }
 
-                    <!-- Address Card -->
-                    <div class="contact-card">
-                        <div class="contact-card-icon">
-                            <i class="bi bi-geo-alt"></i>
-                        </div>
-                        <div class="contact-card-content">
-                            <h3>Adresse</h3>
-                            <p>
-                                123 Avenue Principale<br>
-                                75000 Paris, France
-                            </p>
-                        </div>
-                    </div>
+    /* 🔵 TOP BAR BLEUE */
+    .topbar {
+        width: 100%;
+        background: #3b82f6;
+        color: white;
+        padding: 10px 20px;
+        font-size: 13px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+    }
 
-                    <!-- Phone Card -->
-                    <div class="contact-card">
-                        <div class="contact-card-icon">
-                            <i class="bi bi-telephone"></i>
-                        </div>
-                        <div class="contact-card-content">
-                            <h3>Téléphone</h3>
-                            <p>
-                                <a href="tel:+33123456789">+33 (1) 23 45 67 89</a><br>
-                                <small>Lun - Ven, 9h00 - 18h00</small>
-                            </p>
-                        </div>
-                    </div>
+        .topbar .left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
 
-                    <!-- Email Card -->
-                    <div class="contact-card">
-                        <div class="contact-card-icon">
-                            <i class="bi bi-envelope"></i>
-                        </div>
-                        <div class="contact-card-content">
-                            <h3>Email</h3>
-                            <p>
-                                <a href="mailto:info@seminapro.com">info@seminapro.com</a><br>
-                                <a href="mailto:support@seminapro.com">support@seminapro.com</a>
-                            </p>
-                        </div>
-                    </div>
+        .topbar .right {
+            font-size: 12px;
+            opacity: 0.9;
+        }
 
-                    <!-- Hours Card -->
-                    <div class="contact-card">
-                        <div class="contact-card-icon">
-                            <i class="bi bi-clock"></i>
-                        </div>
-                        <div class="contact-card-content">
-                            <h3>Heures d'Ouverture</h3>
-                            <p>
-                                Lundi - Vendredi: 9h00 - 18h00<br>
-                                Samedi: 10h00 - 14h00<br>
-                                Dimanche: Fermé
-                            </p>
-                        </div>
-                    </div>
+    /* PAGE */
+    .page {
+        width: 100%;
+        max-width: 1200px;
+        margin: auto;
+        padding: 80px 20px 30px; /* 🔥 padding-top pour topbar */
+    }
 
-                    <!-- Social Links -->
-                    <div class="social-links mt-4 pt-4 border-top">
-                        <h3 class="mb-3">Suivez-Nous</h3>
-                        <div class="d-flex gap-3">
-                            <a href="#" class="social-icon" title="Facebook"><i class="bi bi-facebook"></i></a>
-                            <a href="#" class="social-icon" title="Twitter"><i class="bi bi-twitter"></i></a>
-                            <a href="#" class="social-icon" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
-                            <a href="#" class="social-icon" title="Instagram"><i class="bi bi-instagram"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    /* HEADER */
+    .header {
+        margin-bottom: 18px;
+    }
 
-            <!-- Contact Form -->
-            <div class="col-lg-7">
-                <div class="contact-form-section">
-                    <h2 class="mb-4">Formulaire de Contact</h2>
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0;
+        }
 
-                    @if (!string.IsNullOrEmpty(Model.Message))
-                    {
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="bi bi-check-circle"></i> @Model.Message
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    }
+        .header p {
+            color: #64748b;
+            font-size: 13px;
+            margin: 4px 0 0;
+        }
 
-                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-                    {
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="bi bi-exclamation-circle"></i> @Model.ErrorMessage
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    }
+    /* GRID */
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 1.4fr;
+        gap: 16px;
+        align-items: stretch;
+    }
 
-                    <form method="post" class="contact-form">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="firstName" class="form-label">Prénom *</label>
-                                <input type="text" class="form-control" id="firstName" name="FirstName" 
-                                       required placeholder="Votre prénom" value="@Model.FirstName">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="lastName" class="form-label">Nom *</label>
-                                <input type="text" class="form-control" id="lastName" name="LastName" 
-                                       required placeholder="Votre nom" value="@Model.LastName">
-                            </div>
-                        </div>
+    @@media (max-width: 900px) {
+        .grid {
+            grid-template-columns: 1fr;
+        }
+    }
 
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email *</label>
-                            <input type="email" class="form-control" id="email" name="Email" 
-                                   required placeholder="votre.email@exemple.com" value="@Model.Email">
-                        </div>
+    /* CARD */
+    .card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 18px;
+    }
 
-                        <div class="mb-3">
-                            <label for="phone" class="form-label">Téléphone</label>
-                            <input type="tel" class="form-control" id="phone" name="Phone" 
-                                   placeholder="+33 (1) 23 45 67 89" value="@Model.Phone">
-                        </div>
+    /* INFO */
+    .info-item {
+        display: flex;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
 
-                        <div class="mb-3">
-                            <label for="subject" class="form-label">Sujet *</label>
-                            <select class="form-control" id="subject" name="Subject" required>
-                                <option value="">-- Sélectionnez un sujet --</option>
-                                <option value="general">Question générale</option>
-                                <option value="support">Support technique</option>
-                                <option value="billing">Facturation</option>
-                                <option value="partnership">Partenariat</option>
-                                <option value="feedback">Retour / Suggestion</option>
-                                <option value="other">Autre</option>
-                            </select>
-                        </div>
+        .info-item:last-child {
+            border-bottom: none;
+        }
 
-                        <div class="mb-3">
-                            <label for="message" class="form-label">Message *</label>
-                            <textarea class="form-control" id="message" name="Message" rows="6" 
-                                      required placeholder="Écrivez votre message ici...">@Model.ContactMessage</textarea>
-                        </div>
+    .icon {
+        width: 38px;
+        height: 38px;
+        background: #f1f5f9;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #3b82f6;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
 
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="terms" name="Terms" required>
-                            <label class="form-check-label" for="terms">
-                                J'accepte les <a href="#">conditions d'utilisation</a> et la 
-                                <a href="#">politique de confidentialité</a>
-                            </label>
-                        </div>
+    /* FORM */
+    .form-control {
+        width: 100%;
+        padding: 11px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
 
-                        <button type="submit" class="btn btn-primary btn-lg w-100">
-                            <i class="bi bi-send"></i> Envoyer le Message
-                        </button>
-                    </form>
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+        }
 
-                    <p class="text-muted small mt-3">* Champs obligatoires</p>
-                </div>
-            </div>
-        </div>
+    /* BUTTON */
+    .btn {
+        background: #3b82f6;
+        color: white;
+        padding: 10px 16px;
+        border-radius: 10px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+    }
 
-        <!-- Map Section -->
-        <section class="map-section mt-5 pt-5 border-top">
-            <h2 class="text-center mb-4">Localisation</h2>
-            <div class="map-container">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2624.9915256854155!2d2.3522!3d48.8566!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e66e1c4b4a1d7b%3A0x1d4a4f4e4e4e4e4e!2sParis%2C%20France!5e0!3m2!1sfr!2sfr!4v1234567890" 
-                        width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" 
-                        referrerpolicy="no-referrer-when-downgrade"></iframe>
-            </div>
-        </section>
+        .btn:hover {
+            background: #2563eb;
+        }
+
+    .btn-wrapper {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    /* FAQ */
+    .faq {
+        margin-top: 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    @@media (max-width: 900px) {
+        .faq {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .faq-item {
+        background: white;
+        border: 1px solid #e2e8f0;
+        padding: 14px;
+        border-radius: 12px;
+    }
+
+        .faq-item h4 {
+            font-size: 14px;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .faq-item p {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+    /* MAP */
+    .map {
+        margin-top: 18px;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+
+</style>
+
+<!-- 🔵 TOPBAR -->
+<div class="topbar">
+    <div class="left">
+        <i class="bi bi-lightning-charge-fill"></i>
+        SeminaPro
     </div>
+
+    <div class="right">
+        Support actif • Contact 24/7
+    </div>
+</div>
+
+<div class="page">
+
+    <!-- HEADER -->
+    <div class="header">
+        <h1>Contact</h1>
+        <p>Nous sommes disponibles pour répondre à toutes vos questions</p>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="grid">
+
+        <!-- LEFT -->
+        <div class="card">
+
+            <div class="info-item">
+                <div class="icon"><i class="bi bi-geo-alt"></i></div>
+                <div>
+                    <strong>Adresse</strong><br />
+                    <span style="color:#64748b;font-size:13px;">Paris, France</span>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="icon"><i class="bi bi-telephone"></i></div>
+                <div>
+                    <strong>Téléphone</strong><br />
+                    <span style="color:#64748b;font-size:13px;">+33 12 34 56 78</span>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="icon"><i class="bi bi-envelope"></i></div>
+                <div>
+                    <strong>Email</strong><br />
+                    <span style="color:#64748b;font-size:13px;">info@seminapro.com</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT -->
+        <div class="card">
+
+            <form method="post">
+
+                <input class="form-control" name="FirstName" placeholder="Prénom" />
+                <input class="form-control" name="LastName" placeholder="Nom" />
+                <input class="form-control" name="Email" type="email" placeholder="Email" />
+                <textarea class="form-control" name="Message" rows="5" placeholder="Message..."></textarea>
+
+                <div class="btn-wrapper">
+                    <button class="btn">Envoyer</button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- FAQ -->
+    <div class="faq">
+
+        <div class="faq-item">
+            <h4>Délai de réponse</h4>
+            <p>Nous répondons sous 24 heures.</p>
+        </div>
+
+        <div class="faq-item">
+            <h4>Support</h4>
+            <p>Disponible du lundi au vendredi.</p>
+        </div>
+
+    </div>
+
+    <!-- MAP -->
+    <div class="map">
+        <iframe width="100%" height="350"
+                src="https://www.google.com/maps/embed?pb=!1m18..."
+                style="border:0;"></iframe>
+    </div>
+
 </div>

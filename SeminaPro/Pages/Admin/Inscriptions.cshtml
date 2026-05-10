@@ -4,160 +4,375 @@
     ViewData["Title"] = "Gérer les Inscriptions";
 }
 
-<link rel="stylesheet" href="~/css/admin-seminaires.css" asp-append-version="true" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
-<div class="admin-container">
-    <!-- Header -->
-    <div class="admin-header">
+<div class="page">
+
+    <!-- HEADER -->
+    <div class="header">
         <h1><i class="bi bi-check-circle-fill"></i> Gestion des Inscriptions</h1>
-        <p>Ajouter, modifier ou supprimer des inscriptions</p>
+        <p>Ajouter, modifier et gérer les inscriptions des participants</p>
     </div>
 
-    <!-- Messages -->
+    <!-- ALERTS -->
     @if (!string.IsNullOrEmpty(TempData["Message"]?.ToString()))
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert success">
             <i class="bi bi-check-circle"></i> @TempData["Message"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
+
     @if (!string.IsNullOrEmpty(TempData["Error"]?.ToString()))
     {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="alert error">
             <i class="bi bi-exclamation-circle"></i> @TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
 
-    <div class="row">
-        <!-- Formulaire -->
-        <div class="col-lg-4 mb-4">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h6 class="mb-0"><i class="bi bi-plus-circle"></i> Ajouter Inscription</h6>
-                </div>
-                <div class="card-body">
-                    <form method="post" asp-page-handler="Save">
-                        <input type="hidden" asp-for="Inscription.Id" />
+    <div class="layout">
 
-                        <div class="mb-3">
-                            <label asp-for="Inscription.ParticipantId" class="form-label">Participant</label>
-                            <select class="form-control" asp-for="Inscription.ParticipantId" required>
-                                <option value="">Sélectionner un participant</option>
-                                @foreach (var participant in Model.Participants ?? new List<SeminaPro.Models.Participant>())
-                                {
-                                    <option value="@participant.Id">@participant.Nom @participant.Prenom (@participant.Email)</option>
-                                }
-                            </select>
-                        </div>
+        <!-- FORM -->
+        <div class="panel">
 
-                        <div class="mb-3">
-                            <label asp-for="Inscription.SeminaireId" class="form-label">Séminaire</label>
-                            <select class="form-control" asp-for="Inscription.SeminaireId" required>
-                                <option value="">Sélectionner un séminaire</option>
-                                @foreach (var seminaire in Model.Seminaires ?? new List<SeminaPro.Models.Seminaire>())
-                                {
-                                    <option value="@seminaire.Id">@seminaire.Titre - @seminaire.DateSeminaire.ToString("dd/MM/yyyy")</option>
-                                }
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Inscription.DateInscription" class="form-label">Date d'inscription</label>
-                            <input type="datetime-local" class="form-control" asp-for="Inscription.DateInscription" required />
-                        </div>
-
-                        <div class="mb-3">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" asp-for="Inscription.AffichageConfirmation" />
-                                <label class="form-check-label" asp-for="Inscription.AffichageConfirmation">
-                                    Afficher confirmation
-                                </label>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-check"></i> Enregistrer</button>
-                    </form>
-                </div>
+            <div class="panel-title">
+                Formulaire inscription
             </div>
+
+            <form method="post" asp-page-handler="Save">
+
+                <input type="hidden" asp-for="Inscription.Id" />
+
+                <label>Participant</label>
+                <select asp-for="Inscription.ParticipantId" required>
+                    <option value="">Sélectionner un participant</option>
+                    @foreach (var p in Model.Participants ?? new List<SeminaPro.Models.Participant>())
+                    {
+                        <option value="@p.Id">@p.Nom @p.Prenom</option>
+                    }
+                </select>
+
+                <label>Séminaire</label>
+                <select asp-for="Inscription.SeminaireId" required>
+                    <option value="">Sélectionner un séminaire</option>
+                    @foreach (var s in Model.Seminaires ?? new List<SeminaPro.Models.Seminaire>())
+                    {
+                        <option value="@s.Id">@s.Titre</option>
+                    }
+                </select>
+
+                <label>Date d'inscription</label>
+                <input type="datetime-local" asp-for="Inscription.DateInscription" required />
+
+                <div class="check">
+                    <input type="checkbox" asp-for="Inscription.AffichageConfirmation" />
+                    <label>Afficher confirmation</label>
+                </div>
+
+                <button type="submit">
+                    <i class="bi bi-check-circle"></i> Enregistrer
+                </button>
+
+            </form>
+
         </div>
 
-        <!-- Liste des Inscriptions -->
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header bg-secondary text-white">
-                    <h6 class="mb-0"><i class="bi bi-list-ul"></i> Liste des Inscriptions (@Model.Inscriptions?.Count ?? 0)</h6>
-                </div>
-                <div class="card-body p-0">
-                    @if (Model.Inscriptions != null && Model.Inscriptions.Count > 0)
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Participant</th>
-                                        <th>Email</th>
-                                        <th>Séminaire</th>
-                                        <th>Date Séminaire</th>
-                                        <th>Date Inscription</th>
-                                        <th>Confirmation</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var inscription in Model.Inscriptions)
+        <!-- TABLE -->
+        <div class="panel">
+
+            <div class="panel-title-row">
+                <span>Liste des inscriptions</span>
+                <span class="count">@((Model.Inscriptions?.Count) ?? 0)</span>
+            </div>
+
+            @if (Model.Inscriptions != null && Model.Inscriptions.Any())
+            {
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Participant</th>
+                            <th>Séminaire</th>
+                            <th>Date inscription</th>
+                            <th>Confirmation</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var i in Model.Inscriptions)
+                        {
+                            <tr>
+
+                                <td class="name">
+                                    @i.Participant?.Nom @i.Participant?.Prenom
+                                    <div class="muted">@i.Participant?.Email</div>
+                                </td>
+
+                                <td>@i.Seminaire?.Titre</td>
+
+                                <td class="muted">
+                                    @i.DateInscription.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+
+                                <td>
+                                    @if (i.AffichageConfirmation)
                                     {
-                                        <tr>
-                                            <td><strong>@inscription.Participant?.Nom @inscription.Participant?.Prenom</strong></td>
-                                            <td><small>@inscription.Participant?.Email</small></td>
-                                            <td>@inscription.Seminaire?.Titre</td>
-                                            <td>
-                                                <span class="badge bg-info">@inscription.Seminaire?.DateSeminaire.ToString("dd/MM/yyyy")</span>
-                                            </td>
-                                            <td><small>@inscription.DateInscription.ToString("dd/MM/yyyy HH:mm")</small></td>
-                                            <td>
-                                                @if (inscription.AffichageConfirmation)
-                                                {
-                                                    <span class="badge bg-success"><i class="bi bi-check"></i> Oui</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="badge bg-warning"><i class="bi bi-x"></i> Non</span>
-                                                }
-                                            </td>
-                                            <td>
-                                                <a href="?id=@inscription.Id" class="btn btn-sm btn-outline-primary" title="Modifier">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
-                                                <form method="post" asp-page-handler="Delete" asp-route-id="@inscription.Id" style="display:inline;" 
-                                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette inscription ?')">
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </td>
-                                        </tr>
+                                        <span class="badge success">Oui</span>
                                     }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="alert alert-info m-3 mb-0">
-                            <i class="bi bi-info-circle"></i> Aucune inscription enregistrée.
-                        </div>
-                    }
+                                    else
+                                    {
+                                        <span class="badge warning">Non</span>
+                                    }
+                                </td>
+
+                                <td class="actions">
+
+                                    <a href="?id=@i.Id" class="icon edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    <form method="post"
+                                          asp-page-handler="Delete"
+                                          asp-route-id="@i.Id"
+                                          onsubmit="return confirm('Supprimer cette inscription ?')">
+
+                                        <button class="icon delete">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            }
+            else
+            {
+                <div class="empty">
+                    Aucune inscription trouvée
                 </div>
-            </div>
+            }
+
         </div>
+
     </div>
 </div>
 
 <style>
-    .admin-container { padding: 2rem 0; }
-    .admin-header { margin-bottom: 2rem; }
-    .admin-header h1 { font-size: 1.8rem; font-weight: 700; }
-    .admin-header p { color: #6c757d; }
-    .table-hover tbody tr:hover { background-color: rgba(0, 123, 255, 0.05); }
+
+    /* GLOBAL */
+    .page {
+        padding: 32px;
+        font-family: system-ui;
+        background: #f8fafc;
+        color: #0f172a;
+    }
+
+    /* HEADER */
+    .header h1 {
+        font-size: 26px;
+        font-weight: 800;
+        color: #1e3a8a;
+    }
+
+    .header p {
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    /* ALERTS */
+    .alert {
+        padding: 12px;
+        border-radius: 10px;
+        margin: 10px 0;
+        font-size: 13px;
+    }
+
+        .alert.success {
+            background: #ecfdf5;
+            color: #065f46;
+        }
+
+        .alert.error {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+    /* LAYOUT */
+    .layout {
+        display: grid;
+        grid-template-columns: 360px 1fr;
+        gap: 22px;
+    }
+
+    /* PANEL */
+    .panel {
+        background: white;
+        border-radius: 14px;
+        padding: 18px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 10px 25px rgba(30, 58, 138, 0.06);
+    }
+
+    /* TITLES */
+    .panel-title {
+        font-weight: 700;
+        color: #1e3a8a;
+        margin-bottom: 12px;
+    }
+
+    .panel-title-row {
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+        color: #1e3a8a;
+    }
+
+    /* COUNT */
+    .count {
+        background: #e0e7ff;
+        color: #1e3a8a;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+    }
+
+    /* FORM */
+    label {
+        display: block;
+        font-size: 12px;
+        color: #475569;
+        margin-top: 10px;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #cbd5e1;
+        margin-top: 6px;
+        background: #f8fafc;
+        font-size: 13px;
+    }
+
+        input:focus, select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+            background: white;
+        }
+
+    /* CHECKBOX */
+    .check {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+        font-size: 13px;
+    }
+
+    /* BUTTON */
+    button {
+        margin-top: 14px;
+        width: 100%;
+        padding: 11px;
+        border: none;
+        border-radius: 10px;
+        background: linear-gradient(135deg,#1e3a8a,#2563eb);
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+        button:hover {
+            transform: translateY(-1px);
+            opacity: 0.95;
+        }
+
+    /* TABLE */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        text-align: left;
+        font-size: 11px;
+        color: #64748b;
+        padding: 10px 0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    td {
+        padding: 12px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    /* TEXT */
+    .name {
+        font-weight: 600;
+    }
+
+    .muted {
+        font-size: 12px;
+        color: #64748b;
+    }
+
+    /* BADGES */
+    .badge {
+        font-size: 11px;
+        padding: 4px 10px;
+        border-radius: 999px;
+    }
+
+        .badge.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+    /* ACTIONS */
+    .actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 6px;
+    }
+
+    /* ICON BUTTON */
+    .icon {
+        border: 1px solid #e2e8f0;
+        background: white;
+        padding: 6px 8px;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+        .icon:hover {
+            background: #eff6ff;
+            border-color: #2563eb;
+        }
+
+    .delete {
+        color: #dc2626;
+    }
+
+    /* EMPTY */
+    .empty {
+        padding: 25px;
+        text-align: center;
+        color: #94a3b8;
+    }
+
+    /* RESPONSIVE */
+  
+    }
+
 </style>

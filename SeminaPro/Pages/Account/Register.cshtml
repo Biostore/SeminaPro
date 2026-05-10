@@ -1,149 +1,684 @@
 @page
 @model SeminaPro.Pages.Account.RegisterModel
+
 @{
+    Layout = null;
     ViewData["Title"] = "Inscription";
 }
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header bg-success text-white">
-                    <h4 class="mb-0"><i class="bi bi-person-plus"></i> Créer un compte</h4>
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>@ViewData["Title"] - SeminaPro</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+
+            min-height: 100vh;
+
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+            /* BLEU PLUS CLAIR */
+            background: linear-gradient(135deg, #163b73, #2f5fa7, #4b7fd1);
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 40px 15px;
+        }
+
+        .register-container {
+
+            width: 100%;
+            max-width: 850px;
+        }
+
+        .register-card {
+
+            background: rgba(255,255,255,0.98);
+
+            border-radius: 24px;
+
+            overflow: hidden;
+
+            box-shadow: 0 20px 45px rgba(0,0,0,0.35);
+
+            animation: fadeIn 0.8s ease;
+        }
+
+        /* HEADER */
+
+        .register-header {
+
+            background: linear-gradient(135deg, #000814, #001d3d);
+
+            color: white;
+
+            text-align: center;
+
+            padding: 40px 25px;
+
+            position: relative;
+        }
+
+        .register-header::after {
+
+            content: "";
+
+            position: absolute;
+
+            bottom: -40px;
+            left: 0;
+
+            width: 100%;
+            height: 80px;
+
+            background: white;
+
+            border-radius: 50%;
+        }
+
+        .logo-circle {
+
+            width: 90px;
+            height: 90px;
+
+            margin: auto;
+
+            border-radius: 50%;
+
+            background: rgba(255,255,255,0.12);
+
+            border: 1px solid rgba(255,255,255,0.15);
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            margin-bottom: 20px;
+        }
+
+        .logo-circle i {
+
+            font-size: 42px;
+        }
+
+        .register-header h2 {
+
+            font-weight: 700;
+
+            margin-bottom: 8px;
+        }
+
+        .register-header p {
+
+            opacity: 0.85;
+
+            margin: 0;
+        }
+
+        /* BODY */
+
+        .register-body {
+
+            padding: 60px 35px 35px;
+        }
+
+        .form-label {
+
+            font-weight: 600;
+
+            color: #001d3d;
+
+            margin-bottom: 8px;
+        }
+
+        .input-group {
+
+            margin-bottom: 22px;
+        }
+
+        .input-group-text {
+
+            background: #f1f5f9;
+
+            border: 1px solid #dbe4ee;
+            border-right: none;
+
+            border-radius: 12px 0 0 12px;
+
+            color: #001d3d;
+        }
+
+        .form-control,
+        .form-select {
+
+            height: 52px;
+
+            border: 1px solid #dbe4ee;
+
+            background: #f8fafc;
+
+            transition: 0.3s;
+        }
+
+        .form-control {
+
+            border-left: none;
+
+            border-radius: 0 12px 12px 0;
+        }
+
+        .form-select {
+
+            border-radius: 12px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+
+            border-color: #001d3d;
+
+            box-shadow: none;
+
+            background: white;
+        }
+
+        .form-check-label {
+
+            color: #555;
+        }
+
+        .dynamic-box {
+
+            background: #f8fafc;
+
+            border: 1px solid #e2e8f0;
+
+            border-radius: 16px;
+
+            padding: 20px;
+
+            margin-bottom: 20px;
+        }
+
+        /* BUTTON */
+
+        .btn-register {
+
+            width: 100%;
+
+            height: 54px;
+
+            border: none;
+
+            border-radius: 14px;
+
+            background: linear-gradient(135deg, #001d3d, #000814);
+
+            color: white;
+
+            font-weight: 700;
+
+            font-size: 16px;
+
+            transition: 0.3s;
+
+            margin-top: 10px;
+        }
+
+        .btn-register:hover {
+
+            background: linear-gradient(135deg, #000814, #001d3d);
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 10px 20px rgba(0,0,0,0.35);
+        }
+
+        .login-link {
+
+            text-align: center;
+
+            margin-top: 25px;
+
+            color: #555;
+        }
+
+        .login-link a {
+
+            color: #001d3d;
+
+            font-weight: 700;
+
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+
+            text-decoration: underline;
+        }
+
+        .alert {
+
+            border-radius: 12px;
+        }
+
+        /* ANIMATION */
+
+        @@keyframes fadeIn {
+
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* RESPONSIVE */
+
+        @@media(max-width: 768px) {
+
+            .register-body {
+
+                padding: 55px 20px 25px;
+            }
+
+            .logo-circle {
+
+                width: 75px;
+                height: 75px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="register-container">
+
+        <div class="register-card">
+
+            <!-- HEADER -->
+
+            <div class="register-header">
+
+                <div class="logo-circle">
+
+                    <i class="bi bi-person-plus-fill"></i>
+
                 </div>
-                <div class="card-body p-5">
-                    <form method="post">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="FirstName" class="form-label">Prénom</label>
-                                <input type="text" class="form-control" id="FirstName" name="FirstName" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="LastName" class="form-label">Nom</label>
-                                <input type="text" class="form-control" id="LastName" name="LastName" required>
-                            </div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label for="Email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="Email" name="Email" required>
-                        </div>
+                <h2>Créer un compte</h2>
 
-                        <div class="mb-3">
-                            <label for="Phone" class="form-label">Téléphone</label>
-                            <input type="tel" class="form-control" id="Phone" name="Phone">
-                        </div>
+                <p>Rejoignez SeminaPro</p>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="Password" class="form-label">Mot de passe</label>
-                                <input type="password" class="form-control" id="Password" name="Password" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="ConfirmPassword" class="form-label">Confirmer le mot de passe</label>
-                                <input type="password" class="form-control" id="ConfirmPassword" name="ConfirmPassword" required>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="ParticipantType" class="form-label">Type de participant</label>
-                            <select class="form-select" id="ParticipantType" name="ParticipantType" required>
-                                <option value="">-- Sélectionner --</option>
-                                <option value="Universitaire">Universitaire</option>
-                                <option value="Industriel">Industriel</option>
-                            </select>
-                        </div>
-
-                        <div id="universitaireFields" style="display:none;">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="Niveau" class="form-label">Niveau d'études <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="Niveau" name="Niveau">
-                                    <span asp-validation-for="Niveau" class="text-danger"></span>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="NomUniversite" class="form-label">Nom de l'université</label>
-                                    <input type="text" class="form-control" id="NomUniversite" name="NomUniversite">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="industrielFields" style="display:none;">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="Fonction" class="form-label">Fonction <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="Fonction" name="Fonction">
-                                    <span asp-validation-for="Fonction" class="text-danger"></span>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="NomEntreprise" class="form-label">Nom de l'entreprise</label>
-                                    <input type="text" class="form-control" id="NomEntreprise" name="NomEntreprise">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="Accept" name="Accept" value="true">
-                            <label class="form-check-label" for="Accept">
-                                J'accepte les conditions d'utilisation
-                            </label>
-                            <span asp-validation-for="Accept" class="text-danger"></span>
-                        </div>
-
-                        <button type="submit" class="btn btn-success w-100 mb-3">
-                            <i class="bi bi-check-circle"></i> S'inscrire
-                        </button>
-                    </form>
-
-                    <hr>
-
-                    <p class="text-center mb-0">
-                        Vous avez déjà un compte ? 
-                        <a href="/Account/Login" class="btn btn-link p-0">Se connecter ici</a>
-                    </p>
-                </div>
             </div>
+
+            <!-- BODY -->
+
+            <div class="register-body">
+
+                <form method="post">
+
+                    <!-- NAMES -->
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">Prénom</label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-person-fill"></i>
+                                </span>
+
+                                <input type="text"
+                                       class="form-control"
+                                       id="FirstName"
+                                       name="FirstName"
+                                       required>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">Nom</label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-person-fill"></i>
+                                </span>
+
+                                <input type="text"
+                                       class="form-control"
+                                       id="LastName"
+                                       name="LastName"
+                                       required>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- EMAIL -->
+
+                    <label class="form-label">Email</label>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">
+                            <i class="bi bi-envelope-fill"></i>
+                        </span>
+
+                        <input type="email"
+                               class="form-control"
+                               id="Email"
+                               name="Email"
+                               required>
+
+                    </div>
+
+                    <!-- PHONE -->
+
+                    <label class="form-label">Téléphone</label>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">
+                            <i class="bi bi-telephone-fill"></i>
+                        </span>
+
+                        <input type="tel"
+                               class="form-control"
+                               id="Phone"
+                               name="Phone">
+
+                    </div>
+
+                    <!-- PASSWORDS -->
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">Mot de passe</label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-lock-fill"></i>
+                                </span>
+
+                                <input type="password"
+                                       class="form-control"
+                                       id="Password"
+                                       name="Password"
+                                       required>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">Confirmer</label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-shield-lock-fill"></i>
+                                </span>
+
+                                <input type="password"
+                                       class="form-control"
+                                       id="ConfirmPassword"
+                                       name="ConfirmPassword"
+                                       required>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- PARTICIPANT -->
+
+                    <label class="form-label">Type de participant</label>
+
+                    <select class="form-select mb-4"
+                            id="ParticipantType"
+                            name="ParticipantType"
+                            required>
+
+                        <option value="">-- Sélectionner --</option>
+
+                        <option value="Universitaire">
+                            Universitaire
+                        </option>
+
+                        <option value="Industriel">
+                            Industriel
+                        </option>
+
+                    </select>
+
+                    <!-- UNIVERSITAIRE -->
+
+                    <div id="universitaireFields"
+                         class="dynamic-box"
+                         style="display:none;">
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    Niveau d'études
+                                </label>
+
+                                <input type="text"
+                                       class="form-control mb-3"
+                                       id="Niveau"
+                                       name="Niveau">
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    Université
+                                </label>
+
+                                <input type="text"
+                                       class="form-control mb-3"
+                                       id="NomUniversite"
+                                       name="NomUniversite">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- INDUSTRIEL -->
+
+                    <div id="industrielFields"
+                         class="dynamic-box"
+                         style="display:none;">
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    Fonction
+                                </label>
+
+                                <input type="text"
+                                       class="form-control mb-3"
+                                       id="Fonction"
+                                       name="Fonction">
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    Entreprise
+                                </label>
+
+                                <input type="text"
+                                       class="form-control mb-3"
+                                       id="NomEntreprise"
+                                       name="NomEntreprise">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- ACCEPT -->
+
+                    <div class="form-check mb-3">
+
+                        <input type="checkbox"
+                               class="form-check-input"
+                               id="Accept"
+                               name="Accept"
+                               value="true">
+
+                        <label class="form-check-label" for="Accept">
+
+                            J'accepte les conditions d'utilisation
+
+                        </label>
+
+                    </div>
+
+                    <!-- BUTTON -->
+
+                    <button type="submit" class="btn-register">
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                        S'INSCRIRE
+
+                    </button>
+
+                </form>
+
+                <!-- LOGIN -->
+
+                <div class="login-link">
+
+                    Vous avez déjà un compte ?
+                    <a href="/Account/Login">
+
+                        Se connecter ici
+
+                    </a>
+
+                </div>
+
+            </div>
+
         </div>
+
     </div>
-</div>
 
-<script>
-document.getElementById('ParticipantType').addEventListener('change', function() {
-    document.getElementById('universitaireFields').style.display = this.value === 'Universitaire' ? 'block' : 'none';
-    document.getElementById('industrielFields').style.display = this.value === 'Industriel' ? 'block' : 'none';
+    <script>
 
-    // Mettre à jour les validations
-    const niveauInput = document.getElementById('Niveau');
-    const fonctionInput = document.getElementById('Fonction');
+        document.getElementById('ParticipantType').addEventListener('change', function () {
 
-    if (this.value === 'Universitaire') {
-        niveauInput.required = true;
-        fonctionInput.required = false;
-    } else if (this.value === 'Industriel') {
-        fonctionInput.required = true;
-        niveauInput.required = false;
-    } else {
-        niveauInput.required = false;
-        fonctionInput.required = false;
-    }
-});
+            document.getElementById('universitaireFields').style.display =
+                this.value === 'Universitaire' ? 'block' : 'none';
 
-// Validation du formulaire avant soumission
-document.querySelector('form').addEventListener('submit', function(e) {
-    const participantType = document.getElementById('ParticipantType').value;
-    const niveau = document.getElementById('Niveau').value.trim();
-    const fonction = document.getElementById('Fonction').value.trim();
+            document.getElementById('industrielFields').style.display =
+                this.value === 'Industriel' ? 'block' : 'none';
 
-    if (participantType === 'Universitaire' && !niveau) {
-        e.preventDefault();
-        alert('Veuillez entrer le niveau d\'études');
-        return false;
-    }
+            const niveauInput = document.getElementById('Niveau');
+            const fonctionInput = document.getElementById('Fonction');
 
-    if (participantType === 'Industriel' && !fonction) {
-        e.preventDefault();
-        alert('Veuillez entrer votre fonction');
-        return false;
-    }
-});
-</script>
+            if (this.value === 'Universitaire') {
+
+                niveauInput.required = true;
+                fonctionInput.required = false;
+
+            } else if (this.value === 'Industriel') {
+
+                fonctionInput.required = true;
+                niveauInput.required = false;
+
+            } else {
+
+                niveauInput.required = false;
+                fonctionInput.required = false;
+            }
+        });
+
+        document.querySelector('form').addEventListener('submit', function (e) {
+
+            const participantType =
+                document.getElementById('ParticipantType').value;
+
+            const niveau =
+                document.getElementById('Niveau').value.trim();
+
+            const fonction =
+                document.getElementById('Fonction').value.trim();
+
+            if (participantType === 'Universitaire' && !niveau) {
+
+                e.preventDefault();
+
+                alert('Veuillez entrer le niveau d\\'études');
+
+                return false;
+            }
+
+            if (participantType === 'Industriel' && !fonction) {
+
+                e.preventDefault();
+
+                alert('Veuillez entrer votre fonction');
+
+                return false;
+            }
+        });
+
+    </script>
+
+</body>
+</html>

@@ -11,52 +11,144 @@ namespace SeminaPro.Pages.Admin
         private readonly ApplicationDbContext _context;
         private readonly ILogger<SeminairesModel> _logger;
 
-        public List<Seminaire>? Seminaires { get; set; }
+        // LISTE
+        public List<Seminaire> Seminaires { get; set; } = new();
 
-        public SeminairesModel(ApplicationDbContext context, ILogger<SeminairesModel> logger)
+        public SeminairesModel(
+            ApplicationDbContext context,
+            ILogger<SeminairesModel> logger)
         {
             _context = context;
             _logger = logger;
         }
 
-        public void OnGet()
-        {
-            CheckAdmin();
-            Seminaires = _context.Seminaires
-                .OrderByDescending(s => s.DateSeminaire)
-                .ToList();
+        // =====================================
+        // GET
+        // =====================================
 
-            // Charger les inscriptions
-            foreach (var seminaire in Seminaires)
+        public IActionResult OnGet()
+        {
+            try
             {
-                seminaire.Inscriptions = _context.Inscriptions
-                    .Where(i => i.SeminaireId == seminaire.Id)
-                    .ToList();
+                CheckAdmin();
+
+                LoadSeminaires();
+
+                return Page();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return RedirectToPage("/Login");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "Erreur chargement séminaires");
+
+                TempData["Error"] =
+                    ex.InnerException?.Message ?? ex.Message;
+
+                Seminaires = new List<Seminaire>();
+
+                return Page();
             }
         }
+
+        // =====================================
+        // DELETE
+        // =====================================
 
         public IActionResult OnPostDelete(int id)
         {
-            CheckAdmin();
-            var seminaire = _context.Seminaires.FirstOrDefault(s => s.Id == id);
-            if (seminaire == null)
+            try
             {
-                return NotFound();
+                CheckAdmin();
+
+                var seminaire = _context.Seminaires
+                    .Include(s => s.Inscriptions)
+                    .FirstOrDefault(s => s.Id == id);
+
+                if (seminaire == null)
+                {
+                    TempData["Error"] =
+                        "Séminaire introuvable";
+
+                    return RedirectToPage();
+                }
+
+                // SUPPRIMER INSCRIPTIONS
+                if (seminaire.Inscriptions != null
+                    && seminaire.Inscriptions.Any())
+                {
+                    _context.Inscriptions
+                        .RemoveRange(seminaire.Inscriptions);
+                }
+
+                // DELETE IMAGE PHYSIQUE
+                if (!string.IsNullOrEmpty(
+                    seminaire.ImageUrl))
+                {
+                    var imagePath =
+                        Path.Combine(
+                            Directory.GetCurrentDirectory(),
+                            "wwwroot",
+                            seminaire.ImageUrl
+                                .TrimStart('/')
+                                .Replace("/", "\\"));
+
+                    if (System.IO.File.Exists(imagePath))
+                    {
+                        System.IO.File.Delete(imagePath);
+                    }
+                }
+
+                // DELETE SEMINAIRE
+                _context.Seminaires.Remove(seminaire);
+
+                _context.SaveChanges();
+
+                TempData["Message"] =
+                    "Séminaire supprimé avec succès";
+
+                return RedirectToPage();
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "Erreur suppression séminaire");
 
-            _context.Seminaires.Remove(seminaire);
-            _context.SaveChanges();
+                TempData["Error"] =
+                    ex.InnerException?.Message ?? ex.Message;
 
-            ViewData["Message"] = "Séminaire supprimé avec succès";
-            return RedirectToPage();
+                return RedirectToPage();
+            }
         }
+
+        // =====================================
+        // LOAD
+        // =====================================
+
+        private void LoadSeminaires()
+        {
+            Seminaires = _context.Seminaires
+                .Include(s => s.Inscriptions)
+                .OrderByDescending(s => s.DateSeminaire)
+                .ToList();
+        }
+
+        // =====================================
+        // CHECK ADMIN
+        // =====================================
 
         private void CheckAdmin()
         {
-            var userRole = HttpContext.Session.GetString("UserRole");
+            var userRole =
+                HttpContext.Session.GetString("UserRole");
+
             if (userRole != "Admin")
             {
-                throw new UnauthorizedAccessException("Accès réservé aux administrateurs");
+                throw new UnauthorizedAccessException(
+                    "Accès réservé aux administrateurs");
             }
         }
     }

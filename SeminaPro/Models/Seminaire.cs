@@ -35,5 +35,8 @@ namespace SeminaPro.Models
         public Specialite? Specialite { get; set; }
 
         public ICollection<Inscription> Inscriptions { get; set; } = new List<Inscription>();
+
+        [StringLength(300)]
+        public string? ImageUrl { get; set; }
     }
 }

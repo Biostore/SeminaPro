@@ -1,16 +1,92 @@
 /* ========================================
-   ADMIN DASHBOARD - MODERN DESIGN
+   NAVBAR - STICKY ET FULL WIDTH
    ======================================== */
 
-:root {
-    --admin-dark: #1a1f3a;
-    --admin-sidebar: #0f1419;
-    --admin-accent: #6366f1;
-    --admin-accent-light: #818cf8;
-    --admin-success: #10b981;
-    --admin-warning: #f59e0b;
-    --admin-danger: #ef4444;
-    --admin-info: #0ea5e9;
+.navbar-modern {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1001;
+    left: 0;
+    right: 0;
+}
+
+/* ========================================
+   ADMIN AVATAR SECTION - In Sidebar
+   ======================================== */
+
+.admin-avatar-section {
+    padding: 1.5rem 0.8rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 80px;
+}
+
+.admin-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: white;
+    margin: 0 auto 1rem;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    border: 3px solid var(--admin-accent-light);
+    overflow: hidden;
+}
+
+.admin-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.admin-name {
+    color: white;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 0.2rem;
+}
+
+.admin-role {
+    color: var(--admin-accent-light);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* ========================================
+   NOTIFICATION BADGES
+   ======================================== */
+
+.sidebar-item {
+    position: relative;
+}
+
+.sidebar-item .notif-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--admin-danger);
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
 }
 
 /* ========================================
@@ -20,7 +96,7 @@
 .dashboard-container {
     display: flex;
     gap: 0;
-    min-height: calc(100vh - 80px);
+    min-height: 100vh;
     background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
     position: relative;
 }
@@ -30,17 +106,17 @@
    ======================================== */
 
 .sidebar {
-    background: linear-gradient(180deg, var(--admin-sidebar) 0%, var(--admin-dark) 100%);
-    padding: 1.5rem 0.8rem;
+    background: linear-gradient(90deg, var(--dark) 0%, #2a2a4e 100%);
+    padding: 0 0.8rem;
     position: fixed;
     left: 0;
-    top: 80px;
+    top: 0;
     width: 280px;
-    height: calc(100vh - 80px);
+    height: 100vh;
     overflow-y: auto;
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
     z-index: 999;
-    border-right: 3px solid var(--admin-accent);
+    border-right: 3px solid var(--gold);
     animation: slideInLeft 0.6s ease;
 }
 
@@ -50,8 +126,9 @@
     font-weight: 800;
     margin-bottom: 1.5rem;
     padding: 0.8rem 0.8rem;
-    border-bottom: 2px solid var(--admin-accent);
+    border-bottom: 2px solid var(--gold);
     letter-spacing: 0.5px;
+    margin-top: 90px;
 }
 
 .sidebar-item {
@@ -107,6 +184,7 @@
 .main-content {
     flex: 1;
     margin-left: 280px;
+    margin-top: 80px;
     overflow-y: auto;
     background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
     min-height: calc(100vh - 80px);

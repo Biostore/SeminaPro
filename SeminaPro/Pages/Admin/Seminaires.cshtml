@@ -4,165 +4,225 @@
     ViewData["Title"] = "Gestion des Séminaires";
 }
 
-<!-- PAGE HEADER -->
-<div class="admin-page-header">
-    <div>
-        <h1>Gestion des Séminaires</h1>
-        <p>Gérez et organisez l'ensemble de vos séminaires</p>
-    </div>
-    <a class="btn-add-action" asp-page="CreateSeminaire">
-        <i class="bi bi-plus-lg"></i> Ajouter un Séminaire
-    </a>
-</div>
+<style>
+    body {
+        background: linear-gradient(135deg, #163b73, #2f5fa7, #4b7fd1);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 100vh;
+    }
 
-<!-- MESSAGES -->
-@if (!string.IsNullOrEmpty(ViewData["Message"]?.ToString()))
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="bi bi-check-circle"></i>
-        @ViewData["Message"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-}
+    .admin-container {
+        padding: 40px 20px;
+    }
 
-<!-- SEARCH & FILTER -->
-<div class="admin-search-filter">
-    <div class="search-box">
-        <input type="text" id="searchInput" class="form-control" placeholder="🔍 Rechercher par titre ou code...">
-    </div>
-    <div class="filter-box">
-        <select id="filterLieu" class="form-control">
-            <option value="">Tous les lieux</option>
-            @if (Model.Seminaires?.Count > 0)
-            {
-                @foreach (var lieu in Model.Seminaires.Select(s => s.Lieu).Distinct())
-                {
-                    <option value="@lieu">@lieu</option>
-                }
-            }
-        </select>
-    </div>
-</div>
+    .admin-page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+        margin-bottom: 25px;
+    }
 
-<!-- TABLE -->
-<div class="table-responsive">
-    <table class="table admin-table">
-        <thead>
-            <tr>
-                <th>Code</th>
-                <th>Titre</th>
-                <th>Lieu</th>
-                <th>Date</th>
-                <th>Tarif</th>
-                <th>Inscrits</th>
-                <th style="text-align: center;">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.Seminaires?.Count > 0)
-            {
+    .admin-page-header h1 {
+        font-weight: 800;
+        margin: 0;
+    }
+
+    /* 🔵 BOUTON AJOUTER (BLEU PRO) */
+    .btn-add-action {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8); /* bleu moderne */
+        color: white;
+        padding: 12px 18px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        transition: 0.3s;
+        box-shadow: 0 8px 18px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-add-action:hover {
+        background: linear-gradient(135deg, #1d4ed8, #1e40af);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba(29, 78, 216, 0.4);
+        color: white;
+    }
+
+    /* TABLE */
+    .table-responsive {
+        background: white;
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+    }
+
+    .admin-table thead {
+        background: #f1f5f9;
+    }
+
+    .admin-table th {
+        color: #001d3d !important;
+        font-weight: 800;
+        text-transform: uppercase;
+        border-bottom: 2px solid #ddd;
+    }
+
+    .admin-table td {
+        color: #001d3d;
+        vertical-align: middle;
+    }
+
+    .admin-table td strong {
+        font-weight: 800;
+        color: #001d3d;
+    }
+
+    /* CODE */
+    .seminar-code {
+        background: #001d3d;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 8px;
+        font-size: 13px;
+    }
+
+    /* PRICE */
+    .price-cell {
+        font-weight: 700;
+        color: #0b3d91;
+    }
+
+    /* INSCRITS */
+    .inscriptions-badge {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #ffffff !important;
+        min-width: 70px;
+        text-align: center;
+    }
+
+    .inscriptions-badge.low { background: #16a34a; }
+    .inscriptions-badge.medium { background: #f59e0b; }
+    .inscriptions-badge.high { background: #dc2626; }
+
+    /* ACTIONS */
+    .actions-column {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+    }
+
+    .btn-action {
+        border: none;
+        padding: 8px 12px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .btn-edit {
+        background: #0b3d91;
+        color: white;
+    }
+
+    .btn-delete {
+        background: #dc2626;
+        color: white;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #777;
+    }
+</style>
+
+<div class="admin-container">
+
+    <!-- HEADER -->
+    <div class="admin-page-header">
+        <div>
+            <h1>Gestion des Séminaires</h1>
+            <p>Gérez et organisez vos séminaires</p>
+        </div>
+
+        <!-- 🔵 BOUTON AJOUT BLEU -->
+        <a class="btn-add-action" asp-page="CreateSeminaire">
+            + Ajouter
+        </a>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-responsive">
+
+        <table class="table admin-table">
+
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Titre</th>
+                    <th>Lieu</th>
+                    <th>Date</th>
+                    <th>Tarif</th>
+                    <th>Inscrits</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
                 @foreach (var seminaire in Model.Seminaires)
                 {
                     var inscriptions = seminaire.Inscriptions?.Count ?? 0;
                     var max = seminaire.NombreMaximal;
                     var pourcentage = max > 0 ? (inscriptions * 100) / max : 0;
-                    var badgeClass = pourcentage < 50 ? "low" : pourcentage < 80 ? "medium" : "high";
+
+                    var badgeClass = pourcentage < 50 ? "low" :
+                                     pourcentage < 80 ? "medium" : "high";
 
                     <tr>
-                        <!-- Code -->
-                        <td>
-                            <span class="seminar-code">@seminaire.Code</span>
-                        </td>
-
-                        <!-- Titre -->
-                        <td>
-                            <strong>@seminaire.Titre</strong>
-                        </td>
-
-                        <!-- Lieu -->
+                        <td><span class="seminar-code">@seminaire.Code</span></td>
+                        <td><strong>@seminaire.Titre</strong></td>
                         <td>@seminaire.Lieu</td>
-
-                        <!-- Date -->
                         <td>@seminaire.DateSeminaire.ToString("dd/MM/yyyy")</td>
+                        <td class="price-cell">@seminaire.Tarif DT</td>
 
-                        <!-- Prix -->
-                        <td class="price-cell">@seminaire.Tarif.ToString("0.00") DT</td>
-
-                        <!-- Inscrits -->
                         <td>
                             <span class="inscriptions-badge @badgeClass">
                                 @inscriptions / @max
                             </span>
                         </td>
 
-                        <!-- Actions -->
                         <td>
                             <div class="actions-column">
-                                <a class="btn-action btn-edit" asp-page="EditSeminaire" asp-route-id="@seminaire.Id" title="Éditer ce séminaire">
-                                    <i class="bi bi-pencil"></i> Éditer
+
+                                <a class="btn-action btn-edit"
+                                   asp-page="/Admin/EditSeminaire"
+                                   asp-route-id="@seminaire.Id">
+                                    Edit
                                 </a>
-                                <form method="post" asp-page-handler="Delete" asp-route-id="@seminaire.Id" 
-                                      style="display:inline;" onsubmit="return confirm('⚠️ Êtes-vous sûr de vouloir supprimer ce séminaire ?')">
-                                    <button type="submit" class="btn-action btn-delete" title="Supprimer ce séminaire">
-                                        <i class="bi bi-trash3"></i>
+
+                                <form method="post"
+                                      asp-page-handler="Delete"
+                                      asp-route-id="@seminaire.Id"
+                                      onsubmit="return confirm('Supprimer ?')">
+
+                                    <button class="btn-action btn-delete">
+                                        Delete
                                     </button>
+
                                 </form>
+
                             </div>
                         </td>
                     </tr>
                 }
-            }
-            else
-            {
-                <tr>
-                    <td colspan="7">
-                        <div class="empty-state">
-                            <i class="bi bi-inbox"></i>
-                            <p>Aucun séminaire trouvé</p>
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+
+            </tbody>
+
+        </table>
+
+    </div>
 </div>
-
-<!-- Script pour recherche et filtrage -->
-<script>
-    document.getElementById('searchInput')?.addEventListener('keyup', function () {
-        const searchValue = this.value.toLowerCase();
-        const filterValue = document.getElementById('filterLieu')?.value || '';
-
-        document.querySelectorAll('.admin-table tbody tr').forEach(row => {
-            if (row.querySelector('.empty-state')) return;
-
-            const titre = row.cells[1].textContent.toLowerCase();
-            const code = row.cells[0].textContent.toLowerCase();
-            const lieu = row.cells[2].textContent.toLowerCase();
-
-            const matchSearch = titre.includes(searchValue) || code.includes(searchValue);
-            const matchFilter = !filterValue || lieu === filterValue;
-
-            row.style.display = matchSearch && matchFilter ? '' : 'none';
-        });
-    });
-
-    document.getElementById('filterLieu')?.addEventListener('change', function () {
-        const filterValue = this.value.toLowerCase();
-        const searchValue = document.getElementById('searchInput')?.value.toLowerCase() || '';
-
-        document.querySelectorAll('.admin-table tbody tr').forEach(row => {
-            if (row.querySelector('.empty-state')) return;
-
-            const titre = row.cells[1].textContent.toLowerCase();
-            const code = row.cells[0].textContent.toLowerCase();
-            const lieu = row.cells[2].textContent.toLowerCase();
-
-            const matchSearch = titre.includes(searchValue) || code.includes(searchValue);
-            const matchFilter = !filterValue || lieu === filterValue;
-
-            row.style.display = matchSearch && matchFilter ? '' : 'none';
-        });
-    });
-</script>
-

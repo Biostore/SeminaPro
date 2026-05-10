@@ -4,84 +4,300 @@
     ViewData["Title"] = "Paramètres";
 }
 
-<div class="welcome-header mb-4">
-    <h1><i class="bi bi-gear-fill"></i> Paramètres</h1>
-    <p>Gérez les configurations de votre plateforme</p>
-</div>
+<div class="set-page">
 
-<div class="card mb-4">
-    <div class="card-header bg-dark text-white">
-        <h5 class="mb-0"><i class="bi bi-info-circle"></i> Informations générales</h5>
+    <!-- HEADER -->
+    <div class="set-header">
+        <span class="set-badge">
+            <i class="bi bi-gear"></i> Administration
+        </span>
+        <h1><i class="bi bi-sliders"></i> Paramètres</h1>
+        <p>Gérez les configurations de votre plateforme</p>
     </div>
-    <div class="card-body">
-        @if (!string.IsNullOrEmpty(ViewData["Message"]?.ToString()))
-        {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                @ViewData["Message"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        }
-        <form method="post">
-            <div class="mb-3">
-                <label class="form-label">Nom de la plateforme</label>
-                <input class="form-control" asp-for="PlatformName" placeholder="Ex: SeminaPro" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Email de contact</label>
-                <input class="form-control" asp-for="ContactEmail" type="email" placeholder="Ex: info@seminapro.com" />
-            </div>
-            <button type="submit" class="btn btn-primary">
-                <i class="bi bi-check-circle"></i> Enregistrer
-            </button>
-        </form>
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header bg-dark text-white">
-                <h5 class="mb-0"><i class="bi bi-bell"></i> Préférences</h5>
+    <!-- SECTION : Informations générales -->
+    <div class="set-section">
+        <div class="set-section-head">
+            <span class="set-icon set-icon-gray"><i class="bi bi-info-circle"></i></span>
+            <span class="set-section-title">Informations générales</span>
+        </div>
+
+        <div class="set-section-body">
+
+            @if (!string.IsNullOrEmpty(ViewData["Message"]?.ToString()))
+            {
+                <div class="set-alert">
+                    <i class="bi bi-check-circle-fill"></i>
+                    @ViewData["Message"]
+                </div>
+            }
+
+            <form method="post">
+                <div class="set-field">
+                    <label asp-for="PlatformName">Nom de la plateforme</label>
+                    <input class="set-input" asp-for="PlatformName" placeholder="Ex : SeminaPro" />
+                </div>
+
+                <div class="set-field">
+                    <label asp-for="ContactEmail">Email de contact</label>
+                    <input class="set-input" asp-for="ContactEmail" type="email" placeholder="Ex : info@seminapro.com" />
+                </div>
+
+                <button type="submit" class="set-btn set-btn-primary">
+                    <i class="bi bi-check-lg"></i> Enregistrer
+                </button>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- DEUX COLONNES -->
+    <div class="set-two-col">
+
+        <!-- Préférences -->
+        <div class="set-section">
+            <div class="set-section-head">
+                <span class="set-icon set-icon-green"><i class="bi bi-bell"></i></span>
+                <span class="set-section-title">Préférences</span>
             </div>
-            <div class="card-body">
+
+            <div class="set-section-body">
                 <form method="post" asp-page-handler="Preferences">
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" asp-for="EnableNotifications" />
-                        <label class="form-check-label">Activer les notifications</label>
-                    </div>
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" asp-for="UseDarkTheme" />
-                        <label class="form-check-label">Thème sombre</label>
-                    </div>
-                    <button type="submit" class="btn btn-success">
-                        <i class="bi bi-check-circle"></i> Sauvegarder
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
 
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header bg-dark text-white">
-                <h5 class="mb-0"><i class="bi bi-shield-lock"></i> Sécurité</h5>
-            </div>
-            <div class="card-body">
-                <form method="post" asp-page-handler="Security">
-                    <div class="mb-3">
-                        <label class="form-label">Nouveau mot de passe</label>
-                        <input type="password" class="form-control" asp-for="NewPassword" placeholder="••••••••" />
+                    <div class="set-toggle-row">
+                        <div>
+                            <div class="set-toggle-label">Notifications</div>
+                            <div class="set-toggle-sub">Recevoir des alertes par email</div>
+                        </div>
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input" asp-for="EnableNotifications" />
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Confirmer le mot de passe</label>
-                        <input type="password" class="form-control" asp-for="ConfirmPassword" placeholder="••••••••" />
+
+                    <div class="set-toggle-row">
+                        <div>
+                            <div class="set-toggle-label">Thème sombre</div>
+                            <div class="set-toggle-sub">Interface en mode nuit</div>
+                        </div>
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input" asp-for="UseDarkTheme" />
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-warning">
-                        <i class="bi bi-lock"></i> Mettre à jour le mot de passe
+
+                    <button type="submit" class="set-btn set-btn-success">
+                        <i class="bi bi-check-lg"></i> Sauvegarder
                     </button>
+
                 </form>
             </div>
         </div>
+
+        <!-- Sécurité -->
+        <div class="set-section">
+            <div class="set-section-head">
+                <span class="set-icon set-icon-amber"><i class="bi bi-shield-lock"></i></span>
+                <span class="set-section-title">Sécurité</span>
+            </div>
+
+            <div class="set-section-body">
+                <form method="post" asp-page-handler="Security">
+
+                    <div class="set-field">
+                        <label asp-for="NewPassword">Nouveau mot de passe</label>
+                        <input class="set-input" type="password" asp-for="NewPassword" />
+                    </div>
+
+                    <div class="set-field">
+                        <label asp-for="ConfirmPassword">Confirmer le mot de passe</label>
+                        <input class="set-input" type="password" asp-for="ConfirmPassword" />
+                    </div>
+
+                    <button type="submit" class="set-btn set-btn-warning">
+                        <i class="bi bi-lock"></i> Mettre à jour
+                    </button>
+
+                </form>
+            </div>
+        </div>
+
     </div>
 </div>
 
+<style>
+
+/* ───────── FULL WIDTH FIX ───────── */
+body {
+    margin: 0;
+    padding: 0;
+    background: #f6f7fb;
+}
+
+.set-page {
+    width: 100%;
+    max-width: 1200px;   /* 👈 plus large */
+    margin: 0 auto;
+    padding: 1.2rem 1rem; /* 👈 moins de padding horizontal */
+}
+
+/* ───────── HEADER ───────── */
+.set-header {
+    margin-bottom: 1.5rem;
+}
+
+.set-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(99, 102, 241, 0.08);
+    color: #4f46e5;
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 999px;
+}
+
+.set-header h1 {
+    font-size: 1.7rem;
+    font-weight: 700;
+    margin-top: 8px;
+    color: #111827;
+}
+
+.set-header p {
+    color: #6b7280;
+}
+
+/* ───────── CARD ───────── */
+.set-section {
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+    transition: .2s;
+}
+
+.set-section:hover {
+    transform: translateY(-2px);
+}
+
+/* HEADER CARD */
+.set-section-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    background: #fafafa;
+}
+
+.set-section-title {
+    font-weight: 600;
+}
+
+/* ICONS */
+.set-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.set-icon-gray { background:#f3f4f6; }
+.set-icon-green { background:#10b981; color:white; }
+.set-icon-amber { background:#f59e0b; color:white; }
+
+/* BODY */
+.set-section-body {
+    padding: 1rem;
+}
+
+/* ALERT */
+.set-alert {
+    background: #ecfdf5;
+    border: 1px solid #6ee7b7;
+    color: #065f46;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+/* INPUT */
+.set-field {
+    margin-bottom: 0.9rem;
+}
+
+.set-field label {
+    font-size: 12px;
+    color: #6b7280;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.set-input {
+    width: 100%;
+    height: 38px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0 10px;
+    background: #f9fafb;
+}
+
+.set-input:focus {
+    border-color: #6366f1;
+    outline: none;
+}
+
+/* TOGGLES */
+.set-toggle-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+/* BUTTONS */
+.set-btn {
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.set-btn-primary {
+    background: #4f46e5;
+    color: white;
+}
+
+.set-btn-success {
+    background: #059669;
+    color: white;
+}
+
+.set-btn-warning {
+    background: #d97706;
+    color: white;
+}
+
+/* GRID */
+.set-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* RESPONSIVE */
+@@media (max-width: 768px) {
+    .set-two-col {
+        grid-template-columns: 1fr;
+    }
+
+    .set-page {
+        padding: 1rem;
+    }
+}
+
+</style>

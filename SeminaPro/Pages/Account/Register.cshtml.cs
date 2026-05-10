@@ -64,7 +64,7 @@ namespace SeminaPro.Pages.Account
 
         public IActionResult OnPost()
         {
-            var correlationId = HttpContext.TraceIdentifier;
+            var correlationId = HttpContext.Items[SeminaPro.Middleware.CorrelationIdMiddleware.CorrelationIdHeader]?.ToString() ?? HttpContext.TraceIdentifier;
 
             // Nettoyage des espaces
             FirstName = FirstName?.Trim() ?? string.Empty;

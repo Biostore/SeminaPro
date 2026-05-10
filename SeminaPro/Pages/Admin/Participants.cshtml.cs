@@ -11,138 +11,232 @@ namespace SeminaPro.Pages.Admin
         private readonly ApplicationDbContext _context;
         private readonly ILogger<ParticipantsModel> _logger;
 
-        public List<Participant>? Participants { get; set; }
-        public List<Specialite>? Specialites { get; set; }
+        public List<Participant> Participants { get; set; } = new();
+
+        public List<Specialite> Specialites { get; set; } = new();
 
         [BindProperty]
         public Participant Participant { get; set; } = new();
 
-        public ParticipantsModel(ApplicationDbContext context, ILogger<ParticipantsModel> logger)
+        public ParticipantsModel(
+            ApplicationDbContext context,
+            ILogger<ParticipantsModel> logger)
         {
             _context = context;
             _logger = logger;
         }
 
+        // =========================================
+        // GET
+        // =========================================
+
         public IActionResult OnGet(int? id)
         {
-            CheckAdmin();
-            LoadSpecialites();
-
-            if (id.HasValue)
+            try
             {
-                Participant = _context.Participants
-                    .Include(p => p.Specialite)
-                    .FirstOrDefault(p => p.Id == id.Value);
-                if (Participant == null)
-                    return NotFound();
-            }
+                CheckAdmin();
 
-            LoadParticipants();
-            return Page();
+                LoadParticipants();
+                LoadSpecialites();
+
+                // MODE MODIFICATION
+                if (id.HasValue)
+                {
+                    var participant = _context.Participants
+                        .FirstOrDefault(p => p.Id == id.Value);
+
+                    if (participant != null)
+                    {
+                        Participant = participant;
+                    }
+                }
+
+                return Page();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return RedirectToPage("/Login");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur GET Participants");
+                TempData["Error"] = ex.Message;
+
+                LoadParticipants();
+                LoadSpecialites();
+
+                return Page();
+            }
         }
+
+        // =========================================
+        // SAVE
+        // =========================================
 
         public IActionResult OnPostSave()
         {
-            CheckAdmin();
-            LoadSpecialites();
-
-            if (!ModelState.IsValid)
-            {
-                LoadParticipants();
-                return Page();
-            }
-
             try
             {
+                CheckAdmin();
+
+                LoadParticipants();
+                LoadSpecialites();
+
+                if (!ModelState.IsValid)
+                {
+                    TempData["Error"] = "Veuillez remplir tous les champs";
+
+                    return Page();
+                }
+
+                // AJOUT
                 if (Participant.Id == 0)
                 {
                     _context.Participants.Add(Participant);
-                    _logger.LogInformation($"Participant {Participant.Nom} {Participant.Prenom} créé");
-                }
-                else
-                {
-                    _context.Participants.Update(Participant);
-                    _logger.LogInformation($"Participant {Participant.Nom} {Participant.Prenom} modifié");
+
+                    TempData["Message"] =
+                        "Participant ajouté avec succès";
                 }
 
+                // MODIFICATION
+                else
+                {
+                    var participantDb = _context.Participants
+                        .FirstOrDefault(p => p.Id == Participant.Id);
+
+                    if (participantDb == null)
+                    {
+                        TempData["Error"] =
+                            "Participant introuvable";
+
+                        return Page();
+                    }
+
+                    participantDb.Nom =
+                        Participant.Nom;
+
+                    participantDb.Prenom =
+                        Participant.Prenom;
+
+                    participantDb.Email =
+                        Participant.Email;
+
+                    participantDb.NumeroTelephone =
+                        Participant.NumeroTelephone;
+
+                    participantDb.SpecialiteId =
+                        Participant.SpecialiteId;
+
+                    TempData["Message"] =
+                        "Participant modifié avec succès";
+                }
+
+                // IMPORTANT
                 _context.SaveChanges();
-                TempData["Message"] = Participant.Id == 0 ? "Participant créé avec succès" : "Participant modifié avec succès";
+
                 return RedirectToPage();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erreur lors de la sauvegarde du participant");
-                TempData["Error"] = "Erreur lors de la sauvegarde";
+                _logger.LogError(ex,
+                    "Erreur lors de la sauvegarde");
+
+                TempData["Error"] =
+                    ex.InnerException?.Message ?? ex.Message;
+
                 LoadParticipants();
+                LoadSpecialites();
+
                 return Page();
             }
         }
 
+        // =========================================
+        // DELETE
+        // =========================================
+
         public IActionResult OnPostDelete(int id)
         {
-            CheckAdmin();
-
             try
             {
-                var participant = _context.Participants.FirstOrDefault(p => p.Id == id);
+                CheckAdmin();
+
+                var participant = _context.Participants
+                    .FirstOrDefault(p => p.Id == id);
+
                 if (participant == null)
-                    return NotFound();
+                {
+                    TempData["Error"] =
+                        "Participant introuvable";
 
-                // Supprimer les inscriptions associées
-                var inscriptions = _context.Inscriptions.Where(i => i.ParticipantId == id).ToList();
-                _context.Inscriptions.RemoveRange(inscriptions);
+                    return RedirectToPage();
+                }
 
-                _context.Participants.Remove(participant);
+                // SUPPRIMER INSCRIPTIONS
+                var inscriptions = _context.Inscriptions
+                    .Where(i => i.ParticipantId == id)
+                    .ToList();
+
+                _context.Inscriptions
+                    .RemoveRange(inscriptions);
+
+                // SUPPRIMER PARTICIPANT
+                _context.Participants
+                    .Remove(participant);
+
                 _context.SaveChanges();
 
-                TempData["Message"] = "Participant supprimé avec succès";
-                _logger.LogInformation($"Participant {participant.Nom} {participant.Prenom} supprimé");
+                TempData["Message"] =
+                    "Participant supprimé avec succès";
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erreur lors de la suppression du participant");
-                TempData["Error"] = "Erreur lors de la suppression";
+                _logger.LogError(ex,
+                    "Erreur suppression participant");
+
+                TempData["Error"] =
+                    ex.InnerException?.Message ?? ex.Message;
             }
 
             return RedirectToPage();
         }
 
+        // =========================================
+        // LOAD PARTICIPANTS
+        // =========================================
+
         private void LoadParticipants()
         {
-            try
-            {
-                Participants = _context.Participants
-                    .Include(p => p.Specialite)
-                    .Include(p => p.Inscriptions)
-                    .OrderBy(p => p.Nom)
-                    .ToList();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erreur lors du chargement des participants");
-                Participants = new List<Participant>();
-            }
+            Participants = _context.Participants
+                .Include(p => p.Specialite)
+                .Include(p => p.Inscriptions)
+                .OrderByDescending(p => p.Id)
+                .ToList();
         }
+
+        // =========================================
+        // LOAD SPECIALITES
+        // =========================================
 
         private void LoadSpecialites()
         {
-            try
-            {
-                Specialites = _context.Specialites.OrderBy(s => s.Libelle).ToList();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erreur lors du chargement des spécialités");
-                Specialites = new List<Specialite>();
-            }
+            Specialites = _context.Specialites
+                .OrderBy(s => s.Libelle)
+                .ToList();
         }
+
+        // =========================================
+        // CHECK ADMIN
+        // =========================================
 
         private void CheckAdmin()
         {
-            var userRole = HttpContext.Session.GetString("UserRole");
+            var userRole =
+                HttpContext.Session.GetString("UserRole");
+
             if (userRole != "Admin")
             {
-                throw new UnauthorizedAccessException("Accès réservé aux administrateurs");
+                throw new UnauthorizedAccessException();
             }
         }
     }

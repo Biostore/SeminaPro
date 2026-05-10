@@ -4,252 +4,766 @@
     ViewData["Title"] = "SeminaPro - Accueil";
 }
 
-<!-- Hero Section with Video Background -->
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: "Segoe UI", sans-serif;
+        background: #f8fafc;
+        color: #0f172a;
+    }
+
+    /* ================= HERO ================= */
+    .hero {
+        position: relative;
+        height: 95vh;
+        min-height: 650px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        overflow: hidden;
+        color: white;
+    }
+
+    .hero-video {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.65);
+        z-index: 1;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+        padding: 20px;
+    }
+
+    .hero-badge {
+        display: inline-block;
+        background: rgba(99, 102, 241, 0.25);
+        color: #c7d2fe;
+        font-size: 13px;
+        padding: 6px 16px;
+        border-radius: 999px;
+        border: 1px solid rgba(165, 180, 252, 0.3);
+        margin-bottom: 24px;
+        letter-spacing: 0.04em;
+    }
+
+    .hero h1 {
+        font-size: 48px;
+        font-weight: 800;
+        line-height: 1.15;
+        margin-bottom: 16px;
+    }
+
+    .hero h1 span {
+        color: #818cf8;
+    }
+
+    .hero p {
+        font-size: 18px;
+        opacity: 0.8;
+        max-width: 580px;
+        margin: 0 auto 32px;
+        line-height: 1.7;
+    }
+
+    .hero-btns {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #4f46e5;
+        color: white;
+        padding: 13px 26px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+    .btn-primary:hover {
+        background: #4338ca;
+        transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 13px 26px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+    .btn-ghost:hover {
+        background: rgba(255, 255, 255, 0.18);
+        transform: translateY(-2px);
+    }
+
+    .hero-wave {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 70px;
+        background: linear-gradient(to top, #f8fafc, transparent);
+        z-index: 2;
+    }
+
+    /* ================= LAYOUT ================= */
+    .container {
+        max-width: 1160px;
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+
+    .section {
+        padding: 80px 0;
+    }
+
+    .section-label {
+        font-size: 12px;
+        color: #6366f1;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .section-title {
+        font-size: 32px;
+        font-weight: 800;
+        margin-bottom: 12px;
+        color: #0f172a;
+    }
+
+    .section-sub {
+        font-size: 16px;
+        color: #64748b;
+        line-height: 1.7;
+        max-width: 560px;
+    }
+
+    .section-header {
+        margin-bottom: 48px;
+    }
+
+    .section-header.centered {
+        text-align: center;
+    }
+
+    .section-header.centered .section-sub {
+        margin: 0 auto;
+    }
+
+    /* ================= STATS ================= */
+    .stats-section {
+        background: white;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 40px 0;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 20px;
+        border-right: 1px solid #e2e8f0;
+    }
+
+    .stat-item:last-child {
+        border-right: none;
+    }
+
+    .stat-num {
+        font-size: 34px;
+        font-weight: 800;
+        color: #4f46e5;
+        display: block;
+    }
+
+    .stat-lbl {
+        font-size: 14px;
+        color: #64748b;
+        margin-top: 4px;
+    }
+
+    /* ================= SERVICES ================= */
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+    }
+
+    .svc-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 30px 26px;
+        transition: all 0.3s ease;
+    }
+
+    .svc-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.09);
+        border-color: #c7d2fe;
+    }
+
+    .svc-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin-bottom: 18px;
+    }
+
+    .icon-indigo { background: #eef2ff; }
+    .icon-teal   { background: #f0fdf4; }
+    .icon-amber  { background: #fffbeb; }
+    .icon-rose   { background: #fff1f2; }
+    .icon-blue   { background: #eff6ff; }
+    .icon-purple { background: #faf5ff; }
+
+    .svc-card h4 {
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: #0f172a;
+    }
+
+    .svc-card p {
+        font-size: 14px;
+        color: #64748b;
+        line-height: 1.65;
+    }
+
+    /* ================= HOW IT WORKS ================= */
+    .how-section {
+        background: #f1f5f9;
+    }
+
+    .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+        position: relative;
+    }
+
+    .steps-grid::before {
+        content: '';
+        position: absolute;
+        top: 28px;
+        left: calc(16.66% + 16px);
+        right: calc(16.66% + 16px);
+        height: 2px;
+        background: #c7d2fe;
+        z-index: 0;
+    }
+
+    .step-card {
+        background: white;
+        border-radius: 18px;
+        padding: 30px 24px;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .step-num {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: #4f46e5;
+        color: white;
+        font-size: 20px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 18px;
+    }
+
+    .step-card h4 {
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: #0f172a;
+    }
+
+    .step-card p {
+        font-size: 14px;
+        color: #64748b;
+        line-height: 1.65;
+    }
+
+    /* ================= CATEGORIES ================= */
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+    }
+
+    .cat-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 24px 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    .cat-card:hover {
+        border-color: #4f46e5;
+        background: #f5f3ff;
+        transform: translateY(-3px);
+    }
+
+    .cat-emoji {
+        font-size: 32px;
+        margin-bottom: 10px;
+    }
+
+    .cat-card h5 {
+        font-size: 14px;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 4px;
+    }
+
+    .cat-card span {
+        font-size: 12px;
+        color: #94a3b8;
+    }
+
+    /* ================= TESTIMONIALS ================= */
+    .testimonials-section {
+        background: #f1f5f9;
+    }
+
+    .testi-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .testi-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 28px;
+    }
+
+    .testi-stars {
+        color: #f59e0b;
+        font-size: 14px;
+        margin-bottom: 14px;
+        letter-spacing: 2px;
+    }
+
+    .testi-text {
+        font-size: 15px;
+        color: #334155;
+        line-height: 1.75;
+        margin-bottom: 20px;
+        font-style: italic;
+    }
+
+    .testi-author {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .av-blue   { background: #dbeafe; color: #1d4ed8; }
+    .av-green  { background: #dcfce7; color: #16a34a; }
+    .av-purple { background: #ede9fe; color: #7c3aed; }
+    .av-pink   { background: #fce7f3; color: #be185d; }
+
+    .av-name { font-size: 14px; font-weight: 700; color: #0f172a; }
+    .av-role { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+
+    /* ================= CTA ================= */
+    .cta-section {
+        padding: 80px 0;
+    }
+
+    .cta-block {
+        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+        border-radius: 24px;
+        padding: 70px 40px;
+        text-align: center;
+        color: white;
+    }
+
+    .cta-block h2 {
+        font-size: 36px;
+        font-weight: 800;
+        margin-bottom: 14px;
+    }
+
+    .cta-block p {
+        font-size: 17px;
+        color: rgba(255, 255, 255, 0.65);
+        margin-bottom: 36px;
+        max-width: 480px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .cta-btns {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-white {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: white;
+        color: #312e81;
+        padding: 13px 28px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+    .btn-white:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+
+    .btn-outline-white {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: transparent;
+        color: white;
+        border: 1px solid rgba(255,255,255,0.35);
+        padding: 13px 28px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+    .btn-outline-white:hover {
+        background: rgba(255,255,255,0.1);
+        transform: translateY(-2px);
+    }
+
+    /* ================= RESPONSIVE ================= */
+    @@media (max-width: 900px) {
+        .hero h1 { font-size: 32px; }
+        .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        .stat-item:nth-child(2) { border-right: none; }
+        .services-grid { grid-template-columns: 1fr; }
+        .steps-grid { grid-template-columns: 1fr; }
+        .steps-grid::before { display: none; }
+        .categories-grid { grid-template-columns: repeat(2, 1fr); }
+        .testi-grid { grid-template-columns: 1fr; }
+        .cta-block h2 { font-size: 26px; }
+    }
+</style>
+
+
+<!-- ===== HERO ===== -->
 <section class="hero">
-    <!-- Video Background -->
-    <video autoplay muted loop class="hero-video">
+    <video autoplay muted loop playsinline class="hero-video">
         <source src="/videos/vidéo seminar.mp4" type="video/mp4">
     </video>
-
-    <!-- Overlay -->
     <div class="hero-overlay"></div>
-
-    <!-- Content -->
     <div class="hero-content">
-        <div class="container-lg">
-            <div class="row align-items-center">
-                <div class="col-lg-12">
-                    <h1 class="display-3 fw-bold mb-4">🚀 Bienvenue sur<br>SeminaPro</h1>
-                    <p class="lead mb-4">La plateforme révolutionnaire pour découvrir et participer aux meilleurs séminaires professionnels</p>
-                    <div class="d-flex gap-3 flex-wrap">
-                        @if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserEmail")))
-                        {
-                            <a href="/Account/Register" class="btn btn-light">
-                                <i class="bi bi-person-plus"></i> S'inscrire
-                            </a>
-                            <a href="/Seminaires/Index" class="btn btn-outline-light">
-                                <i class="bi bi-search"></i> Voir les séminaires
-                            </a>
-                        }
-                        else
-                        {
-                            <a href="/Seminaires/Index" class="btn btn-light">
-                                <i class="bi bi-search"></i> Parcourir
-                            </a>
-                            <a href="/Dashboard/Index" class="btn btn-outline-light">
-                                <i class="bi bi-speedometer2"></i> Mon tableau
-                            </a>
-                        }
-                    </div>
-                </div>
+        <div class="hero-badge">✨ Plateforme de séminaires #1 en Tunisie</div>
+        <h1>Découvrez les meilleurs<br><span>séminaires professionnels</span></h1>
+        <p>SeminaPro vous connecte aux formations qui font avancer votre carrière — filtrez, inscrivez-vous, et suivez vos progrès en un seul endroit.</p>
+        <div class="hero-btns">
+            <a href="/Seminaires/Index" class="btn-primary">🔍 Explorer les séminaires</a>
+            <a href="/Account/Register" class="btn-ghost">S'inscrire gratuitement</a>
+        </div>
+    </div>
+    <div class="hero-wave"></div>
+</section>
+
+
+<!-- ===== STATS ===== -->
+<section class="stats-section">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-num">1 200+</span>
+                <div class="stat-lbl">Séminaires disponibles</div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-num">18 000</span>
+                <div class="stat-lbl">Participants inscrits</div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-num">350+</span>
+                <div class="stat-lbl">Formateurs certifiés</div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-num">97%</span>
+                <div class="stat-lbl">Taux de satisfaction</div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Services Section -->
-<section class="py-5">
-    <div class="container-lg">
-        <h2 class="text-center mb-5 fw-bold">🎯 Nos Services</h2>
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card h-100 text-center shadow-sm hover-effect">
-                    <div class="card-body">
-                        <div style="font-size: 3rem;">🔍</div>
-                        <h5 class="card-title">Recherche Avancée</h5>
-                        <p class="card-text text-muted">Trouvez les séminaires parfaits selon vos critères : prix, spécialité, date</p>
-                    </div>
-                </div>
+
+<!-- ===== SERVICES ===== -->
+<section class="section">
+    <div class="container">
+        <div class="section-header centered">
+            <p class="section-label">Nos services</p>
+            <h2 class="section-title">Tout ce dont vous avez besoin</h2>
+            <p class="section-sub">De la recherche à la certification, SeminaPro couvre chaque étape de votre parcours de formation.</p>
+        </div>
+        <div class="services-grid">
+            <div class="svc-card">
+                <div class="svc-icon icon-indigo">🔍</div>
+                <h4>Recherche intelligente</h4>
+                <p>Filtrez par domaine, ville, date ou format (présentiel / en ligne) pour trouver la formation parfaite en quelques secondes.</p>
             </div>
-            <div class="col-md-4">
-                <div class="card h-100 text-center shadow-sm hover-effect">
-                    <div class="card-body">
-                        <div style="font-size: 3rem;">✍️</div>
-                        <h5 class="card-title">Inscription Facile</h5>
-                        <p class="card-text text-muted">Inscrivez-vous en quelques clics et gérez vos participations</p>
-                    </div>
-                </div>
+            <div class="svc-card">
+                <div class="svc-icon icon-teal">✍️</div>
+                <h4>Inscription rapide</h4>
+                <p>Confirmez votre place en 2 clics avec confirmation instantanée et rappel automatique par email avant chaque session.</p>
             </div>
-            <div class="col-md-4">
-                <div class="card h-100 text-center shadow-sm hover-effect">
-                    <div class="card-body">
-                        <div style="font-size: 3rem;">📊</div>
-                        <h5 class="card-title">Statistiques</h5>
-                        <p class="card-text text-muted">Suivez vos inscriptions et consultez vos notifications</p>
-                    </div>
-                </div>
+            <div class="svc-card">
+                <div class="svc-icon icon-amber">📊</div>
+                <h4>Suivi & statistiques</h4>
+                <p>Tableau de bord personnel pour visualiser vos participations, heures de formation accumulées et certifications obtenues.</p>
+            </div>
+            <div class="svc-card">
+                <div class="svc-icon icon-rose">🏅</div>
+                <h4>Certificats vérifiables</h4>
+                <p>Recevez un certificat numérique partageable sur LinkedIn à l'issue de chaque séminaire complété avec succès.</p>
+            </div>
+            <div class="svc-card">
+                <div class="svc-icon icon-blue">💬</div>
+                <h4>Espace communautaire</h4>
+                <p>Échangez avec d'autres participants, posez vos questions aux formateurs et élargissez votre réseau professionnel.</p>
+            </div>
+            <div class="svc-card">
+                <div class="svc-icon icon-purple">🔔</div>
+                <h4>Alertes personnalisées</h4>
+                <p>Recevez des notifications dès qu'un nouveau séminaire correspond à vos centres d'intérêt ou à votre secteur d'activité.</p>
             </div>
         </div>
     </div>
 </section>
 
-<!-- CTA Section -->
-<section class="py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; margin: 40px 0;">
-    <div class="container-lg text-center">
-        <h3 class="fw-bold mb-4">Prêt à explorer les meilleurs séminaires?</h3>
-        <p class="lead mb-4">Rejoignez des milliers de participants satisfaits</p>
-        @if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserEmail")))
-        {
-            <a href="/Account/Register" class="btn btn-light btn-lg">
-                <i class="bi bi-rocket"></i> Commencer maintenant
-            </a>
-        }
-        else
-        {
-            <a href="/Seminaires/Index" class="btn btn-light btn-lg">
-                <i class="bi bi-search"></i> Chercher un séminaire
-            </a>
-        }
+
+<!-- ===== COMMENT ÇA MARCHE ===== -->
+<section class="section how-section">
+    <div class="container">
+        <div class="section-header centered">
+            <p class="section-label">Comment ça marche</p>
+            <h2 class="section-title">Simple en 3 étapes</h2>
+            <p class="section-sub">Rejoindre votre prochain séminaire ne prend que quelques minutes.</p>
+        </div>
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-num">1</div>
+                <h4>Créez votre compte</h4>
+                <p>Inscription gratuite en moins de 2 minutes. Aucune carte bancaire requise pour commencer à explorer notre catalogue.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">2</div>
+                <h4>Trouvez votre séminaire</h4>
+                <p>Parcourez le catalogue ou utilisez la recherche avancée pour cibler exactement le séminaire qui correspond à vos besoins.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">3</div>
+                <h4>Participez & progressez</h4>
+                <p>Confirmez votre inscription, recevez tous les détails par email et participez — en salle ou à distance selon votre choix.</p>
+            </div>
+        </div>
     </div>
 </section>
 
-<!-- Séminaires Récents Section -->
-<section class="py-5 bg-light">
-    <div class="container-lg">
-        <div class="d-flex justify-content-between align-items-center mb-5">
-            <h2 class="fw-bold">📅 Séminaires à Venir</h2>
-            <a href="/Seminaires/Index" class="btn btn-outline-primary">
-                <i class="bi bi-arrow-right"></i> Voir tous
+
+<!-- ===== CATÉGORIES ===== -->
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <p class="section-label">Catégories populaires</p>
+            <h2 class="section-title">Explorez par domaine</h2>
+            <p class="section-sub">Des formations dans tous les secteurs clés de l'économie tunisienne et internationale.</p>
+        </div>
+        <div class="categories-grid">
+            <a href="/Seminaires/Index?categorie=management" class="cat-card">
+                <div class="cat-emoji">🏢</div>
+                <h5>Management</h5>
+                <span>142 séminaires</span>
+            </a>
+            <a href="/Seminaires/Index?categorie=digital" class="cat-card">
+                <div class="cat-emoji">💻</div>
+                <h5>Digital & Tech</h5>
+                <span>198 séminaires</span>
+            </a>
+            <a href="/Seminaires/Index?categorie=finance" class="cat-card">
+                <div class="cat-emoji">📈</div>
+                <h5>Finance & Comptabilité</h5>
+                <span>87 séminaires</span>
+            </a>
+            <a href="/Seminaires/Index?categorie=rh" class="cat-card">
+                <div class="cat-emoji">👥</div>
+                <h5>Ressources Humaines</h5>
+                <span>115 séminaires</span>
+            </a>
+            <a href="/Seminaires/Index?categorie=marketing" class="cat-card">
+                <div class="cat-emoji">📣</div>
+                <h5>Marketing & Vente</h5>
+                <span>93 séminaires</span>
+            </a>
+            <a href="/Seminaires/Index?categorie=juridique" class="cat-card">
+                <div class="cat-emoji">⚖️</div>
+                <h5>Droit & Juridique</h5>
+                <span>64 séminaires</span>
+            </a>
+            <a href="/Seminaires/Index?categorie=sante" class="cat-card">
+                <div class="cat-emoji">🏥</div>
+                <h5>Santé & Sécurité</h5>
+                <span>78 séminaires</span>
+            </a>
+            <a href="/Seminaires/Index?categorie=langues" class="cat-card">
+                <div class="cat-emoji">🌍</div>
+                <h5>Langues</h5>
+                <span>56 séminaires</span>
             </a>
         </div>
-
-        @if (Model.SeminairesRecents?.Count > 0)
-        {
-            <div class="row g-4">
-                @foreach (var seminaire in Model.SeminairesRecents.Take(6))
-                {
-                    <div class="col-md-4 col-lg-4">
-                        <div class="card h-100 shadow-sm hover-effect" style="transition: all 0.3s ease;">
-                            <div class="card-body d-flex flex-column">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <span class="badge bg-primary"><i class="bi bi-tag"></i> @seminaire.Code</span>
-                                    <span class="badge bg-success">@seminaire.Tarif.ToString("C")</span>
-                                </div>
-                                <h5 class="card-title fw-bold mb-2">@seminaire.Titre</h5>
-                                <div class="d-flex flex-column gap-2 flex-grow-1">
-                                    <small class="text-muted">
-                                        <i class="bi bi-geo-alt"></i> @seminaire.Lieu
-                                    </small>
-                                    <small class="text-muted">
-                                        <i class="bi bi-calendar-event"></i> @seminaire.DateSeminaire.ToString("dd/MM/yyyy")
-                                    </small>
-                                    <small class="text-muted">
-                                        <i class="bi bi-people"></i> @(seminaire.Inscriptions?.Count ?? 0) / @seminaire.NombreMaximal inscrits
-                                    </small>
-                                </div>
-                                <div class="mt-3">
-                                    <a href="/Seminaires/Inscription?id=@seminaire.Id" class="btn btn-primary btn-sm w-100">
-                                        <i class="bi bi-check-circle"></i> S'inscrire
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-        }
-        else
-        {
-            <div class="alert alert-info text-center">
-                <i class="bi bi-info-circle"></i> Aucun séminaire disponible pour le moment.
-            </div>
-        }
     </div>
 </section>
 
-<!-- Séminaires Populaires Section -->
-<section class="py-5">
-    <div class="container-lg">
-        <div class="d-flex justify-content-between align-items-center mb-5">
-            <h2 class="fw-bold">🔥 Les Plus Populaires</h2>
-            <a href="/Seminaires/Index" class="btn btn-outline-primary">
-                <i class="bi bi-arrow-right"></i> Voir tous
-            </a>
+
+<!-- ===== TÉMOIGNAGES ===== -->
+<section class="section testimonials-section">
+    <div class="container">
+        <div class="section-header centered">
+            <p class="section-label">Témoignages</p>
+            <h2 class="section-title">Ils nous font confiance</h2>
+            <p class="section-sub">Des professionnels de tous secteurs utilisent SeminaPro pour développer leurs compétences.</p>
         </div>
-
-        @if (Model.SeminairesMostPopular?.Count > 0)
-        {
-            <div class="row g-4">
-                @foreach (var seminaire in Model.SeminairesMostPopular.Take(6))
-                {
-                    <div class="col-md-4 col-lg-4">
-                        <div class="card h-100 shadow-sm hover-effect" style="transition: all 0.3s ease;">
-                            <div class="card-body d-flex flex-column">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <span class="badge bg-info"><i class="bi bi-fire"></i> @(seminaire.Inscriptions?.Count ?? 0) inscrits</span>
-                                    <span class="badge bg-success">@seminaire.Tarif.ToString("C")</span>
-                                </div>
-                                <h5 class="card-title fw-bold mb-2">@seminaire.Titre</h5>
-                                <div class="d-flex flex-column gap-2 flex-grow-1">
-                                    <small class="text-muted">
-                                        <i class="bi bi-geo-alt"></i> @seminaire.Lieu
-                                    </small>
-                                    <small class="text-muted">
-                                        <i class="bi bi-calendar-event"></i> @seminaire.DateSeminaire.ToString("dd/MM/yyyy")
-                                    </small>
-                                    <small class="text-muted">
-                                        <i class="bi bi-people"></i> @(seminaire.Inscriptions?.Count ?? 0) / @seminaire.NombreMaximal inscrits
-                                    </small>
-                                </div>
-                                <div class="mt-3">
-                                    <a href="/Seminaires/Inscription?id=@seminaire.Id" class="btn btn-primary btn-sm w-100">
-                                        <i class="bi bi-check-circle"></i> S'inscrire
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-        }
-        else
-        {
-            <div class="alert alert-info text-center">
-                <i class="bi bi-info-circle"></i> Aucun séminaire populaire pour le moment.
-            </div>
-        }
-    </div>
-</section>
-
-<!-- Features -->
-<section class="py-5 bg-white rounded-lg shadow-sm">
-    <div class="container-lg">
-        <h2 class="text-center mb-5 fw-bold">✨ Pourquoi SeminaPro?</h2>
-        <div class="row g-4 align-items-center">
-            <div class="col-md-6">
-                <div class="d-flex mb-4" style="gap: 1.5rem;">
-                    <div style="font-size: 2rem;">🎓</div>
+        <div class="testi-grid">
+            <div class="testi-card">
+                <div class="testi-stars">★★★★★</div>
+                <p class="testi-text">"Grâce à SeminaPro, j'ai trouvé un séminaire sur le management agile en moins de 5 minutes. L'inscription était ultra-simple et la confirmation immédiate."</p>
+                <div class="testi-author">
+                    <div class="avatar av-blue">SB</div>
                     <div>
-                        <h5 class="fw-bold">Formations Qualifiantes</h5>
-                        <p class="text-muted">Des séminaires reconnus par les professionnels</p>
-                    </div>
-                </div>
-                <div class="d-flex mb-4" style="gap: 1.5rem;">
-                    <div style="font-size: 2rem;">👥</div>
-                    <div>
-                        <h5 class="fw-bold">Réseau Professionnel</h5>
-                        <p class="text-muted">Connectez-vous avec d'autres professionnels</p>
-                    </div>
-                </div>
-                <div class="d-flex" style="gap: 1.5rem;">
-                    <div style="font-size: 2rem;">🏆</div>
-                    <div>
-                        <h5 class="fw-bold">Certificats Officiels</h5>
-                        <p class="text-muted">Obtenez des certificats pour votre CV</p>
+                        <div class="av-name">Sami Belkasem</div>
+                        <div class="av-role">Chef de projet · Tunis</div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 text-center">
-                <div style="font-size: 5rem;">🌟</div>
+            <div class="testi-card">
+                <div class="testi-stars">★★★★★</div>
+                <p class="testi-text">"Le tableau de bord de suivi est excellent. Je visualise toutes mes formations passées et télécharge mes certificats facilement pour les partager sur LinkedIn."</p>
+                <div class="testi-author">
+                    <div class="avatar av-green">LB</div>
+                    <div>
+                        <div class="av-name">Lina Baccouche</div>
+                        <div class="av-role">DRH · Sfax</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testi-card">
+                <div class="testi-stars">★★★★★</div>
+                <p class="testi-text">"Plateforme moderne et très intuitive. Les notifications de rappel sont vraiment pratiques pour ne jamais manquer une session importante."</p>
+                <div class="testi-author">
+                    <div class="avatar av-purple">KM</div>
+                    <div>
+                        <div class="av-name">Karim Makhlouf</div>
+                        <div class="av-role">Formateur indépendant · Sousse</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testi-card">
+                <div class="testi-stars">★★★★⭐</div>
+                <p class="testi-text">"J'ai découvert des séminaires que je n'aurais jamais trouvés ailleurs. Le filtre par domaine et par ville est très bien pensé, un vrai gain de temps."</p>
+                <div class="testi-author">
+                    <div class="avatar av-pink">RA</div>
+                    <div>
+                        <div class="av-name">Rim Ayari</div>
+                        <div class="av-role">Consultante RH · Monastir</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-@if (User?.Identity?.IsAuthenticated != true)
-{
-    <div class="d-flex gap-2 justify-content-center">
-        <a class="btn btn-primary btn-lg" href="/Identity/Account/Register">S'inscrire</a>
-        <a class="btn btn-outline-primary btn-lg" href="/seminaires">Voir les séminaires</a>
+
+<!-- ===== CTA FINAL ===== -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-block">
+            <h2>Prêt à développer vos compétences ?</h2>
+            <p>Rejoignez 18 000 professionnels qui font confiance à SeminaPro pour leur formation continue.</p>
+            <div class="cta-btns">
+                <a href="/Account/Register" class="btn-white">🚀 S'inscrire gratuitement</a>
+                <a href="/Seminaires/Index" class="btn-outline-white">📋 Voir le catalogue</a>
+            </div>
+        </div>
     </div>
-}
+</section>

@@ -1,0 +1,14 @@
+/* ========================================
+   ADMIN LAYOUT - CSS VARIABLES
+   ======================================== */
+
+:root {
+    /* Admin Color Scheme - Blue based */
+    --admin-dark: #1a1a2e;
+    --admin-accent: #6366f1;
+    --admin-accent-light: #818cf8;
+    --admin-success: #10b981;
+    --admin-info: #0ea5e9;
+    --admin-warning: #f59e0b;
+    --admin-danger: #ef4444;
+}

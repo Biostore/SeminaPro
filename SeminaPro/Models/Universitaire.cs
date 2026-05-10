@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SeminaPro.Models
 {
-    [Table("Universitaires")]
     public class Universitaire : Participant
     {
         [StringLength(100)]

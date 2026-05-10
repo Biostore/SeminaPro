@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SeminaPro.Models
 {
-    [Table("Industriels")]
     public class Industriel : Participant
     {
         [StringLength(100)]

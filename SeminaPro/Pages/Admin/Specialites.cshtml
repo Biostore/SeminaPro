@@ -1,153 +1,349 @@
-@page
+@page "{id?}"
 @model SeminaPro.Pages.Admin.SpecialitesModel
 @{
-    ViewData["Title"] = "Gérer les Spécialités";
+    ViewData["Title"] = "Gestion des Spécialités";
 }
 
-<link rel="stylesheet" href="~/css/admin-seminaires.css" asp-append-version="true" />
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 
-<div class="admin-container">
-    <!-- Header -->
-    <div class="admin-header">
-        <h1><i class="bi bi-tag-fill"></i> Gestion des Spécialités</h1>
-        <p>Ajouter, modifier ou supprimer des spécialités</p>
+<div class="page-wrapper">
+
+    <!-- HEADER -->
+    <div class="header">
+
+        <div>
+            <h1>Gestion des Spécialités</h1>
+            <p>Administration des spécialités</p>
+        </div>
+
+        <div class="counter">
+            <span>@(Model.Specialites?.Count ?? 0)</span>
+            <small>Total</small>
+        </div>
+
     </div>
 
-    <!-- Messages -->
+    <!-- ALERTS -->
     @if (!string.IsNullOrEmpty(TempData["Message"]?.ToString()))
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle"></i> @TempData["Message"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="alert success">
+            <i class="bi bi-check-circle-fill"></i>
+            @TempData["Message"]
         </div>
     }
+
     @if (!string.IsNullOrEmpty(TempData["Error"]?.ToString()))
     {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-circle"></i> @TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="alert error">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            @TempData["Error"]
         </div>
     }
 
-    <div class="row">
-        <!-- Formulaire -->
-        <div class="col-lg-4 mb-4">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h6 class="mb-0"><i class="bi bi-tag-plus"></i> @(Model.Specialite?.Id == 0 ? "Ajouter" : "Modifier") Spécialité</h6>
-                </div>
-                <div class="card-body">
-                    <form method="post" asp-page-handler="Save">
-                        <input type="hidden" asp-for="Specialite.Id" />
+    <div class="grid">
 
-                        <div class="mb-3">
-                            <label asp-for="Specialite.Libelle" class="form-label">Libellé</label>
-                            <input type="text" class="form-control" asp-for="Specialite.Libelle" required />
-                            <span class="text-danger" asp-validation-for="Specialite.Libelle"></span>
-                        </div>
+        <!-- FORM -->
+        <div class="card">
 
-                        <div class="mb-3">
-                            <label asp-for="Specialite.Abbreviation" class="form-label">Abréviation</label>
-                            <input type="text" class="form-control" asp-for="Specialite.Abbreviation" maxlength="10" />
-                            <span class="text-danger" asp-validation-for="Specialite.Abbreviation"></span>
-                            <small class="text-muted">Max. 10 caractères</small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Specialite.Description" class="form-label">Description</label>
-                            <textarea class="form-control" asp-for="Specialite.Description" rows="3" maxlength="500"></textarea>
-                            <span class="text-danger" asp-validation-for="Specialite.Description"></span>
-                            <small class="text-muted">Max. 500 caractères</small>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-check"></i> Enregistrer</button>
-                    </form>
-                </div>
+            <div class="card-header">
+                <h3>
+                    @(Model.Specialite?.Id > 0 ? "Modifier Spécialité" : "Ajouter Spécialité")
+                </h3>
+                <p>Remplir les informations</p>
             </div>
+
+            <form method="post" asp-page-handler="Save">
+
+                <input type="hidden" asp-for="Specialite.Id" />
+
+                <label>Libellé</label>
+                <input asp-for="Specialite.Libelle" class="input" />
+
+                <label>Abréviation</label>
+                <input asp-for="Specialite.Abbreviation" class="input" />
+
+                <label>Description</label>
+                <textarea asp-for="Specialite.Description" class="input"></textarea>
+
+                <button type="submit" class="btn-primary">
+                    Enregistrer
+                </button>
+
+            </form>
+
         </div>
 
-        <!-- Liste des Spécialités -->
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header bg-secondary text-white">
-                    <h6 class="mb-0"><i class="bi bi-list-ul"></i> Liste des Spécialités (@Model.Specialites?.Count ?? 0)</h6>
-                </div>
-                <div class="card-body p-0">
-                    @if (Model.Specialites != null && Model.Specialites.Count > 0)
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Libellé</th>
-                                        <th>Abréviation</th>
-                                        <th>Description</th>
-                                        <th>Participants</th>
-                                        <th>Séminaires</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var specialite in Model.Specialites)
-                                    {
-                                        <tr>
-                                            <td><strong>@specialite.Libelle</strong></td>
-                                            <td>
-                                                @if (!string.IsNullOrEmpty(specialite.Abbreviation))
-                                                {
-                                                    <span class="badge bg-secondary">@specialite.Abbreviation</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-muted">-</span>
-                                                }
-                                            </td>
-                                            <td>
-                                                @if (!string.IsNullOrEmpty(specialite.Description))
-                                                {
-                                                    <small>@specialite.Description.Substring(0, Math.Min(50, specialite.Description.Length))...</small>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-muted">-</span>
-                                                }
-                                            </td>
-                                            <td><span class="badge bg-info">@specialite.Participants.Count</span></td>
-                                            <td><span class="badge bg-success">@specialite.Seminaires.Count</span></td>
-                                            <td>
-                                                <a href="?id=@specialite.Id" class="btn btn-sm btn-outline-primary" title="Modifier">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
-                                                <form method="post" asp-page-handler="Delete" asp-route-id="@specialite.Id" style="display:inline;" 
-                                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette spécialité ?')">
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer" 
-                                                            @((specialite.Participants.Count > 0 || specialite.Seminaires.Count > 0) ? "disabled" : "")>
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="alert alert-info m-3 mb-0">
-                            <i class="bi bi-info-circle"></i> Aucune spécialité enregistrée.
-                        </div>
-                    }
-                </div>
+        <!-- TABLE -->
+        <div class="card">
+
+            <div class="card-header">
+                <h3>Liste des Spécialités</h3>
+                <p>Gestion complète</p>
             </div>
+
+            @if (Model.Specialites != null && Model.Specialites.Count > 0)
+            {
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Spécialité</th>
+                            <th>Abr.</th>
+                            <th>Description</th>
+                            <th>Participants</th>
+                            <th>Séminaires</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var s in Model.Specialites)
+                        {
+                            <tr>
+
+                                <td>
+                                    <div class="flex">
+                                        <div class="icon">🎓</div>
+                                        <strong>@s.Libelle</strong>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <span class="badge">@s.Abbreviation</span>
+                                </td>
+
+                                <td>
+                                    @(string.IsNullOrEmpty(s.Description)
+                                        ? "-"
+                                        : (s.Description.Length > 40
+                                            ? s.Description.Substring(0, 40) + "..."
+                                            : s.Description))
+                                </td>
+
+                                <td>@s.Participants.Count</td>
+                                <td>@s.Seminaires.Count</td>
+
+                                <td>
+
+                                    <!-- EDIT FIX IMPORTANT -->
+                                    <a asp-page="./Specialites"
+                                           asp-route-id="@s.Id"
+                                           class="btn edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    <!-- DELETE -->
+                                    <form method="post"
+                                          asp-page-handler="Delete"
+                                          asp-route-id="@s.Id"
+                                          class="inline">
+
+                                        <button class="btn delete"
+                                                onclick="return confirm('Supprimer ?')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+            }
+            else
+            {
+                <div class="empty">
+                    Aucune spécialité disponible
+                </div>
+            }
+
         </div>
+
     </div>
+
 </div>
 
 <style>
-    .admin-container { padding: 2rem 0; }
-    .admin-header { margin-bottom: 2rem; }
-    .admin-header h1 { font-size: 1.8rem; font-weight: 700; }
-    .admin-header p { color: #6c757d; }
-    .table-hover tbody tr:hover { background-color: rgba(0, 123, 255, 0.05); }
+
+    body {
+        margin: 0;
+        font-family: Segoe UI;
+        background: #f5f7ff;
+    }
+
+    /* HEADER */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+        .header h1 {
+            color: #0f172a;
+            font-size: 24px;
+        }
+
+        .header p {
+            color: #64748b;
+        }
+
+    .counter {
+        width: 65px;
+        height: 65px;
+        background: #1e3a8a;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+    }
+
+    /* GRID */
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 20px;
+    }
+
+    /* CARD */
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .card-header h3 {
+        color: #1e3a8a;
+        margin: 0;
+    }
+
+    .card-header p {
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    /* INPUT */
+    .input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+    }
+
+        .input:focus {
+            outline: none;
+            border-color: #1d4ed8;
+            box-shadow: 0 0 0 3px rgba(29,78,216,0.2);
+        }
+
+    /* BUTTON */
+    .btn-primary {
+        width: 100%;
+        padding: 10px;
+        background: #1e3a8a;
+        color: white;
+        border: none;
+        border-radius: 8px;
+    }
+
+    /* TABLE */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    thead {
+        background: #1e3a8a;
+        color: white;
+    }
+
+    th, td {
+        padding: 10px;
+    }
+
+    /* FLEX */
+    .flex {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .icon {
+        width: 30px;
+        height: 30px;
+        background: #dbeafe;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* BADGE */
+    .badge {
+        background: #dbeafe;
+        color: #1d4ed8;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+    }
+
+    /* ACTIONS */
+    .btn {
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+    }
+
+    .edit {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .delete {
+        background: #fee2e2;
+        color: #dc2626;
+        border: none;
+    }
+
+    /* INLINE FORM */
+    .inline {
+        display: inline;
+    }
+
+    /* ALERT */
+    .success {
+        background: #ecfdf5;
+        color: #047857;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+    .error {
+        background: #fef2f2;
+        color: #b91c1c;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+    /* EMPTY */
+    .empty {
+        text-align: center;
+        padding: 30px;
+        color: #64748b;
+    }
+
 </style>

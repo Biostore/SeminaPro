@@ -27,7 +27,7 @@ namespace SeminaPro.Pages.Admin
             Specialites = _context.Specialites.ToList();    
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
             var correlationId = HttpContext.TraceIdentifier;
 
@@ -39,14 +39,31 @@ namespace SeminaPro.Pages.Admin
                 return Page();
             }
 
+            // Gestion de l'upload d'image
+            var file = Request.Form.Files["imageFile"];
+            if (file != null && file.Length > 0)
+            {
+                var uploadsFolder = Path.Combine("wwwroot", "images", "seminaires");
+                if (!Directory.Exists(uploadsFolder))
+                    Directory.CreateDirectory(uploadsFolder);
+
+                var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+                Seminaire.ImageUrl = "/images/seminaires/" + uniqueFileName;
+            }
+
             try
             {
                 _context.Seminaires.Add(Seminaire);
                 _context.SaveChanges();
 
                 _logger.LogInformation(
-                    "Séminaire ajouté avec succès. CorrelationId: {CorrelationId}, Code: {Code}", 
-                    correlationId, 
+                    "Séminaire ajouté avec succès. CorrelationId: {CorrelationId}, Code: {Code}",
+                    correlationId,
                     Seminaire.Code);
 
                 TempData["Message"] = "Séminaire ajouté avec succès";
@@ -55,8 +72,8 @@ namespace SeminaPro.Pages.Admin
             catch (Exception ex)
             {
                 _logger.LogError(
-                    ex, 
-                    "Erreur lors de l'ajout du séminaire. CorrelationId: {CorrelationId}", 
+                    ex,
+                    "Erreur lors de l'ajout du séminaire. CorrelationId: {CorrelationId}",
                     correlationId);
                 ModelState.AddModelError("", "Une erreur est survenue");
                 Specialites = _context.Specialites.ToList();
