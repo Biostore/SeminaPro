@@ -1,52 +1,548 @@
 @page "{id}"
 @model SeminaPro.Pages.Seminaires.InscriptionModel
+
 @{
-    ViewData["Title"] = "S'inscrire";
+    ViewData["Title"] = "Inscription";
 }
 
-<div class="container py-4">
-    @if (Model.Seminaire != null)
-    {
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow">
-                    <div class="card-header bg-success text-white">
-                        <h4 class="mb-0"><i class="bi bi-check-circle"></i> Inscription au Séminaire</h4>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet">
+
+<div class="inscription-wrapper">
+
+    <div class="container py-5">
+
+        @if (Model.Seminaire != null)
+        {
+            <div class="row justify-content-center">
+
+                <div class="col-lg-7">
+
+                    <div class="seminaire-card">
+
+                        <!-- HEADER -->
+                        <div class="card-header-custom">
+
+                            <div class="header-badge">
+                                <i class="bi bi-calendar-check"></i>
+                            </div>
+
+                            <h1>
+                                Inscription au Séminaire
+                            </h1>
+
+                            <p>
+                                Réservez votre place rapidement.
+                            </p>
+
+                        </div>
+
+                        <!-- BODY -->
+                        <div class="card-body-custom">
+
+                            <!-- TITRE -->
+                            <div class="seminaire-title">
+
+                                @Model.Seminaire.Titre
+
+                            </div>
+
+                            <!-- INFOS -->
+                            <div class="seminaire-info">
+
+                                <div class="info-item">
+
+                                    <i class="bi bi-calendar-event"></i>
+
+                                    <div>
+
+                                        <span>Date</span>
+
+                                        <strong>
+                                            @Model.Seminaire.DateSeminaire.ToString("dd/MM/yyyy HH:mm")
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="info-item">
+
+                                    <i class="bi bi-geo-alt"></i>
+
+                                    <div>
+
+                                        <span>Lieu</span>
+
+                                        <strong>
+                                            @Model.Seminaire.Lieu
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="info-item">
+
+                                    <i class="bi bi-cash"></i>
+
+                                    <div>
+
+                                        <span>Tarif</span>
+
+                                        <strong>
+                                            @Model.Seminaire.Tarif.ToString("C")
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="info-item">
+
+                                    <i class="bi bi-upc-scan"></i>
+
+                                    <div>
+
+                                        <span>Code</span>
+
+                                        <strong>
+                                            @Model.Seminaire.Code
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <!-- SI DÉJÀ INSCRIT -->
+                            @if (Model.DejaInscrit)
+                            {
+                                <div class="already-box">
+
+                                    <i class="bi bi-check-circle-fill"></i>
+
+                                    <div>
+
+                                        <strong>
+                                            Vous êtes déjà inscrit à ce séminaire
+                                        </strong>
+
+                                        <p class="mb-0">
+                                            Votre inscription est enregistrée.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="button-group mt-4">
+
+                                    <a href="/Dashboard/Index"
+                                           class="btn-dashboard">
+
+                                        <i class="bi bi-speedometer2"></i>
+                                        Tableau de Bord
+
+                                    </a>
+
+                                    <a href="/Seminaires/Index"
+                                           class="btn-back">
+
+                                        <i class="bi bi-arrow-left"></i>
+                                        Retour
+
+                                    </a>
+
+                                </div>
+                            }
+                            else
+                            {
+                                <!-- FORM -->
+                                <form method="post">
+
+                                    <div class="confirm-box">
+
+                                        <input type="checkbox"
+                                               id="confirmCheckbox"
+                                               required>
+
+                                        <label for="confirmCheckbox">
+
+                                            Je confirme mon inscription à ce séminaire.
+
+                                        </label>
+
+                                    </div>
+
+                                    <div class="button-group">
+
+                                        <button type="submit"
+                                                class="btn-confirm">
+
+                                            <i class="bi bi-check-lg"></i>
+                                            Confirmer
+
+                                        </button>
+
+                                        <a href="/Seminaires/Index"
+                                               class="btn-back">
+
+                                            <i class="bi bi-arrow-left"></i>
+                                            Retour
+
+                                        </a>
+
+                                    </div>
+
+                                </form>
+                            }
+
+                        </div>
+
                     </div>
-                    <div class="card-body p-5">
-                        <h5 class="card-title">@Model.Seminaire.Titre</h5>
-                        <p class="card-text">
-                            <strong>Date :</strong> @Model.Seminaire.DateSeminaire.ToString("dd/MM/yyyy HH:mm")<br>
-                            <strong>Lieu :</strong> @Model.Seminaire.Lieu<br>
-                            <strong>Tarif :</strong> @Model.Seminaire.Tarif.ToString("C")
+
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <div class="row justify-content-center">
+
+                <div class="col-lg-5">
+
+                    <div class="error-card">
+
+                        <i class="bi bi-exclamation-circle-fill"></i>
+
+                        <h2>
+                            Séminaire introuvable
+                        </h2>
+
+                        <p>
+                            Le séminaire demandé n’existe pas.
                         </p>
 
-                        <form method="post">
-                            <div class="mb-3">
-                                <label for="confirmCheckbox" class="form-label">
-                                    <input type="checkbox" id="confirmCheckbox" name="confirm" required>
-                                    Je confirme mon inscription à ce séminaire
-                                </label>
-                            </div>
+                        <a href="/Seminaires/Index"
+                               class="btn-back">
 
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-success">
-                                    <i class="bi bi-check-circle"></i> Confirmer l'inscription
-                                </button>
-                                <a href="/Seminaires/Index" class="btn btn-secondary">
-                                    <i class="bi bi-arrow-left"></i> Retour
-                                </a>
-                            </div>
-                        </form>
+                            <i class="bi bi-arrow-left"></i>
+                            Retour
+
+                        </a>
+
                     </div>
+
                 </div>
+
             </div>
-        </div>
-    }
-    else
-    {
-        <div class="alert alert-danger">
-            Séminaire non trouvé
-        </div>
-    }
+        }
+
+    </div>
+
 </div>
+
+<style>
+
+    body {
+        font-family: 'Inter',sans-serif;
+        background: #f8fafc;
+    }
+
+    /* =========================================
+           WRAPPER
+        ========================================== */
+
+    .inscription-wrapper {
+        min-height: 100vh;
+    }
+
+    /* =========================================
+           CARD
+        ========================================== */
+
+    .seminaire-card {
+        background: white;
+        border-radius: 24px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 8px 25px rgba(15,23,42,0.05);
+    }
+
+    /* =========================================
+           HEADER
+        ========================================== */
+
+    .card-header-custom {
+        background: linear-gradient( 135deg, #0f172a, #1e3a8a );
+        padding: 45px 35px;
+        text-align: center;
+        color: white;
+    }
+
+    .header-badge {
+        width: 75px;
+        height: 75px;
+        margin: auto;
+        margin-bottom: 20px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+    }
+
+    .card-header-custom h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .card-header-custom p {
+        opacity: 0.8;
+        margin: 0;
+    }
+
+    /* =========================================
+           BODY
+        ========================================== */
+
+    .card-body-custom {
+        padding: 35px;
+    }
+
+    .seminaire-title {
+        font-size: 1.7rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    /* =========================================
+           INFOS
+        ========================================== */
+
+    .seminaire-info {
+        display: grid;
+        grid-template-columns: repeat(2,1fr);
+        gap: 18px;
+        margin-bottom: 35px;
+    }
+
+    .info-item {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 18px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        transition: 0.3s;
+    }
+
+        .info-item:hover {
+            transform: translateY(-3px);
+            border-color: #2563eb;
+        }
+
+        .info-item i {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #dbeafe;
+            color: #2563eb;
+            font-size: 1.2rem;
+        }
+
+        .info-item span {
+            display: block;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .info-item strong {
+            color: #0f172a;
+            font-size: 1rem;
+        }
+
+    /* =========================================
+           CONFIRM
+        ========================================== */
+
+    .confirm-box {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 18px;
+        padding: 20px;
+        display: flex;
+        gap: 12px;
+        margin-bottom: 30px;
+    }
+
+        .confirm-box input {
+            margin-top: 4px;
+            transform: scale(1.15);
+            accent-color: #2563eb;
+        }
+
+        .confirm-box label {
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+    /* =========================================
+           ALREADY
+        ========================================== */
+
+    .already-box {
+        background: #ecfdf5;
+        border: 1px solid #bbf7d0;
+        border-radius: 18px;
+        padding: 22px;
+        display: flex;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+        .already-box i {
+            color: #16a34a;
+            font-size: 1.7rem;
+        }
+
+        .already-box strong {
+            color: #166534;
+        }
+
+        .already-box p {
+            color: #15803d;
+            margin-top: 5px;
+        }
+
+    /* =========================================
+           BUTTONS
+        ========================================== */
+
+    .button-group {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .btn-confirm {
+        border: none;
+        background: linear-gradient( 135deg, #2563eb, #1d4ed8 );
+        color: white;
+        padding: 13px 24px;
+        border-radius: 14px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37,99,235,0.2);
+        }
+
+    .btn-back,
+    .btn-dashboard {
+        text-decoration: none;
+        padding: 13px 24px;
+        border-radius: 14px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+    .btn-back {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+        .btn-back:hover {
+            background: #cbd5e1;
+            color: #0f172a;
+        }
+
+    .btn-dashboard {
+        background: #0f172a;
+        color: white;
+    }
+
+        .btn-dashboard:hover {
+            background: #1e293b;
+            color: white;
+        }
+
+    /* =========================================
+           ERROR
+        ========================================== */
+
+    .error-card {
+        background: white;
+        border-radius: 24px;
+        padding: 50px 35px;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 8px 25px rgba(15,23,42,0.05);
+    }
+
+        .error-card i {
+            font-size: 4rem;
+            color: #ef4444;
+            margin-bottom: 20px;
+        }
+
+        .error-card h2 {
+            color: #0f172a;
+            margin-bottom: 10px;
+        }
+
+        .error-card p {
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+    /* =========================================
+           RESPONSIVE
+        ========================================== */
+
+    @@media(max-width:768px) {
+
+        .seminaire-info {
+            grid-template-columns: 1fr;
+        }
+
+        .button-group {
+            flex-direction: column;
+        }
+
+        .btn-confirm,
+        .btn-back,
+        .btn-dashboard {
+            width: 100%;
+            text-align: center;
+        }
+
+        .card-body-custom {
+            padding: 25px;
+        }
+
+        .card-header-custom {
+            padding: 35px 20px;
+        }
+
+        .seminaire-title {
+            font-size: 1.4rem;
+        }
+    }
+
+</style>

@@ -5,46 +5,321 @@
     Layout = "_DashboardLayout";
 }
 
+<div id="scroll-progress-bar"></div>
+<button id="back-to-top" title="Retour en haut" aria-label="Retour en haut">
+    <i class="bi bi-arrow-up-short"></i>
+</button>
+
+<!-- ══════════════════════════════════════════════════════════════
+     MODAL — MODIFIER PROFIL
+     Le formulaire N'utilise PAS <form> submit standard.
+     Il envoie via fetch() UNIQUEMENT les champs profil
+     → aucune incidence sur les inscriptions/séminaires.
+══════════════════════════════════════════════════════════════ -->
+<div class="modal fade" id="editProfileModal" tabindex="-1"
+     aria-labelledby="editProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 sp-modal">
+            <div class="modal-header border-0 sp-modal-header px-4 pt-4 pb-3">
+                <div>
+                    <h5 class="modal-title fw-bold mb-1" id="editProfileModalLabel">
+                        <i class="bi bi-person-gear me-2 text-sky"></i>Modifier mon profil
+                    </h5>
+                    <p class="mb-0 small text-muted-light">Vos informations personnelles</p>
+                </div>
+                <button type="button" class="btn-close btn-close-white ms-auto"
+                        data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body px-4 py-3 sp-modal-body">
+                <div id="profileFormAlert" class="alert d-none mb-3" role="alert"></div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="editNom" class="sp-label">Nom</label>
+                        <input type="text" class="form-control sp-input" id="editNom"
+                               value="@(Model.CurrentParticipant?.Nom ?? "")"
+                               placeholder="Votre nom" autocomplete="off"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="editPrenom" class="sp-label">Prénom</label>
+                        <input type="text" class="form-control sp-input" id="editPrenom"
+                               value="@(Model.CurrentParticipant?.Prenom ?? "")"
+                               placeholder="Votre prénom" autocomplete="off"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="editEmail" class="sp-label">Email</label>
+                        <input type="email" class="form-control sp-input" id="editEmail"
+                               value="@(Model.UserEmail ?? "")"
+                               placeholder="votre@email.com" autocomplete="off"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="editTelephone" class="sp-label">Téléphone</label>
+                        <input type="tel" class="form-control sp-input" id="editTelephone"
+                               value="@(Model.CurrentParticipant?.NumeroTelephone ?? "")"
+                               placeholder="+216 XX XXX XXX" autocomplete="off"/>
+                    </div>
+                </div>
+                <div class="mt-4 p-3 rounded-3 border" style="background:#fff;">
+                    <h6 class="fw-bold mb-3" style="font-size:.82rem;color:#0f172a;">
+                        <i class="bi bi-shield-lock me-1 text-sky"></i>
+                        Changer le mot de passe
+                        <span class="text-muted fw-normal ms-1">(laisser vide si inchangé)</span>
+                    </h6>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="editOldPw" class="sp-label">Ancien</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control sp-input" id="editOldPw" placeholder="••••••••"/>
+                                <button class="btn btn-outline-secondary toggle-pw" type="button" data-target="editOldPw"><i class="bi bi-eye"></i></button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editNewPw" class="sp-label">Nouveau</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control sp-input" id="editNewPw" placeholder="••••••••"/>
+                                <button class="btn btn-outline-secondary toggle-pw" type="button" data-target="editNewPw"><i class="bi bi-eye"></i></button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editConfirmPw" class="sp-label">Confirmer</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control sp-input" id="editConfirmPw" placeholder="••••••••"/>
+                                <button class="btn btn-outline-secondary toggle-pw" type="button" data-target="editConfirmPw"><i class="bi bi-eye"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 px-4 pb-4 pt-2 sp-modal-body">
+                <button type="button" class="btn btn-light px-4 rounded-3" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn sp-btn-primary px-4" id="saveProfileBtn">
+                    <i class="bi bi-check-lg me-1"></i>Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<style>
+
+:root {
+    --navy:     #0f172a;
+    --navy2:    #1e3a5f;
+    --sky:      #0ea5e9;
+    --sky-l:    #38bdf8;
+    --green:    #22c55e;
+    --amber:    #f59e0b;
+    --violet:   #8b5cf6;
+    --rose:     #f43f5e;
+    --slate:    #64748b;
+    --surf:     #f1f5f9;
+    --white:    #ffffff;
+    --r:        16px;
+    --sh1:      0 2px 8px rgba(15,23,42,.07);
+    --sh2:      0 8px 24px rgba(15,23,42,.11);
+    --sh3:      0 20px 50px rgba(15,23,42,.16);
+}
+*{box-sizing:border-box;}
+body,.dashboard-container{font-family:'DM Sans',sans-serif;background:var(--surf);}
+
+/* Progress */
+#scroll-progress-bar{position:fixed;top:0;left:0;width:0%;height:3px;
+  background:linear-gradient(90deg,var(--sky),var(--green),var(--amber));
+  z-index:9999;transition:width .1s linear;box-shadow:0 0 10px rgba(56,189,248,.6);}
+
+/* Back to top */
+#back-to-top{position:fixed;bottom:1.5rem;right:1.5rem;width:44px;height:44px;
+  border-radius:50%;background:var(--navy);color:#fff;border:2px solid var(--sky-l);
+  font-size:1.5rem;display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--sh2);opacity:0;transform:translateY(12px);
+  transition:opacity .3s,transform .3s;z-index:9998;cursor:pointer;}
+#back-to-top.visible{opacity:1;transform:translateY(0);}
+#back-to-top:hover{background:var(--sky);border-color:var(--sky);transform:translateY(-2px);}
+
+/* ── HERO BANNER ── */
+.sp-hero{
+  background:linear-gradient(135deg,#060e1f 0%,#0c2040 50%,#0a3356 100%);
+  border-radius:var(--r);padding:2rem 2.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:1.5rem;position:relative;overflow:hidden;
+  box-shadow:var(--sh3);margin-bottom:1.75rem;
+}
+.sp-hero::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 78% 50%,rgba(14,165,233,.2) 0%,transparent 60%);pointer-events:none;}
+.sp-hero::after{content:'';position:absolute;top:-60px;right:-60px;
+  width:260px;height:260px;border-radius:50%;
+  border:1.5px solid rgba(56,189,248,.1);pointer-events:none;}
+
+.sp-hero-left{color:#fff;}
+.sp-chip{display:inline-flex;align-items:center;gap:.4rem;
+  background:rgba(56,189,248,.15);border:1px solid rgba(56,189,248,.3);
+  border-radius:999px;padding:.22rem .8rem;font-size:.78rem;
+  color:var(--sky-l);margin-bottom:.65rem;}
+.sp-hero-left h1{font-family:'Syne',sans-serif;font-size:clamp(1.35rem,3vw,1.9rem);
+  font-weight:800;margin:0 0 .35rem;letter-spacing:-.02em;}
+.sp-hero-left p{color:#94a3b8;margin:0;font-size:.88rem;}
+
+/* ── CLOCK ── */
+.sp-clock{display:flex;flex-direction:column;align-items:flex-end;gap:.25rem;}
+.sp-clock-time{font-family:'Syne',sans-serif;font-size:clamp(2.2rem,5vw,3.4rem);
+  font-weight:800;color:#fff;letter-spacing:.05em;line-height:1;
+  text-shadow:0 0 30px rgba(56,189,248,.45);}
+.sp-clock-time .colon{animation:blink 1s step-end infinite;color:var(--sky-l);}
+ blink{0%,100%{opacity:1}50%{opacity:.15}}
+.sp-clock-sec{font-family:'Syne',sans-serif;font-size:1rem;
+  font-weight:700;color:var(--sky-l);opacity:.85;}
+.sp-clock-date{font-size:.78rem;color:#94a3b8;text-align:right;text-transform:capitalize;}
+
+/* ── STAT CARDS ── */
+.sp-stat{border-radius:var(--r);padding:1.3rem 1.5rem;
+  display:flex;align-items:center;gap:1rem;box-shadow:var(--sh1);
+  cursor:pointer;transition:transform .22s,box-shadow .22s;
+  position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.4);}
+.sp-stat:hover{transform:translateY(-5px);box-shadow:var(--sh2);}
+.sp-stat::after{content:'';position:absolute;top:-28px;right:-28px;
+  width:85px;height:85px;border-radius:50%;background:rgba(255,255,255,.09);pointer-events:none;}
+.sp-stat-icon{width:50px;height:50px;border-radius:13px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.35rem;flex-shrink:0;background:rgba(255,255,255,.18);color:#fff;}
+.sp-stat-val{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;margin:0;line-height:1;color:#fff;}
+.sp-stat-lbl{margin:0;font-size:.8rem;color:rgba(255,255,255,.8);font-weight:500;}
+
+.sp-p{background:linear-gradient(135deg,#0ea5e9,#38bdf8);}
+.sp-s{background:linear-gradient(135deg,#22c55e,#4ade80);}
+.sp-i{background:linear-gradient(135deg,#8b5cf6,#a78bfa);}
+.sp-w{background:linear-gradient(135deg,#f59e0b,#fcd34d);}
+
+/* ── CARD ── */
+.sp-card{background:var(--white);border-radius:var(--r);
+  border:1px solid #e2e8f0;box-shadow:var(--sh1);overflow:hidden;
+  transition:box-shadow .2s;}
+.sp-card:hover{box-shadow:var(--sh2);}
+.sp-card-hd{padding:1rem 1.4rem;display:flex;align-items:center;
+  justify-content:space-between;border-bottom:1px solid #f1f5f9;
+  background:var(--navy);color:#fff;}
+.sp-card-hd h5{font-family:'Syne',sans-serif;font-size:.9rem;
+  font-weight:700;margin:0;letter-spacing:.01em;}
+.text-sky{color:var(--sky-l)!important;}
+.text-muted-light{color:#94a3b8;}
+
+/* ── CALENDRIER ── */
+.cal-names{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px;}
+.cal-name{text-align:center;font-size:.65rem;font-weight:700;color:var(--slate);
+  padding:4px 0;text-transform:uppercase;letter-spacing:.05em;}
+#calendarGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cc{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;border-radius:10px;font-size:.79rem;position:relative;
+  transition:background .15s,transform .15s;cursor:default;}
+.cc.empty{background:transparent;}
+.cc:not(.empty):not(.om){background:#f8fafc;}
+.cc:not(.empty):not(.om):hover{background:#e0f2fe;}
+.cc.om{color:#cbd5e1;background:transparent;}
+.cc.td{background:var(--navy)!important;color:#fff;font-weight:700;box-shadow:0 4px 12px rgba(15,23,42,.22);}
+.cc.hs{background:#dcfce7!important;color:#15803d;font-weight:700;cursor:pointer;border:2px solid #22c55e;}
+.cc.hs:hover{background:#22c55e!important;color:#fff;transform:scale(1.1);}
+.cc.hs.td{background:#15803d!important;border-color:#14532d;color:#fff;}
+.sdot{width:5px;height:5px;border-radius:50%;background:#22c55e;margin-top:2px;}
+.cc.td .sdot{background:var(--sky-l);}
+.cc.hs.td .sdot{background:#fff;}
+.stip{position:absolute;bottom:115%;left:50%;transform:translateX(-50%) translateY(4px);
+  background:var(--navy);color:#fff;font-size:.67rem;padding:5px 9px;border-radius:8px;
+  white-space:normal;max-width:175px;text-align:center;z-index:200;pointer-events:none;
+  opacity:0;transition:opacity .18s,transform .18s;line-height:1.35;box-shadow:var(--sh2);}
+.stip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:5px solid transparent;border-top-color:var(--navy);}
+.cc:hover .stip{opacity:1;transform:translateX(-50%) translateY(0);}
+.cal-leg{display:flex;align-items:center;gap:14px;margin-top:12px;font-size:.73rem;color:var(--slate);}
+.ldot{width:11px;height:11px;border-radius:50%;display:inline-block;margin-right:3px;}
+
+/* ── ACTIVITÉS ── */
+.act-item{padding:.9rem 1.2rem;border-bottom:1px solid #f1f5f9;transition:background .15s;}
+.act-item:last-child{border-bottom:none;}
+.act-item:hover{background:#f8fafc;}
+
+/* ── TABLE ── */
+.sp-table thead th{background:#f8fafc;font-family:'Syne',sans-serif;
+  font-size:.72rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--slate);border:none;padding:.85rem 1rem;}
+.sp-table tbody td{padding:.8rem 1rem;border-color:#f1f5f9;vertical-align:middle;}
+.sp-table tbody tr:hover{background:#f8fafc;}
+
+/* ── PROFIL FIELDS ── */
+.pf{padding:.7rem 0;border-bottom:1px solid #f1f5f9;}
+.pf:last-child{border-bottom:none;}
+.pf label{font-size:.68rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--slate);display:block;margin-bottom:.18rem;}
+.pf .val{font-size:.92rem;font-weight:600;color:var(--navy);}
+
+/* ── MODAL ── */
+.sp-modal{border-radius:20px;overflow:hidden;box-shadow:0 25px 60px rgba(0,0,0,.26);}
+.sp-modal-header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 100%);}
+.sp-modal-body{background:#f8fafc;}
+.sp-label{font-size:.78rem;font-weight:700;color:var(--navy);margin-bottom:.3rem;display:block;}
+.sp-input{border-radius:10px;border:1.5px solid #e2e8f0;padding:.5rem .8rem;font-size:.87rem;
+  transition:border-color .2s,box-shadow .2s;}
+.sp-input:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(14,165,233,.14);outline:none;}
+
+/* ── BUTTONS ── */
+.sp-btn-primary{background:linear-gradient(135deg,#0ea5e9,#38bdf8);
+  color:#fff;border:none;border-radius:10px;font-weight:600;}
+.sp-btn-primary:hover{background:linear-gradient(135deg,#0284c7,#0ea5e9);color:#fff;}
+.sp-btn-ghost{background:#f1f5f9;color:var(--navy);border:none;border-radius:10px;
+  padding:.55rem 1rem;text-align:left;font-size:.85rem;font-weight:500;width:100%;
+  transition:background .15s;}
+.sp-btn-ghost:hover{background:#e0f2fe;color:var(--sky);}
+.sp-btn-danger{background:#fff0f3;color:var(--rose);border:1px solid #fecdd3;
+  border-radius:10px;padding:.55rem 1rem;text-align:left;font-size:.85rem;
+  font-weight:500;width:100%;}
+.sp-btn-danger:hover{background:var(--rose);color:#fff;}
+
+/* ── SIDEBAR ── */
+.sidebar-modern{background:var(--navy)!important;}
+.sidebar-item{color:#94a3b8!important;border-radius:10px!important;}
+.sidebar-item:hover,.sidebar-item.active{background:rgba(56,189,248,.12)!important;color:#fff!important;}
+.sidebar-item.active{border-left:3px solid var(--sky)!important;}
+.sidebar-item-danger:hover{background:rgba(244,63,94,.15)!important;color:#f43f5e!important;}
+.sidebar-header{border-bottom:1px solid rgba(255,255,255,.07)!important;}
+
+/* ── EMPTY ── */
+.sp-empty{padding:3rem 1rem;text-align:center;}
+.sp-empty i{font-size:2.3rem;color:#cbd5e1;display:block;margin-bottom:.65rem;}
+.sp-empty h6{color:var(--slate);font-weight:600;}
+.sp-empty p{color:#94a3b8;font-size:.83rem;}
+
+/* ── BADGE ── */
+.badge{border-radius:6px!important;font-weight:600!important;font-size:.7rem!important;}
+.badge-sky{background:rgba(56,189,248,.15);color:var(--sky-l);}
+.badge-green{background:rgba(34,197,94,.15);color:#16a34a;}
+
+/* ── ANIMATIONS ── */
+fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.a1{animation:fadeUp .5s ease both;}
+.a2{animation:fadeUp .5s .08s ease both;}
+.a3{animation:fadeUp .5s .16s ease both;}
+.a4{animation:fadeUp .5s .24s ease both;}
+.a5{animation:fadeUp .5s .32s ease both;}
+</style>
+
 <div class="dashboard-container" id="participant-dashboard">
+
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-dashboard sticky-top">
         <div class="container-fluid px-4">
             <a class="navbar-brand" href="/">
-                <img src="/images/logo semina.png" alt="SeminaPro Logo" height="40" class="d-inline-block align-text-top">
+                <img src="/images/logo semina.png" alt="SeminaPro" height="40" class="d-inline-block align-text-top">
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center gap-3">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">
-                            <i class="bi bi-house"></i> Accueil
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Seminaires/Index">
-                            <i class="bi bi-book"></i> Séminaires
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/About">
-                            <i class="bi bi-info-circle"></i> À Propos
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Contact">
-                            <i class="bi bi-envelope"></i> Contact
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Dashboard/Index">
-                            <i class="bi bi-speedometer2"></i> Mon Tableau
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <span class="nav-text">Connecté: <strong>Participant</strong></span>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="/"><i class="bi bi-house"></i> Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Seminaires/Index"><i class="bi bi-book"></i> Séminaires</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/About"><i class="bi bi-info-circle"></i> À Propos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Contact"><i class="bi bi-envelope"></i> Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Dashboard/Index"><i class="bi bi-speedometer2"></i> Mon Tableau</a></li>
+                    <li class="nav-item"><span class="nav-text">Connecté: <strong>Participant</strong></span></li>
                     <li class="nav-item">
                         <a href="/Account/Logout" class="btn btn-outline-light btn-sm">
                             <i class="bi bi-box-arrow-right"></i> DÉCONNEXION
@@ -55,353 +330,615 @@
         </div>
     </nav>
 
-    <!-- DASHBOARD CONTENT WRAPPER -->
     <div class="dashboard-content-wrapper">
-        <!-- SIDEBAR AMÉLIORÉE -->
         <aside class="sidebar sidebar-modern">
             <div class="sidebar-header">
-                <h5 class="fw-bold mb-0">👤 PARTICIPANT</h5>
+                <h5 class="fw-bold mb-0" style="font-family:'Syne',sans-serif;color:#fff;">👤 PARTICIPANT</h5>
             </div>
-
             <nav class="sidebar-nav">
-                <a href="/Dashboard/Index" class="sidebar-item active" data-path="/Dashboard/Index">
-                    <i class="bi bi-speedometer2"></i>
-                    <span>Tableau de Bord</span>
+                <a href="/Dashboard/Index" class="sidebar-item active">
+                    <i class="bi bi-speedometer2"></i><span>Tableau de Bord</span>
                 </a>
-                <a href="#mes-seminaires" class="sidebar-item" onclick="document.getElementById('mes-seminaires').scrollIntoView({behavior:'smooth'})">
-                    <i class="bi bi-book"></i>
-                    <span>Mes Séminaires</span>
+                <a href="#mes-seminaires" class="sidebar-item"
+                   onclick="event.preventDefault();document.getElementById('mes-seminaires').scrollIntoView({behavior:'smooth'})">
+                    <i class="bi bi-book"></i><span>Mes Séminaires</span>
                 </a>
-                <a href="#mon-profil" class="sidebar-item" onclick="document.getElementById('mon-profil').scrollIntoView({behavior:'smooth'})">
-                    <i class="bi bi-person-circle"></i>
-                    <span>Mon Profil</span>
+                <a href="#mon-profil" class="sidebar-item"
+                   onclick="event.preventDefault();document.getElementById('mon-profil').scrollIntoView({behavior:'smooth'})">
+                    <i class="bi bi-person-circle"></i><span>Mon Profil</span>
                 </a>
-                <a href="/Seminaires/Index" class="sidebar-item" data-path="/Seminaires/Index">
-                    <i class="bi bi-search"></i>
-                    <span>Parcourir</span>
+                <a href="/Seminaires/Index" class="sidebar-item">
+                    <i class="bi bi-search"></i><span>Parcourir</span>
                 </a>
-                <a href="/Dashboard/Settings" class="sidebar-item" data-path="/Dashboard/Settings">
-                    <i class="bi bi-gear-fill"></i>
-                    <span>Paramètres</span>
+                <a href="/Dashboard/Settings" class="sidebar-item">
+                    <i class="bi bi-gear-fill"></i><span>Paramètres</span>
                 </a>
                 <a href="/" class="sidebar-item">
-                    <i class="bi bi-house"></i>
-                    <span>Accueil</span>
+                    <i class="bi bi-house"></i><span>Accueil</span>
                 </a>
                 <a href="/Account/Logout" class="sidebar-item sidebar-item-danger">
-                    <i class="bi bi-box-arrow-right"></i>
-                    <span>Déconnexion</span>
+                    <i class="bi bi-box-arrow-right"></i><span>Déconnexion</span>
                 </a>
             </nav>
         </aside>
 
-        <!-- MAIN CONTENT -->
         <div class="main-content">
-            <div class="content-area">
-                <!-- WELCOME HEADER -->
-                <div class="welcome-header mb-5">
-                    <h1><i class="bi bi-speedometer2"></i> Tableau de Bord Personnel</h1>
-                    <p>Votre espace personnel — résumé rapide et actions</p>
-                </div>
+            <div class="content-area p-4">
 
-                <!-- STATISTIQUES CARDS -->
-                <div class="row mb-4 g-4">
-                    <div class="col-md-6 col-lg-3">
-                        <div class="stat-card stat-card-primary" data-href="/Seminaires/Index" style="cursor: pointer;">
-                            <div class="stat-icon">
-                                <i class="bi bi-check-circle-fill"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3>@Model.TotalInscriptions</h3>
-                                <p>Inscriptions</p>
-                            </div>
+                <!-- ══ HERO + HORLOGE ══ -->
+                <div class="sp-hero a1">
+                    <div class="sp-hero-left">
+                        <div class="sp-chip">
+                            <i class="bi bi-person-fill"></i>
+                            @(Model.CurrentParticipant?.Prenom ?? "Participant")
+                            @(Model.CurrentParticipant?.Nom ?? "")
                         </div>
+                        <h1>Bienvenue sur votre espace</h1>
+                        <p>Suivez vos séminaires, gérez votre profil et restez organisé.</p>
                     </div>
-
-                    <div class="col-md-6 col-lg-3">
-                        <div class="stat-card stat-card-success" data-href="/Seminaires/Index?filter=upcoming" style="cursor: pointer;">
-                            <div class="stat-icon">
-                                <i class="bi bi-calendar-check-fill"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3>@Model.InscriptionsAVenir</h3>
-                                <p>À Venir</p>
-                            </div>
+                    <div class="sp-clock">
+                        <div class="sp-clock-time">
+                            <span id="ck-h">00</span><span class="colon">:</span><span id="ck-m">00</span>
                         </div>
-                    </div>
-
-                    <div class="col-md-6 col-lg-3">
-                        <div class="stat-card stat-card-info" data-href="/Seminaires/Index?filter=past" style="cursor: pointer;">
-                            <div class="stat-icon">
-                                <i class="bi bi-clock-history"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3>@Model.InscriptionsPasses</h3>
-                                <p>Passés</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6 col-lg-3">
-                        <div class="stat-card stat-card-warning" data-href="/Seminaires/Index" style="cursor: pointer;">
-                            <div class="stat-icon">
-                                <i class="bi bi-book-fill"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3>@Model.TotalSeminairesDisponibles</h3>
-                                <p>Disponibles</p>
-                            </div>
-                        </div>
+                        <div class="sp-clock-sec"><span id="ck-s">00</span>s</div>
+                        <div class="sp-clock-date" id="ck-date"></div>
                     </div>
                 </div>
 
-                <!-- DEUX SECTIONS : CHART & ACTIVITÉS -->
-                <div class="row mb-4">
+                <!-- ══ STATS ══ -->
+                <div class="row g-3 mb-4 a2">
+                    <div class="col-6 col-lg-3">
+                        <div class="sp-stat sp-p" onclick="location.href='/Seminaires/Index'">
+                            <div class="sp-stat-icon"><i class="bi bi-check-circle-fill"></i></div>
+                            <div>
+                                <div class="sp-stat-val">@Model.TotalInscriptions</div>
+                                <div class="sp-stat-lbl">Inscriptions</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="sp-stat sp-s" onclick="location.href='/Seminaires/Index?filter=upcoming'">
+                            <div class="sp-stat-icon"><i class="bi bi-calendar-check-fill"></i></div>
+                            <div>
+                                <div class="sp-stat-val">@Model.InscriptionsAVenir</div>
+                                <div class="sp-stat-lbl">À Venir</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="sp-stat sp-i" onclick="location.href='/Seminaires/Index?filter=past'">
+                            <div class="sp-stat-icon"><i class="bi bi-clock-history"></i></div>
+                            <div>
+                                <div class="sp-stat-val">@Model.InscriptionsPasses</div>
+                                <div class="sp-stat-lbl">Passés</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3">
+                        <div class="sp-stat sp-w" onclick="location.href='/Seminaires/Index'">
+                            <div class="sp-stat-icon"><i class="bi bi-book-fill"></i></div>
+                            <div>
+                                <div class="sp-stat-val">@Model.TotalSeminairesDisponibles</div>
+                                <div class="sp-stat-lbl">Disponibles</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══ CHART + CALENDRIER + ACTIVITÉS ══ -->
+                <div class="row g-3 mb-4 a3">
                     <div class="col-lg-8">
-                        <!-- CHART SECTION -->
-                        <div class="card card-modern">
-                            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0"><i class="bi bi-graph-up"></i> Tendances et Répartition</h5>
+                        <!-- Chart -->
+                        <div class="sp-card mb-3">
+                            <div class="sp-card-hd">
+                                <h5><i class="bi bi-graph-up me-2 text-sky"></i>Répartition des inscriptions</h5>
                             </div>
-                            <div class="card-body p-4">
-                                <canvas id="inscriptionsChart" height="80" data-upcoming="@Model.InscriptionsAVenir" data-past="@Model.InscriptionsPasses" data-total="@Model.TotalInscriptions"></canvas>
+                            <div class="p-4">
+                                <canvas id="inscriptionsChart" height="85"
+                                        data-upcoming="@Model.InscriptionsAVenir"
+                                        data-past="@Model.InscriptionsPasses"
+                                        data-total="@Model.TotalInscriptions"></canvas>
                             </div>
                         </div>
 
-                        <!-- CALENDRIER SECTION -->
-                        <div class="card card-modern mt-4">
-                            <div class="card-header bg-dark text-white">
-                                <h5 class="mb-0"><i class="bi bi-calendar-event"></i> Calendrier</h5>
+                        <!-- Calendrier -->
+                        <div class="sp-card">
+                            <div class="sp-card-hd">
+                                <h5><i class="bi bi-calendar-event me-2 text-sky"></i>Calendrier de mes séminaires</h5>
+                                <span class="badge badge-green">@(Model.MesSeminaires?.Count ?? 0) séminaire(s)</span>
                             </div>
-                            <div class="card-body p-4">
-                                <div id="calendar" class="calendar-view">
-                                    <div class="calendar-header d-flex justify-content-between align-items-center mb-3">
-                                        <button class="btn btn-sm btn-outline-primary" id="prevMonth"><i class="bi bi-chevron-left"></i></button>
-                                        <h6 class="mb-0" id="monthYear"></h6>
-                                        <button class="btn btn-sm btn-outline-primary" id="nextMonth"><i class="bi bi-chevron-right"></i></button>
-                                    </div>
-                                    <div class="calendar-grid" id="calendarGrid"></div>
+                            <div class="p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <button class="btn btn-sm" id="prevMonth"
+                                            style="background:#f1f5f9;border:none;border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;">
+                                        <i class="bi bi-chevron-left" style="font-size:.75rem;"></i>
+                                    </button>
+                                    <h6 class="mb-0 fw-bold" id="monthYear"
+                                        style="font-family:'Syne',sans-serif;font-size:.92rem;"></h6>
+                                    <button class="btn btn-sm" id="nextMonth"
+                                            style="background:#f1f5f9;border:none;border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;">
+                                        <i class="bi bi-chevron-right" style="font-size:.75rem;"></i>
+                                    </button>
+                                </div>
+                                <div class="cal-names">
+                                    <div class="cal-name">Lun</div><div class="cal-name">Mar</div>
+                                    <div class="cal-name">Mer</div><div class="cal-name">Jeu</div>
+                                    <div class="cal-name">Ven</div><div class="cal-name">Sam</div>
+                                    <div class="cal-name">Dim</div>
+                                </div>
+                                <div id="calendarGrid"></div>
+                                <div class="cal-leg">
+                                    <span><span class="ldot" style="background:var(--navy);"></span>Aujourd'hui</span>
+                                    <span><span class="ldot" style="background:#22c55e;border:2px solid #15803d;"></span>Séminaire inscrit</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- CÔTÉ DROIT: ACTIVITÉS & PROFIL -->
+                    <!-- Activités -->
                     <div class="col-lg-4">
-                        <!-- ACTIVITÉS RÉCENTES -->
-                        <div class="card card-modern h-100">
-                            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0"><i class="bi bi-activity"></i> Activités Récentes</h5>
-                                <a href="/Seminaires/Index" class="btn btn-sm btn-light">Voir tout</a>
+                        <div class="sp-card h-100">
+                            <div class="sp-card-hd">
+                                <h5><i class="bi bi-activity me-2 text-sky"></i>Activités Récentes</h5>
+                                <a href="/Seminaires/Index" class="badge badge-sky text-decoration-none">Voir tout</a>
                             </div>
-                            <div class="card-body p-0">
-                                <div class="recent-activities">
-                                    @if (Model.MesInscriptions != null && Model.MesInscriptions.Count > 0)
-                                    {
-                                        foreach (var ins in Model.MesInscriptions.Take(5))
-                                        {
-                                            var isUpcoming = ins.Seminaire != null && ins.Seminaire.DateSeminaire > DateTime.Now;
-                                            <div class="activity-item p-3">
-                                                <div class="d-flex justify-content-between align-items-start gap-2">
-                                                    <div class="flex-grow-1">
-                                                        <div class="fw-600 text-dark">@ins.Seminaire?.Titre</div>
-                                                        <div class="text-muted small mt-1">
-                                                            <i class="bi bi-calendar-check me-1"></i>
-                                                            @ins.Seminaire?.DateSeminaire.ToString("dd/MM/yyyy")
-                                                        </div>
-                                                    </div>
-                                                    <span class="badge @(isUpcoming ? "bg-success" : "bg-secondary")">
-                                                        @(isUpcoming ? "À venir" : "Passé")
-                                                    </span>
+                            @if (Model.MesInscriptions != null && Model.MesInscriptions.Count > 0)
+                            {
+                                foreach (var ins in Model.MesInscriptions.Take(6))
+                                {
+                                    var isUp = ins.Seminaire != null && ins.Seminaire.DateSeminaire > DateTime.Now;
+                                    <div class="act-item">
+                                        <div class="d-flex justify-content-between align-items-start gap-2">
+                                            <div class="flex-grow-1">
+                                                <div class="fw-600 small" style="color:var(--navy);">@ins.Seminaire?.Titre</div>
+                                                <div class="text-muted" style="font-size:.73rem;margin-top:2px;">
+                                                    <i class="bi bi-calendar2 me-1"></i>@ins.Seminaire?.DateSeminaire.ToString("dd MMM yyyy")
                                                 </div>
                                             </div>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <div class="empty-state-box p-4 text-center">
-                                            <div class="empty-icon mb-3">
-                                                <i class="bi bi-inbox"></i>
-                                            </div>
-                                            <h6 class="text-muted mb-2">Aucune inscription</h6>
-                                            <p class="small text-muted">Commencez en vous inscrivant à un séminaire</p>
+                                            <span class="badge @(isUp ? "bg-success" : "bg-secondary")">
+                                                @(isUp ? "À venir" : "Passé")
+                                            </span>
                                         </div>
-                                    }
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="sp-empty">
+                                    <i class="bi bi-inbox"></i>
+                                    <h6>Aucune activité</h6>
+                                    <p>Inscrivez-vous à un séminaire pour commencer</p>
                                 </div>
-                            </div>
+                            }
                         </div>
                     </div>
                 </div>
 
-                <!-- MES SÉMINAIRES SECTION -->
-                <div id="mes-seminaires" class="row mb-4">
-                    <div class="col-12">
-                        <div class="card card-modern">
-                            <div class="card-header bg-dark text-white">
-                                <h5 class="mb-0"><i class="bi bi-calendar-range"></i> Mes Séminaires Inscrits</h5>
-                            </div>
-                            <div class="card-body p-0">
-                                @if (Model.MesSeminaires != null && Model.MesSeminaires.Count > 0)
-                                {
-                                    <table class="table table-hover mb-0">
-                                        <thead class="table-light">
+                <!-- ══ MES SÉMINAIRES ══ -->
+                <div id="mes-seminaires" class="mb-4 a4">
+                    <div class="sp-card">
+                        <div class="sp-card-hd">
+                            <h5><i class="bi bi-calendar-range me-2 text-sky"></i>Mes Séminaires Inscrits</h5>
+                            <span class="badge badge-green">@(Model.MesSeminaires?.Count ?? 0) total</span>
+                        </div>
+                        @if (Model.MesSeminaires != null && Model.MesSeminaires.Count > 0)
+                        {
+                            <div class="table-responsive">
+                                <table class="table sp-table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Titre</th>
+                                            <th>Date</th>
+                                            <th>Lieu</th>
+                                            <th>Code</th>
+                                            <th class="text-center">Statut</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var s in Model.MesSeminaires)
+                                        {
+                                            var up = s.DateSeminaire > DateTime.Now;
                                             <tr>
-                                                <th>Titre</th>
-                                                <th>Date</th>
-                                                <th>Lieu</th>
-                                                <th>Code</th>
-                                                <th class="text-center">Statut</th>
+                                                <td class="fw-600" style="color:var(--navy);">@s.Titre</td>
+                                                <td class="text-muted small">@s.DateSeminaire.ToString("dd/MM/yyyy")</td>
+                                                <td class="text-muted small">@s.Lieu</td>
+                                                <td>
+                                                    <code style="background:#f1f5f9;padding:2px 7px;border-radius:5px;font-size:.78rem;">
+                                                        @s.Code
+                                                    </code>
+                                                </td>
+                                                <td class="text-center">
+                                                    <span class="badge @(up ? "bg-success" : "bg-secondary")">
+                                                        @(up ? "À venir" : "Passé")
+                                                    </span>
+                                                </td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var seminaire in Model.MesSeminaires)
-                                            {
-                                                var isUpcoming = seminaire.DateSeminaire > DateTime.Now;
-                                                <tr class="align-middle">
-                                                    <td class="fw-600">@seminaire.Titre</td>
-                                                    <td>
-                                                        <small class="text-muted">
-                                                            @seminaire.DateSeminaire.ToString("dd/MM/yyyy")
-                                                        </small>
-                                                    </td>
-                                                    <td>@seminaire.Lieu</td>
-                                                    <td>
-                                                        <small class="text-muted">@(seminaire.Code)</small>
-                                                    </td>
-                                                    <td class="text-center">
-                                                        <span class="badge @(isUpcoming ? "bg-success" : "bg-secondary")">
-                                                            @(isUpcoming ? "À venir" : "Passé")
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                }
-                                else
-                                {
-                                    <div class="empty-state-box p-5 text-center">
-                                        <div class="empty-icon mb-3">
-                                            <i class="bi bi-calendar"></i>
-                                        </div>
-                                        <h6 class="text-muted mb-2">Aucun séminaire inscrit</h6>
-                                        <p class="small text-muted mb-3">Vous n'êtes inscrit à aucun séminaire pour le moment</p>
-                                        <a href="/Seminaires/Index" class="btn btn-primary btn-sm">
-                                            <i class="bi bi-search me-1"></i>Parcourir les séminaires
-                                        </a>
-                                    </div>
-                                }
+                                        }
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>
+                        }
+                        else
+                        {
+                            <div class="sp-empty">
+                                <i class="bi bi-calendar-x"></i>
+                                <h6>Aucun séminaire inscrit</h6>
+                                <p class="mb-3">Vous n'êtes pas encore inscrit à un séminaire</p>
+                                <a href="/Seminaires/Index" class="btn sp-btn-primary btn-sm px-4">
+                                    <i class="bi bi-search me-1"></i>Parcourir
+                                </a>
+                            </div>
+                        }
                     </div>
                 </div>
 
-                <!-- MON PROFIL SECTION -->
-                <div id="mon-profil" class="row">
+                <!-- ══ MON PROFIL ══ -->
+                <div id="mon-profil" class="row g-3 a5">
                     <div class="col-lg-8">
-                        <div class="card card-modern">
-                            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0"><i class="bi bi-person-badge"></i> Mon Profil</h5>
-                                <a href="#" class="btn btn-sm btn-light" title="Modifier">
-                                    <i class="bi bi-pencil"></i> Modifier
-                                </a>
+                        <div class="sp-card">
+                            <div class="sp-card-hd">
+                                <h5><i class="bi bi-person-badge me-2 text-sky"></i>Mon Profil</h5>
+                                <!-- ✅ BOUTON CORRIGÉ — ouvre la modale, ne soumet pas la page -->
+                                <button type="button"
+                                        class="badge badge-sky border-0"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editProfileModal"
+                                        style="cursor:pointer;padding:.4rem .75rem;font-size:.78rem;">
+                                    <i class="bi bi-pencil me-1"></i>Modifier
+                                </button>
                             </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="text-muted small">Email</label>
-                                        <div class="fw-600">@Model.UserEmail</div>
-                                    </div>
-                                    @if (Model.CurrentParticipant != null)
-                                    {
-                                        <div class="col-md-6 mb-3">
-                                            <label class="text-muted small">Nom</label>
-                                            <div class="fw-600">@(Model.CurrentParticipant.Nom ?? "Non spécifié")</div>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label class="text-muted small">Prénom</label>
-                                            <div class="fw-600">@(Model.CurrentParticipant.Prenom ?? "Non spécifié")</div>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label class="text-muted small">Téléphone</label>
-                                            <div class="fw-600">@(Model.CurrentParticipant.NumeroTelephone ?? "Non spécifié")</div>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label class="text-muted small">Type de Participant</label>
-                                            <div class="fw-600">@(Model.CurrentParticipant.GetType().Name == "Universitaire" ? "Universitaire" : "Industriel")</div>
-                                        </div>
-                                    }
+                            <div class="px-4 py-2">
+                                <div class="pf">
+                                    <label>Email</label>
+                                    <div class="val" id="disp-email">@Model.UserEmail</div>
                                 </div>
+                                @if (Model.CurrentParticipant != null)
+                                {
+                                    <div class="pf">
+                                        <label>Nom</label>
+                                        <div class="val" id="disp-nom">@(Model.CurrentParticipant.Nom ?? "Non spécifié")</div>
+                                    </div>
+                                    <div class="pf">
+                                        <label>Prénom</label>
+                                        <div class="val" id="disp-prenom">@(Model.CurrentParticipant.Prenom ?? "Non spécifié")</div>
+                                    </div>
+                                    <div class="pf">
+                                        <label>Téléphone</label>
+                                        <div class="val" id="disp-tel">@(Model.CurrentParticipant.NumeroTelephone ?? "Non spécifié")</div>
+                                    </div>
+                                    <div class="pf">
+                                        <label>Type</label>
+                                        <div class="val">
+                                            @(Model.CurrentParticipant.GetType().Name == "Universitaire" ? "Universitaire" : "Industriel")
+                                        </div>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
 
-                    <!-- PARAMÈTRES SECTION -->
                     <div class="col-lg-4">
-                        <div class="card card-modern h-100">
-                            <div class="card-header bg-dark text-white">
-                                <h5 class="mb-0"><i class="bi bi-sliders"></i> Paramètres Rapides</h5>
+                        <div class="sp-card h-100">
+                            <div class="sp-card-hd">
+                                <h5><i class="bi bi-sliders me-2 text-sky"></i>Actions Rapides</h5>
                             </div>
-                            <div class="card-body d-flex flex-column gap-2">
-                                <a href="/Seminaires/Index" class="btn btn-primary btn-sm d-flex align-items-center gap-2">
-                                    <i class="bi bi-search"></i> Parcourir Séminaires
+                            <div class="p-3 d-flex flex-column gap-2">
+                                <a href="/Seminaires/Index" class="btn sp-btn-primary btn-sm fw-semibold text-start px-3 py-2">
+                                    <i class="bi bi-search me-2"></i>Parcourir Séminaires
                                 </a>
-                                <a href="#" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2">
-                                    <i class="bi bi-gear-fill"></i> Modifier Profil
-                                </a>
-                                <a href="#" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2">
-                                    <i class="bi bi-shield-lock"></i> Changer Mot de Passe
-                                </a>
-                                <a href="#" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2">
-                                    <i class="bi bi-bell"></i> Notifications
-                                </a>
-                                <hr class="my-2">
-                                <a href="/Account/Logout" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-2">
-                                    <i class="bi bi-box-arrow-right"></i> Déconnexion
+                                <button type="button" class="sp-btn-ghost"
+                                        data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                                    <i class="bi bi-gear-fill me-2" style="color:var(--sky);"></i>Modifier Profil
+                                </button>
+                                <button type="button" id="openPwBtn" class="sp-btn-ghost">
+                                    <i class="bi bi-shield-lock me-2" style="color:var(--green);"></i>Changer Mot de Passe
+                                </button>
+                                <button type="button" disabled class="sp-btn-ghost" style="opacity:.5;">
+                                    <i class="bi bi-bell me-2"></i>Notifications
+                                    <span class="badge bg-secondary ms-1" style="font-size:.6rem;">Bientôt</span>
+                                </button>
+                                <hr class="my-1">
+                                <a href="/Account/Logout" class="sp-btn-danger text-decoration-none d-block">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 </div>
 
-@section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="~/js/dashboard-participant.js" asp-append-version="true"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.stat-card[data-href]').forEach(function (el) { 
-                el.addEventListener('click', function () { 
-                    var href = el.getAttribute('data-href'); 
-                    if (href) window.location.href = href; 
-                }); 
-            });
+<!-- ════════════════════════════════════════════════════════════
+     DONNÉES SÉMINAIRES → JSON pour le calendrier JS
+     Ces données sont séparées du profil et ne sont jamais
+     modifiées par la sauvegarde du profil.
+════════════════════════════════════════════════════════════ -->
+<script id="seminar-data" type="application/json">
+[@if (Model.MesSeminaires != null && Model.MesSeminaires.Count > 0)
+{
+    var items = Model.MesSeminaires.Select(s => new {
+        date  = s.DateSeminaire.ToString("yyyy-MM-dd"),
+        titre = (s.Titre ?? "").Replace("\\","\\\\").Replace("\"","\\\"")
+    }).ToList();
+    @Html.Raw(string.Join(",\n",
+        items.Select(x => $"{{\"date\":\"{x.date}\",\"titre\":\"{x.titre}\"}}")))
+}]
+</script>
 
-            var canvas = document.getElementById('inscriptionsChart');
-            if (canvas) {
-                var upcoming = parseInt(canvas.dataset.upcoming || '0');
-                var past = parseInt(canvas.dataset.past || '0');
-                var total = parseInt(canvas.dataset.total || '0');
-                var other = Math.max(0, total - (upcoming + past));
-                new Chart(canvas, {
-                    type: 'doughnut',
-                    data: { 
-                        labels: ['À venir','Passés','Autres'], 
-                        datasets: [{ 
-                            data: [upcoming, past, other], 
-                            backgroundColor: ['#22c55e','#3b82f6','#d1d5db'] 
-                        }] 
-                    },
-                    options: { 
-                        plugins: { legend: { position: 'bottom' } }, 
-                        maintainAspectRatio: false 
-                    }
-                });
+<!-- Token CSRF pour l'AJAX -->
+@Html.AntiForgeryToken()
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="~/js/dashboard-participant.js" asp-append-version="true"></script>
+<script>
+(function(){
+'use strict';
+
+// ══════════════════════════════════════════════════════
+// 1. HORLOGE EN TEMPS RÉEL
+// ══════════════════════════════════════════════════════
+var DAYS=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+var MONTHS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+function pad(n){return String(n).padStart(2,'0');}
+function tick(){
+    var d=new Date();
+    document.getElementById('ck-h').textContent=pad(d.getHours());
+    document.getElementById('ck-m').textContent=pad(d.getMinutes());
+    document.getElementById('ck-s').textContent=pad(d.getSeconds());
+    document.getElementById('ck-date').textContent=
+        DAYS[d.getDay()]+' '+d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear();
+}
+tick();
+setInterval(tick,1000);
+
+// ══════════════════════════════════════════════════════
+// 2. SCROLL PROGRESS + BACK TO TOP
+// ══════════════════════════════════════════════════════
+var bar=document.getElementById('scroll-progress-bar');
+var btt=document.getElementById('back-to-top');
+window.addEventListener('scroll',function(){
+    var st=window.scrollY||document.documentElement.scrollTop;
+    var dh=document.documentElement.scrollHeight-document.documentElement.clientHeight;
+    bar.style.width=(dh>0?(st/dh)*100:0)+'%';
+    btt.classList.toggle('visible',st>300);
+},{passive:true});
+btt.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+
+// ══════════════════════════════════════════════════════
+// 3. DOM READY
+// ══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',function(){
+
+    // ── CHART ──
+    var canvas=document.getElementById('inscriptionsChart');
+    if(canvas){
+        var up=parseInt(canvas.dataset.upcoming||'0');
+        var ps=parseInt(canvas.dataset.past||'0');
+        var tt=parseInt(canvas.dataset.total||'0');
+        var ot=Math.max(0,tt-(up+ps));
+        new Chart(canvas,{
+            type:'doughnut',
+            data:{
+                labels:['À venir','Passés','Autres'],
+                datasets:[{
+                    data:[up,ps,ot],
+                    backgroundColor:['#22c55e','#0ea5e9','#e2e8f0'],
+                    borderWidth:0,hoverOffset:6
+                }]
+            },
+            options:{
+                cutout:'72%',
+                plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:16,font:{size:12}}}},
+                maintainAspectRatio:false
             }
         });
-    </script>
-    <script src="~/js/dashboard-calendar.js" asp-append-version="true"></script>
+    }
+
+    // ══════════════════════════════════════════════════
+    // 4. CALENDRIER
+    //    Source de données : le bloc <script id="seminar-data">
+    //    injecté par C# ci-dessus.
+    //    ⚠️ Ces données sont chargées UNE SEULE FOIS au
+    //    chargement de la page et ne dépendent PAS du profil.
+    //    Modifier/sauvegarder le profil (via AJAX) ne touche
+    //    jamais semMap ni le calendrier.
+    // ══════════════════════════════════════════════════
+    var rawEl=document.getElementById('seminar-data');
+    var seminars=[];
+    try{seminars=JSON.parse(rawEl?rawEl.textContent.trim():'[]');}catch(e){}
+
+    var semMap={};
+    seminars.forEach(function(s){
+        if(!semMap[s.date])semMap[s.date]=[];
+        semMap[s.date].push(s.titre);
+    });
+
+    var today=new Date();
+    var cy=today.getFullYear(),cm=today.getMonth();
+    var MN=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+
+    function buildCal(y,m){
+        document.getElementById('monthYear').textContent=MN[m]+' '+y;
+        var g=document.getElementById('calendarGrid');
+        g.innerHTML='';
+        var fd=new Date(y,m,1).getDay();
+        var off=fd===0?6:fd-1;
+        var dim=new Date(y,m+1,0).getDate();
+        for(var i=0;i<off;i++){
+            var e=document.createElement('div');e.className='cc empty';g.appendChild(e);
+        }
+        for(var d=1;d<=dim;d++){
+            var key=y+'-'+pad(m+1)+'-'+pad(d);
+            var isTd=(y===today.getFullYear()&&m===today.getMonth()&&d===today.getDate());
+            var hasS=semMap.hasOwnProperty(key);
+            var cell=document.createElement('div');
+            var cls=['cc'];
+            if(isTd)cls.push('td');
+            if(hasS)cls.push('hs');
+            cell.className=cls.join(' ');
+            var num=document.createElement('span');num.textContent=d;cell.appendChild(num);
+            if(isTd||hasS){var dot=document.createElement('div');dot.className='sdot';cell.appendChild(dot);}
+            if(hasS){
+                var tip=document.createElement('div');tip.className='stip';
+                tip.innerHTML=semMap[key].join('<br>');cell.appendChild(tip);
+            }
+            g.appendChild(cell);
+        }
+    }
+    buildCal(cy,cm);
+    document.getElementById('prevMonth').addEventListener('click',function(){if(--cm<0){cm=11;cy--;}buildCal(cy,cm);});
+    document.getElementById('nextMonth').addEventListener('click',function(){if(++cm>11){cm=0;cy++;}buildCal(cy,cm);});
+
+    // ── TOGGLE PASSWORD ──
+    document.querySelectorAll('.toggle-pw').forEach(function(b){
+        b.addEventListener('click',function(){
+            var inp=document.getElementById(b.dataset.target);
+            if(!inp)return;
+            var h=inp.type==='password';
+            inp.type=h?'text':'password';
+            b.querySelector('i').className=h?'bi bi-eye-slash':'bi bi-eye';
+        });
+    });
+
+    // ── BOUTON CHANGER MOT DE PASSE ──
+    var openPwBtn=document.getElementById('openPwBtn');
+    if(openPwBtn){
+        openPwBtn.addEventListener('click',function(){
+            var m=new bootstrap.Modal(document.getElementById('editProfileModal'));
+            m.show();
+            document.getElementById('editProfileModal').addEventListener('shown.bs.modal',function h(){
+                document.getElementById('editOldPw').scrollIntoView({behavior:'smooth',block:'center'});
+                document.getElementById('editProfileModal').removeEventListener('shown.bs.modal',h);
+            });
+        });
+    }
+
+    // ══════════════════════════════════════════════════
+    // 5. SAUVEGARDE PROFIL — AJAX PUR (sans rechargement)
+    //
+    //    POURQUOI le problème original existait :
+    //    Le formulaire soumettait la page entière (POST).
+    //    Le serveur rechargait TOUTES les données du modèle
+    //    (inscriptions, séminaires, profil). Si le handler
+    //    n'était pas bien isolé, les inscriptions pouvaient
+    //    être rechargées depuis un état différent ou écrasées.
+    //
+    //    SOLUTION :
+    //    • fetch() envoie SEULEMENT Nom/Prénom/Email/Tel/MDP
+    //    • La page NE se recharge PAS
+    //    • Les inscriptions/séminaires en mémoire sont intacts
+    //    • On met à jour uniquement les <div> d'affichage du profil
+    //
+    //    CE QUE VOTRE PAGEMODEL DOIT RETOURNER :
+    //    return new JsonResult(new {
+    //        success = true,
+    //        nom = updatedNom,
+    //        prenom = updatedPrenom,
+    //        email = updatedEmail,
+    //        tel = updatedTel
+    //    });
+    // ══════════════════════════════════════════════════
+    var saveBtn=document.getElementById('saveProfileBtn');
+    var alertBox=document.getElementById('profileFormAlert');
+    var modalEl=document.getElementById('editProfileModal');
+    var csrf=(document.querySelector('input[name="__RequestVerificationToken"]')||{}).value||'';
+
+    function showAlert(msg,type){
+        alertBox.className='alert alert-'+type;
+        alertBox.textContent=msg;
+    }
+
+    saveBtn.addEventListener('click',function(){
+        var nom    =document.getElementById('editNom').value.trim();
+        var prenom =document.getElementById('editPrenom').value.trim();
+        var email  =document.getElementById('editEmail').value.trim();
+        var tel    =document.getElementById('editTelephone').value.trim();
+        var oldPw  =document.getElementById('editOldPw').value;
+        var newPw  =document.getElementById('editNewPw').value;
+        var confPw =document.getElementById('editConfirmPw').value;
+
+        // Validation client
+        if(!email){showAlert("L'email est obligatoire.",'danger');return;}
+        if(newPw && newPw!==confPw){showAlert('Les mots de passe ne correspondent pas.','danger');return;}
+
+        // Spinner
+        saveBtn.disabled=true;
+        saveBtn.innerHTML='<span class="spinner-border spinner-border-sm me-1"></span>Enregistrement…';
+
+        // Corps de la requête — UNIQUEMENT les champs profil
+        var body=new URLSearchParams();
+        body.append('__RequestVerificationToken',csrf);
+        body.append('Nom',nom);
+        body.append('Prenom',prenom);
+        body.append('Email',email);
+        body.append('NumeroTelephone',tel);
+        body.append('OldPassword',oldPw);
+        body.append('NewPassword',newPw);
+        body.append('ConfirmPassword',confPw);
+
+        fetch(window.location.pathname+'?handler=UpdateProfile',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/x-www-form-urlencoded',
+                'X-Requested-With':'XMLHttpRequest'
+            },
+            body:body.toString()
+        })
+        .then(function(r){
+            if(!r.ok)throw new Error('Erreur HTTP '+r.status);
+            return r.json();
+        })
+        .then(function(json){
+            if(json.success){
+                // ── Mise à jour de l'affichage sans recharger la page ──
+                var dn=document.getElementById('disp-nom');
+                var dp=document.getElementById('disp-prenom');
+                var de=document.getElementById('disp-email');
+                var dt=document.getElementById('disp-tel');
+                if(dn&&json.nom)    dn.textContent=json.nom;
+                if(dp&&json.prenom) dp.textContent=json.prenom;
+                if(de&&json.email)  de.textContent=json.email;
+                if(dt&&json.tel)    dt.textContent=json.tel;
+
+                // Mise à jour du chip hero
+                var chip=document.querySelector('.sp-chip');
+                if(chip){
+                    chip.innerHTML='<i class="bi bi-person-fill"></i> '
+                        +(json.prenom||'')+' '+(json.nom||'');
+                }
+
+                showAlert('✅ Profil mis à jour avec succès !','success');
+                setTimeout(function(){
+                    bootstrap.Modal.getInstance(modalEl).hide();
+                },1300);
+            } else {
+                showAlert(json.message||'Une erreur est survenue.','danger');
+            }
+        })
+        .catch(function(err){
+            showAlert('⚠️ '+err.message+' — Vérifiez que OnPostUpdateProfileAsync est défini dans votre PageModel.','warning');
+        })
+        .finally(function(){
+            saveBtn.disabled=false;
+            saveBtn.innerHTML='<i class="bi bi-check-lg me-1"></i>Enregistrer';
+        });
+    });
+
+    // Reset à la fermeture de la modale
+    modalEl.addEventListener('hidden.bs.modal',function(){
+        alertBox.className='alert d-none';alertBox.textContent='';
+        ['editOldPw','editNewPw','editConfirmPw'].forEach(function(id){
+            var inp=document.getElementById(id);
+            if(inp){inp.value='';inp.type='password';}
+        });
+        document.querySelectorAll('.toggle-pw i').forEach(function(ic){ic.className='bi bi-eye';});
+    });
+
+}); // end DOMContentLoaded
+})();
+</script>
 }

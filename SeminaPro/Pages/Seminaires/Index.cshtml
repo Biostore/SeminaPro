@@ -1,40 +1,74 @@
 @page
 @using SeminaPro.Pages.Seminaires
 @model SeminairesModel
+
 @{
     ViewData["Title"] = "Séminaires";
+
+    // ✅ CORRECTION: récupération session propre
+    var userEmail = HttpContext.Session.GetString("UserEmail");
+    var isLogged = !string.IsNullOrEmpty(userEmail);
 }
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
 <div class="page">
 
-    <!-- HEADER -->
+    <!-- ================= HEADER ================= -->
     <div class="header">
+
         <div class="badge">
-            <i class="bi bi-mortarboard"></i> Formations professionnelles
+            <i class="bi bi-mortarboard"></i> Plateforme de formation
         </div>
 
         <h1>🎓 Séminaires disponibles</h1>
-        <p>Explorez, apprenez et évoluez avec les meilleurs experts</p>
+        <p>Développez vos compétences avec des experts</p>
+
     </div>
 
-    <!-- FILTER -->
+    <!-- ================= FILTER ================= -->
     <div class="filter">
+
         <form method="get">
-            <input type="text" name="searchTitle" value="@Model.SearchTitle" placeholder="Rechercher..." />
-            <input type="number" name="minPrice" value="@Model.MinPrice" placeholder="Prix min" />
-            <input type="number" name="maxPrice" value="@Model.MaxPrice" placeholder="Prix max" />
+
+            <input type="text"
+                   name="searchTitle"
+                   value="@Model.SearchTitle"
+                   placeholder="Rechercher..." />
+
+            <input type="number"
+                   name="minPrice"
+                   value="@Model.MinPrice"
+                   placeholder="Prix min" />
+
+            <input type="number"
+                   name="maxPrice"
+                   value="@Model.MaxPrice"
+                   placeholder="Prix max" />
+
+            <!-- ✅ DATE FILTER -->
+            <input type="date"
+                   name="startDate"
+                   value="@Model.StartDate?.ToString("yyyy-MM-dd")" />
+
+            <input type="date"
+                   name="endDate"
+                   value="@Model.EndDate?.ToString("yyyy-MM-dd")" />
 
             <button type="submit">
                 <i class="bi bi-search"></i>
             </button>
+
         </form>
+
     </div>
 
-    @if (Model.Seminaires?.Count > 0)
+    <!-- ================= LIST ================= -->
+    @if (Model.Seminaires != null && Model.Seminaires.Count > 0)
     {
-        <div class="count">@Model.Seminaires.Count séminaire(s) disponible(s)</div>
+        <div class="count">
+            @Model.Seminaires.Count séminaire(s) trouvé(s)
+        </div>
 
         <div class="grid">
 
@@ -43,21 +77,24 @@
                 var filled = s.Inscriptions?.Count ?? 0;
                 var pct = s.NombreMaximal > 0 ? ((double)filled * 100 / s.NombreMaximal) : 0;
                 var isFull = filled >= s.NombreMaximal;
-                var isLogged = !string.IsNullOrEmpty(HttpContext.Session.GetString("UserEmail"));
 
                 <div class="card">
 
                     <!-- IMAGE -->
                     <div class="img">
+
                         <img src="@(string.IsNullOrEmpty(s.ImageUrl)
                                                                                          ? "/images/default-seminaire.jpg"
                                                                                          : s.ImageUrl)"
                              onerror="this.src='/images/default-seminaire.jpg'" />
 
-                        <span class="price">@s.Tarif.ToString("C")</span>
+                        <span class="price">
+                            @s.Tarif.ToString("C")
+                        </span>
+
                     </div>
 
-                    <!-- TOP -->
+                    <!-- TITLE -->
                     <div class="top">
                         <span class="code">@s.Code</span>
                         <h3>@s.Titre</h3>
@@ -74,10 +111,12 @@
                             <i class="bi bi-calendar"></i> @s.DateSeminaire.ToString("dd MMM yyyy")
                         </div>
 
+                        <!-- PROGRESS -->
                         <div class="sem-progress">
 
                             <div class="progress-head">
-                                <span>@filled / @s.NombreMaximal participants</span>
+
+                                <span>@filled / @s.NombreMaximal</span>
 
                                 @if (isFull)
                                 {
@@ -87,10 +126,13 @@
                                 {
                                     <span class="tag open">Disponible</span>
                                 }
+
                             </div>
 
                             <div class="bar">
-                                <div class="fill @(isFull ? "red" : "")" style="width:@pct%"></div>
+                                <div class="fill @(isFull ? "red" : "")"
+                                     style="width:@pct%">
+                                </div>
                             </div>
 
                         </div>
@@ -100,7 +142,11 @@
                     <!-- FOOTER -->
                     <div class="footer">
 
-                        <a class="btn" asp-page="Details" asp-route-id="@s.Id">Détails</a>
+                        <a class="btn"
+                               asp-page="Details"
+                               asp-route-id="@s.Id">
+                            Détails
+                        </a>
 
                         @if (isFull)
                         {
@@ -108,11 +154,18 @@
                         }
                         else if (isLogged)
                         {
-                            <a class="btn success" asp-page="Inscription" asp-route-id="@s.Id">S'inscrire</a>
+                            <a class="btn success"
+                                   asp-page="Inscription"
+                                   asp-route-id="@s.Id">
+                                S'inscrire
+                            </a>
                         }
                         else
                         {
-                            <a class="btn muted" href="/Account/Login">Connexion</a>
+                            <a class="btn muted"
+                                   href="/Account/Login">
+                                Connexion
+                            </a>
                         }
 
                     </div>
@@ -124,20 +177,22 @@
     }
     else
     {
-        <div class="empty">Aucun séminaire disponible</div>
+        <div class="empty">
+            Aucun séminaire trouvé
+        </div>
     }
 
 </div>
 
+<!-- ================= STYLE ================= -->
 <style>
 
-    /* PAGE */
     .page {
         max-width: 1200px;
         margin: auto;
         padding: 40px 20px;
-        font-family: Segoe UI;
-        background: #f5f7ff;
+        font-family: 'Segoe UI';
+        background: #f6f8ff;
     }
 
     /* HEADER */
@@ -148,16 +203,17 @@
 
     .badge {
         background: #e0e7ff;
-        color: #4f46e5;
+        color: #1e3a8a;
         padding: 6px 14px;
         border-radius: 20px;
         font-size: 12px;
+        font-weight: 600;
     }
 
     .header h1 {
-        font-size: 30px;
+        font-size: 32px;
         font-weight: 800;
-        color: #1e1b4b;
+        color: #0f172a;
     }
 
     .header p {
@@ -168,27 +224,33 @@
     .filter {
         background: white;
         padding: 15px;
-        border-radius: 12px;
+        border-radius: 14px;
         margin-bottom: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     }
 
         .filter form {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr auto;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
             gap: 10px;
         }
 
         .filter input {
             padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
         }
 
+            .filter input:focus {
+                border-color: #1e3a8a;
+                outline: none;
+            }
+
         .filter button {
-            background: #6366f1;
+            background: #1e3a8a;
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
         }
 
     /* GRID */
@@ -201,7 +263,7 @@
     /* CARD */
     .card {
         background: white;
-        border-radius: 15px;
+        border-radius: 16px;
         overflow: hidden;
         box-shadow: 0 10px 25px rgba(0,0,0,0.08);
         transition: 0.3s;
@@ -221,43 +283,36 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: 0.3s;
         }
-
-    .card:hover .img img {
-        transform: scale(1.05);
-    }
 
     .price {
         position: absolute;
         top: 10px;
         right: 10px;
-        background: #6366f1;
+        background: #1e3a8a;
         color: white;
         padding: 5px 10px;
         border-radius: 10px;
         font-size: 12px;
     }
 
-    /* TOP */
+    /* BODY */
     .top {
-        padding: 12px;
+        padding: 10px 12px;
     }
 
     .code {
         font-size: 11px;
-        color: gray;
+        color: #94a3b8;
     }
 
-    /* BODY */
     .body {
         padding: 12px;
     }
 
     .info {
-        color: #64748b;
         font-size: 13px;
-        margin-bottom: 4px;
+        color: #64748b;
     }
 
     /* PROGRESS */
@@ -289,13 +344,13 @@
 
     .bar {
         height: 5px;
-        background: #eee;
+        background: #e5e7eb;
         border-radius: 10px;
     }
 
     .fill {
         height: 100%;
-        background: #6366f1;
+        background: #1e3a8a;
     }
 
         .fill.red {
@@ -313,7 +368,7 @@
         padding: 6px 10px;
         border-radius: 8px;
         text-decoration: none;
-        border: 1px solid #ddd;
+        border: 1px solid #e2e8f0;
         font-size: 12px;
     }
 
@@ -335,7 +390,7 @@
     .empty {
         text-align: center;
         padding: 50px;
-        color: gray;
+        color: #64748b;
     }
 
 </style>
