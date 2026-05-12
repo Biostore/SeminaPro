@@ -10,603 +10,345 @@
 <style>
     :root {
         --primary: #0f6bff;
-        --success: #22c55e;
-        --dark: #1e293b;
-        --light: #f1f5f9;
-        --muted: #64748b;
+        --dark: #0f172a;
+        --light: #f8fafc;
         --border: #e2e8f0;
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+        --muted: #64748b;
+        --success: #22c55e;
     }
 
     body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: 'Segoe UI', sans-serif;
         background: var(--light);
-        padding: 2rem 0;
+        margin: 0;
+        padding: 30px 10px;
     }
 
-    .facture-container {
+    /* CONTAINER */
+    .facture {
         max-width: 900px;
-        margin: 0 auto;
+        margin: auto;
         background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border-radius: 14px;
         overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
     }
 
+    /* HEADER */
     .facture-header {
-        background: linear-gradient(135deg, var(--dark) 0%, #0c2040 100%);
+        background: linear-gradient(135deg, var(--dark), #1e293b);
         color: white;
-        padding: 2rem;
+        padding: 25px;
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
+        flex-wrap: wrap;
     }
 
-    .facture-logo h2 {
-        font-size: 1.8rem;
-        font-weight: 800;
-        margin-bottom: 0.3rem;
-    }
+        .facture-header h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
 
-    .facture-logo p {
-        opacity: 0.9;
-        font-size: 0.9rem;
-    }
-
-    .facture-info {
-        text-align: right;
-    }
-
-    .facture-number {
-        font-size: 1.2rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-    }
-
-    .facture-date {
-        font-size: 0.9rem;
-        opacity: 0.9;
-    }
-
-    .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: rgba(34,197,94,0.1);
+    .badge-status {
+        margin-top: 10px;
+        display: inline-block;
+        background: rgba(34,197,94,0.15);
         color: var(--success);
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin-top: 1rem;
+        padding: 5px 10px;
+        border-radius: 8px;
+        font-size: 13px;
     }
 
+    /* BODY */
     .facture-body {
-        padding: 2rem;
+        padding: 25px;
     }
 
+    /* SECTION */
     .section {
-        margin-bottom: 2rem;
-        border-bottom: 1px solid var(--border);
-        padding-bottom: 1.5rem;
-    }
-
-    .section:last-child {
-        border-bottom: none;
+        margin-bottom: 25px;
     }
 
     .section-title {
-        font-size: 0.85rem;
+        font-size: 12px;
         font-weight: 700;
-        text-transform: uppercase;
         color: var(--muted);
-        margin-bottom: 1rem;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+        letter-spacing: 0.5px;
     }
 
-    .section-content {
+    /* GRID */
+    .grid-2 {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 2rem;
+        gap: 20px;
     }
 
-    .field-group {
-        margin-bottom: 1rem;
+    /* FIELD */
+    .field {
+        margin-bottom: 12px;
     }
 
-    .field-label {
-        display: block;
-        font-size: 0.75rem;
-        font-weight: 600;
+    .label {
+        font-size: 12px;
         color: var(--muted);
-        margin-bottom: 0.25rem;
         text-transform: uppercase;
     }
 
-    .field-value {
-        font-size: 1rem;
+    .value {
+        font-size: 15px;
         font-weight: 600;
         color: var(--dark);
     }
 
-    .seminaire-details {
+    /* SEMINAIRE CARD */
+    .seminaire {
+        display: flex;
+        gap: 15px;
         background: var(--light);
-        border-radius: 10px;
-        padding: 1.5rem;
-        display: grid;
-        grid-template-columns: 120px 1fr;
-        gap: 1.5rem;
-    }
-
-    .seminaire-image {
-        width: 120px;
-        height: 120px;
-        border-radius: 10px;
-        object-fit: cover;
+        padding: 15px;
+        border-radius: 12px;
         border: 1px solid var(--border);
     }
 
-    .seminaire-info h3 {
-        margin-bottom: 0.8rem;
-        color: var(--dark);
-    }
+        .seminaire img {
+            width: 120px;
+            height: 120px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
 
-    .seminaire-info p {
-        margin-bottom: 0.5rem;
-        color: var(--muted);
-    }
-
-    .table-facture {
+    /* TABLE */
+    table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 1rem;
+        margin-top: 10px;
     }
 
-    .table-facture thead {
+    th {
+        text-align: left;
+        font-size: 12px;
+        color: var(--muted);
+        padding: 10px;
         background: var(--light);
     }
 
-    .table-facture th,
-    .table-facture td {
-        padding: 1rem;
+    td {
+        padding: 12px;
         border-bottom: 1px solid var(--border);
     }
 
-    .table-facture th {
-        text-transform: uppercase;
-        font-size: 0.8rem;
-        color: var(--muted);
-    }
-
-    .montant {
-        color: var(--primary);
-        font-weight: 700;
+    .amount {
         text-align: right;
+        font-weight: bold;
+        color: var(--primary);
     }
 
-    .totals-section {
+    /* TOTAL */
+    .total-box {
+        margin-top: 20px;
         display: flex;
         justify-content: flex-end;
-        margin-top: 2rem;
     }
 
-    .totals {
-        width: 320px;
+    .total {
+        width: 300px;
     }
 
-    .total-row {
+    .total-line {
         display: flex;
         justify-content: space-between;
-        padding: 0.8rem 0;
+        padding: 8px 0;
         border-bottom: 1px solid var(--border);
     }
 
-    .grand-total {
-        font-size: 1.2rem;
+    .total-final {
+        font-size: 18px;
         font-weight: 800;
         color: var(--primary);
-        border-bottom: none;
     }
 
-    .payment-section {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.5rem;
-    }
-
-    .payment-method {
-        background: var(--light);
-        border-radius: 10px;
-        padding: 1.5rem;
+    /* BUTTONS */
+    .actions {
         display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .payment-icon {
-        font-size: 2rem;
-        color: var(--primary);
-    }
-
-    .notes-section {
-        background: var(--light);
-        border-left: 4px solid var(--primary);
-        padding: 1rem;
-        border-radius: 6px;
-    }
-
-    .notes-section strong {
-        display: block;
-        margin-bottom: 0.5rem;
-    }
-
-    .action-buttons {
-        display: flex;
-        gap: 1rem;
+        gap: 10px;
         justify-content: center;
-        margin-top: 2rem;
-        padding-top: 2rem;
-        border-top: 1px solid var(--border);
+        margin-top: 25px;
     }
 
     .btn {
-        padding: 0.8rem 1.5rem;
-        border-radius: 8px;
-        text-decoration: none;
+        padding: 10px 18px;
+        border-radius: 10px;
         border: none;
         cursor: pointer;
         font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
+        text-decoration: none;
     }
 
     .btn-primary {
-        background: linear-gradient(135deg, var(--primary), #3b82f6);
+        background: var(--primary);
         color: white;
     }
 
     .btn-secondary {
-        background: var(--light);
+        background: white;
         border: 1px solid var(--border);
         color: var(--dark);
     }
 
+    /* HOVER */
     .btn:hover {
         transform: translateY(-2px);
         transition: 0.2s;
     }
 
+    /* PRINT */
     @@media print {
-        body {
-            background: white;
-            padding: 0;
-        }
-
-        .action-buttons {
+        .actions {
             display: none;
         }
 
-        .facture-container {
+        body {
+            background: white;
+        }
+
+        .facture {
             box-shadow: none;
-            border-radius: 0;
         }
     }
 
+    /* MOBILE */
     @@media (max-width: 768px) {
-
-        .facture-header,
-        .section-content,
-        .payment-section,
-        .seminaire-details {
+        .grid-2 {
             grid-template-columns: 1fr;
+        }
+
+        .seminaire {
             flex-direction: column;
-        }
-
-        .facture-info {
-            text-align: left;
-        }
-
-        .action-buttons {
-            flex-direction: column;
-        }
-
-        .btn {
-            width: 100%;
-            justify-content: center;
+            align-items: center;
+            text-align: center;
         }
     }
 </style>
 
-<div class="facture-container">
+<div class="facture">
 
     <!-- HEADER -->
     <div class="facture-header">
-
-        <div class="facture-logo">
+        <div>
             <h2>SeminaPro</h2>
-            <p>Plateforme de Séminaires</p>
+            <small>Plateforme de Séminaires</small>
         </div>
 
-        <div class="facture-info">
-            <div class="facture-number">
-                Facture #@(Model.Inscription?.Id.ToString("D6"))
-            </div>
-
-            <div class="facture-date">
-                @DateTime.Now.ToString("dd MMMM yyyy")
-            </div>
-
-            <div class="status-badge">
-                <i class="bi bi-check-circle-fill"></i>
-                Confirmée
+        <div>
+            <div>Facture #@(Model.Inscription?.Id.ToString("D6"))</div>
+            <div class="badge-status">
+                <i class="bi bi-check-circle"></i> Confirmée
             </div>
         </div>
-
     </div>
 
-    <!-- BODY -->
     <div class="facture-body">
 
         <!-- INFOS -->
         <div class="section">
+            <div class="section-title">Informations</div>
 
-            <div class="section-title">
-                Informations Générales
-            </div>
-
-            <div class="section-content">
+            <div class="grid-2">
 
                 <div>
-
-                    <div class="field-group">
-                        <span class="field-label">Participant</span>
-                        <span class="field-value">
-                            @Model.Participant?.Prenom @Model.Participant?.Nom
-                        </span>
+                    <div class="field">
+                        <div class="label">Participant</div>
+                        <div class="value">@Model.Participant?.Prenom @Model.Participant?.Nom</div>
                     </div>
 
-                    <div class="field-group">
-                        <span class="field-label">Email</span>
-                        <span class="field-value">
-                            @Model.Participant?.Email
-                        </span>
+                    <div class="field">
+                        <div class="label">Email</div>
+                        <div class="value">@Model.Participant?.Email</div>
                     </div>
-
-                    <div class="field-group">
-                        <span class="field-label">Téléphone</span>
-                        <span class="field-value">
-                            @(Model.Participant?.NumeroTelephone ?? "N/A")
-                        </span>
-                    </div>
-
                 </div>
 
                 <div>
-
-                    <div class="field-group">
-                        <span class="field-label">Date d'inscription</span>
-                        <span class="field-value">
-                            @Model.Inscription?.DateInscription.ToString("dd/MM/yyyy HH:mm")
-                        </span>
+                    <div class="field">
+                        <div class="label">Date</div>
+                        <div class="value">@Model.Inscription?.DateInscription.ToString("dd/MM/yyyy")</div>
                     </div>
 
-                    <div class="field-group">
-                        <span class="field-label">Numéro d'inscription</span>
-                        <span class="field-value">
-                            #INS-@(Model.Inscription?.Id.ToString("D6"))
-                        </span>
+                    <div class="field">
+                        <div class="label">ID Inscription</div>
+                        <div class="value">#INS-@(Model.Inscription?.Id.ToString("D6"))</div>
                     </div>
-
                 </div>
 
             </div>
-
         </div>
 
         <!-- SEMINAIRE -->
         <div class="section">
+            <div class="section-title">Séminaire</div>
 
-            <div class="section-title">
-                Détails du Séminaire
-            </div>
+            <div class="seminaire">
+                <img src="@(Model.Seminaire?.ImageUrl ?? "/images/default.png")" />
 
-            <div class="seminaire-details">
-
-                <img src="@(Model.Seminaire?.ImageUrl ?? "/images/default-seminaire.png")"
-                     alt="@Model.Seminaire?.Titre"
-                     class="seminaire-image" />
-
-                <div class="seminaire-info">
-
+                <div>
                     <h3>@Model.Seminaire?.Titre</h3>
-
-                    <p>
-                        <i class="bi bi-hash"></i>
-                        Code : @Model.Seminaire?.Code
-                    </p>
-
-                    <p>
-                        <i class="bi bi-calendar"></i>
-                        Date : @Model.Seminaire?.DateSeminaire.ToString("dd MMMM yyyy")
-                    </p>
-
-                    <p>
-                        <i class="bi bi-geo-alt"></i>
-                        Lieu : @Model.Seminaire?.Lieu
-                    </p>
-
-                    <p>
-                        <i class="bi bi-info-circle"></i>
-                        Spécialité :
-                        @Model.Seminaire?.Specialite?.Libelle
-                    </p>
-
+                    <p>@Model.Seminaire?.Lieu</p>
+                    <p>@Model.Seminaire?.DateSeminaire.ToString("dd MMM yyyy")</p>
                 </div>
-
             </div>
-
         </div>
 
         <!-- TABLE -->
-        <table class="table-facture">
-
-            <thead>
-                <tr>
-                    <th>Description</th>
-                    <th style="text-align:right;">Tarif</th>
-                    <th style="text-align:right;">Quantité</th>
-                    <th style="text-align:right;">Montant</th>
-                </tr>
-            </thead>
-
-            <tbody>
-
-                <tr>
-
-                    <td>
-                        <strong>@Model.Seminaire?.Titre</strong>
-                        <br />
-                        <small style="color: var(--muted)">
-                            Inscription au séminaire
-                        </small>
-                    </td>
-
-                    <td style="text-align:right;">
-                        @Model.Seminaire?.Tarif.ToString("N2") DH
-                    </td>
-
-                    <td style="text-align:right;">
-                        1
-                    </td>
-
-                    <td class="montant">
-                        @Model.Seminaire?.Tarif.ToString("N2") DH
-                    </td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
-
-        <!-- TOTAL -->
-        <div class="totals-section">
-
-            <div class="totals">
-
-                <div class="total-row">
-                    <span>Sous-total</span>
-                    <span>@Model.Seminaire?.Tarif.ToString("N2") DH</span>
-                </div>
-
-                <div class="total-row">
-                    <span>TVA</span>
-                    <span>0.00 DH</span>
-                </div>
-
-                <div class="total-row grand-total">
-                    <span>Total TTC</span>
-                    <span>@Model.Seminaire?.Tarif.ToString("N2") DH</span>
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- PAYMENT -->
         <div class="section">
+            <div class="section-title">Détail</div>
 
-            <div class="section-title">
-                Moyens de Paiement
-            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Prix</th>
+                        <th>Qté</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
 
-            <div class="payment-section">
+                <tbody>
+                    <tr>
+                        <td>@Model.Seminaire?.Titre</td>
+                        <td>@Model.Seminaire?.Tarif DH</td>
+                        <td>1</td>
+                        <td class="amount">@Model.Seminaire?.Tarif DH</td>
+                    </tr>
+                </tbody>
+            </table>
 
-                <div class="payment-method">
-                    <div class="payment-icon">
-                        <i class="bi bi-credit-card"></i>
+            <div class="total-box">
+                <div class="total">
+                    <div class="total-line">
+                        <span>Total</span>
+                        <span>@Model.Seminaire?.Tarif DH</span>
                     </div>
 
-                    <div>
-                        <strong>Carte Bancaire</strong>
-                        <p>Visa, Mastercard</p>
+                    <div class="total-line total-final">
+                        <span>TTC</span>
+                        <span>@Model.Seminaire?.Tarif DH</span>
                     </div>
                 </div>
-
-                <div class="payment-method">
-                    <div class="payment-icon">
-                        <i class="bi bi-bank"></i>
-                    </div>
-
-                    <div>
-                        <strong>Virement Bancaire</strong>
-                        <p>Paiement sécurisé</p>
-                    </div>
-                </div>
-
             </div>
-
         </div>
 
-        <!-- NOTES -->
-        <div class="notes-section">
-
-            <strong>📝 Remarques</strong>
-
-            <p>
-                Cette facture confirme votre inscription au séminaire.
-                Merci de conserver ce document.
-            </p>
-
-        </div>
-
-        <!-- BUTTONS -->
-        <div class="action-buttons">
-
-            <button class="btn btn-primary" id="downloadPdf">
-                <i class="bi bi-download"></i>
-                Télécharger en PDF
+        <!-- ACTIONS -->
+        <div class="actions">
+            <button class="btn btn-primary" onclick="window.print()">
+                <i class="bi bi-download"></i> PDF
             </button>
 
             <a href="javascript:history.back()" class="btn btn-secondary">
-                <i class="bi bi-arrow-left"></i>
                 Retour
             </a>
-
         </div>
 
     </div>
-
 </div>
-
-<script>
-
-    document.addEventListener('DOMContentLoaded', function () {
-
-        const downloadBtn = document.getElementById('downloadPdf');
-
-        if (downloadBtn) {
-
-            downloadBtn.addEventListener('click', function () {
-
-                const originalTitle = document.title;
-
-                document.title =
-                    'Facture_@(Model.Inscription?.Id.ToString("D6"))';
-
-                window.print();
-
-                setTimeout(() => {
-                    document.title = originalTitle;
-                }, 500);
-            });
-        }
-
-    });
-
-</script>

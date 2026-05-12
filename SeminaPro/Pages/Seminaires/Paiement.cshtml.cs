@@ -5,6 +5,7 @@ using SeminaPro.Data;
 using SeminaPro.Models;
 using SeminaPro.Services.Interfaces;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Configuration;
 
 namespace SeminaPro.Pages.Seminaires
 {
@@ -14,11 +15,14 @@ namespace SeminaPro.Pages.Seminaires
         private readonly IPaymentService _paymentService;
         private readonly IInvoiceService _invoiceService;
         private readonly ILogger<PaiementModel> _logger;
+        private readonly IConfiguration _configuration;
 
         public Seminaire? Seminaire { get; set; }
         public Participant? Participant { get; set; }
         public PaymentIntentDto? PaymentIntent { get; set; }
         public Inscription? CurrentInscription { get; set; }
+        public string? StripePublicKey { get; set; }
+        public string? RequestToken { get; set; }
 
         [BindProperty]
         public string? SelectedPaymentMethod { get; set; } = "card";
@@ -27,24 +31,20 @@ namespace SeminaPro.Pages.Seminaires
         public string? CardName { get; set; }
 
         [BindProperty]
-        public string? CardNumber { get; set; }
-
-        [BindProperty]
-        public string? CardExpiry { get; set; }
-
-        [BindProperty]
-        public string? CardCvc { get; set; }
+        public string? StripeToken { get; set; }
 
         public PaiementModel(
             ApplicationDbContext context,
             IPaymentService paymentService,
             IInvoiceService invoiceService,
-            ILogger<PaiementModel> logger)
+            ILogger<PaiementModel> logger,
+            IConfiguration configuration)
         {
             _context = context;
             _paymentService = paymentService;
             _invoiceService = invoiceService;
             _logger = logger;
+            _configuration = configuration;
         }
 
         public IActionResult OnGet(int id)
@@ -88,6 +88,10 @@ namespace SeminaPro.Pages.Seminaires
                     return RedirectToPage("/Dashboard/Index");
                 }
 
+                // Charger la clé publique Stripe
+                StripePublicKey = _configuration["Stripe:PublicKey"];
+                RequestToken = GetRequestVerificationToken();
+
                 return Page();
             }
             catch (Exception ex)
@@ -127,12 +131,6 @@ namespace SeminaPro.Pages.Seminaires
                     return RedirectToPage("/Seminaires/Index");
                 }
 
-                // Valider les données du formulaire
-                if (!ValidatePaymentData())
-                {
-                    return Page();
-                }
-
                 // Créer une inscription en attente de paiement
                 var inscription = new Inscription
                 {
@@ -153,18 +151,7 @@ namespace SeminaPro.Pages.Seminaires
                     Seminaire.Id,
                     inscription.Id);
 
-                // Créer une intention de paiement
-                PaymentIntent = await _paymentService.CreatePaymentIntentAsync(
-                    inscription.Id,
-                    Participant,
-                    Seminaire);
-
-                // Enregistrer l'intention de paiement
-                inscription.PaymentMethodId = PaymentIntent.PaymentIntentId;
-                _context.Inscriptions.Update(inscription);
-                await _context.SaveChangesAsync();
-
-                // Traiter le paiement
+                // Traiter le paiement selon la méthode
                 bool paymentSucceeded = await ProcessPaymentAsync(inscription);
 
                 if (paymentSucceeded)
@@ -191,6 +178,8 @@ namespace SeminaPro.Pages.Seminaires
                         inscription.Id);
 
                     TempData["Error"] = "Le paiement a échoué. Veuillez réessayer avec une autre méthode.";
+                    StripePublicKey = _configuration["Stripe:PublicKey"];
+                    RequestToken = GetRequestVerificationToken();
                     return Page();
                 }
             }
@@ -198,7 +187,25 @@ namespace SeminaPro.Pages.Seminaires
             {
                 _logger.LogError(ex, "Erreur lors du traitement du paiement");
                 TempData["Error"] = "Une erreur est survenue lors du paiement";
+                StripePublicKey = _configuration["Stripe:PublicKey"];
+                RequestToken = GetRequestVerificationToken();
                 return Page();
+            }
+        }
+
+        /// <summary>
+        /// Récupère le token de vérification des requêtes CSRF
+        /// </summary>
+        private string GetRequestVerificationToken()
+        {
+            try
+            {
+                var tokens = HttpContext.Items["__RequestVerificationToken"];
+                return tokens?.ToString() ?? string.Empty;
+            }
+            catch
+            {
+                return string.Empty;
             }
         }
 
@@ -215,16 +222,32 @@ namespace SeminaPro.Pages.Seminaires
 
             if (SelectedPaymentMethod == "card")
             {
-                return ValidateCardPayment();
+                // Valider le nom sur la carte
+                if (string.IsNullOrWhiteSpace(CardName) || CardName.Length < 3)
+                {
+                    ModelState.AddModelError("CardName", "Le nom sur la carte doit contenir au moins 3 caractères");
+                    return false;
+                }
+
+                // Le token Stripe valide le reste
+                if (string.IsNullOrWhiteSpace(StripeToken))
+                {
+                    ModelState.AddModelError("", "Erreur de paiement: token invalide. Veuillez réessayer.");
+                    return false;
+                }
+
+                return true;
             }
             else if (SelectedPaymentMethod == "paypal")
             {
-                // Validation PayPal (simplifié)
+                // Validation PayPal - accepter par défaut
+                _logger.LogInformation("Paiement PayPal sélectionné");
                 return true;
             }
             else if (SelectedPaymentMethod == "transfer")
             {
-                // Validation virement bancaire
+                // Validation virement bancaire - accepter par défaut
+                _logger.LogInformation("Virement bancaire sélectionné");
                 return true;
             }
 
@@ -233,134 +256,38 @@ namespace SeminaPro.Pages.Seminaires
         }
 
         /// <summary>
-        /// Valide les données de carte bancaire
-        /// </summary>
-        private bool ValidateCardPayment()
-        {
-            // Valider le nom sur la carte
-            if (string.IsNullOrWhiteSpace(CardName) || CardName.Length < 3)
-            {
-                ModelState.AddModelError("CardName", "Nom sur la carte invalide");
-                return false;
-            }
-
-            // Valider le numéro de carte
-            if (string.IsNullOrWhiteSpace(CardNumber))
-            {
-                ModelState.AddModelError("CardNumber", "Numéro de carte requis");
-                return false;
-            }
-
-            string cleanCardNumber = Regex.Replace(CardNumber, @"\s+", "");
-            if (!Regex.IsMatch(cleanCardNumber, @"^\d{13,19}$"))
-            {
-                ModelState.AddModelError("CardNumber", "Numéro de carte invalide");
-                return false;
-            }
-
-            // Valider Luhn
-            if (!ValidateLuhn(cleanCardNumber))
-            {
-                ModelState.AddModelError("CardNumber", "Numéro de carte invalide (checksum)");
-                return false;
-            }
-
-            // Valider la date d'expiration
-            if (string.IsNullOrWhiteSpace(CardExpiry) || !CardExpiry.Contains("/"))
-            {
-                ModelState.AddModelError("CardExpiry", "Date d'expiration invalide");
-                return false;
-            }
-
-            string[] expiryParts = CardExpiry.Split('/');
-            if (expiryParts.Length != 2 || 
-                !int.TryParse(expiryParts[0], out int month) || 
-                !int.TryParse(expiryParts[1], out int year))
-            {
-                ModelState.AddModelError("CardExpiry", "Date d'expiration invalide");
-                return false;
-            }
-
-            // Vérifier que la carte n'est pas expirée
-            int fullYear = 2000 + year;
-            DateTime expiryDate = new DateTime(fullYear, month, 1).AddMonths(1).AddDays(-1);
-            if (expiryDate < DateTime.Now)
-            {
-                ModelState.AddModelError("CardExpiry", "Carte expirée");
-                return false;
-            }
-
-            // Valider le CVV
-            if (string.IsNullOrWhiteSpace(CardCvc) || !Regex.IsMatch(CardCvc, @"^\d{3,4}$"))
-            {
-                ModelState.AddModelError("CardCvc", "CVV invalide");
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Valide un numéro de carte avec l'algorithme de Luhn
-        /// </summary>
-        private bool ValidateLuhn(string cardNumber)
-        {
-            int sum = 0;
-            bool isEven = false;
-
-            for (int i = cardNumber.Length - 1; i >= 0; i--)
-            {
-                int digit = cardNumber[i] - '0';
-
-                if (isEven)
-                {
-                    digit *= 2;
-                    if (digit > 9)
-                    {
-                        digit -= 9;
-                    }
-                }
-
-                sum += digit;
-                isEven = !isEven;
-            }
-
-            return (sum % 10) == 0;
-        }
-
-        /// <summary>
-        /// Traite le paiement (simulation pour développement)
+        /// Traite le paiement selon la méthode sélectionnée
         /// </summary>
         private async Task<bool> ProcessPaymentAsync(Inscription inscription)
         {
             try
             {
-                // En développement: simuler un paiement réussi
-                // En production: intégrer Stripe, PayPal, etc.
+                _logger.LogInformation(
+                    "Traitement du paiement - Méthode: {Method}, Inscription ID: {Id}",
+                    SelectedPaymentMethod,
+                    inscription.Id);
+
+                // Valider les données du formulaire
+                if (!ValidatePaymentData())
+                {
+                    _logger.LogWarning("Validation du paiement échouée");
+                    return false;
+                }
 
                 if (SelectedPaymentMethod == "card")
                 {
-                    // Simuler le traitement de la carte
-                    await Task.Delay(500);
-
-                    // Vérifier certains numéros de test qui échouent
-                    if (CardNumber?.Contains("0000") == true)
-                    {
-                        return false;
-                    }
-
-                    return true;
+                    // Traiter la carte bancaire via Stripe
+                    return await ProcessStripePaymentAsync(inscription);
                 }
                 else if (SelectedPaymentMethod == "paypal")
                 {
-                    // Simuler PayPal
-                    await Task.Delay(500);
-                    return true;
+                    // Traiter PayPal
+                    return await ProcessPayPalPaymentAsync(inscription);
                 }
                 else if (SelectedPaymentMethod == "transfer")
                 {
-                    // Virement: marquer comme en attente de confirmation
-                    return true;
+                    // Traiter virement bancaire - marquer comme en attente
+                    return await ProcessBankTransferPaymentAsync(inscription);
                 }
 
                 return false;
@@ -368,6 +295,106 @@ namespace SeminaPro.Pages.Seminaires
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erreur lors du traitement du paiement");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Traite un paiement par carte (Stripe)
+        /// </summary>
+        private async Task<bool> ProcessStripePaymentAsync(Inscription inscription)
+        {
+            try
+            {
+                // Simuler le traitement Stripe
+                if (string.IsNullOrWhiteSpace(StripeToken))
+                {
+                    _logger.LogWarning("Token Stripe manquant");
+                    return false;
+                }
+
+                // En production: appel réel à l'API Stripe
+                await Task.Delay(300);
+
+                // Marquer comme payée
+                inscription.PaymentStatus = "Payée";
+                inscription.DatePaiement = DateTime.Now;
+                inscription.TransactionId = $"stripe_{Guid.NewGuid():N}";
+                inscription.SelectedPaymentMethod = "card";
+
+                _context.Inscriptions.Update(inscription);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation(
+                    "Paiement Stripe réussi - Transaction: {TransactionId}",
+                    inscription.TransactionId);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors du traitement du paiement Stripe");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Traite un paiement via PayPal
+        /// </summary>
+        private async Task<bool> ProcessPayPalPaymentAsync(Inscription inscription)
+        {
+            try
+            {
+                // En production: rediriger vers PayPal
+                await Task.Delay(300);
+
+                inscription.PaymentStatus = "En Attente";
+                inscription.TransactionId = $"paypal_{Guid.NewGuid():N}";
+                inscription.SelectedPaymentMethod = "paypal";
+
+                _context.Inscriptions.Update(inscription);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation(
+                    "Paiement PayPal initié - Transaction: {TransactionId}",
+                    inscription.TransactionId);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors du traitement du paiement PayPal");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Traite un paiement par virement bancaire
+        /// </summary>
+        private async Task<bool> ProcessBankTransferPaymentAsync(Inscription inscription)
+        {
+            try
+            {
+                // Virement: marquer comme en attente de confirmation
+                await Task.Delay(300);
+
+                inscription.PaymentStatus = "En Attente";
+                inscription.TransactionId = $"transfer_{Guid.NewGuid():N}";
+                inscription.SelectedPaymentMethod = "transfer";
+
+                _context.Inscriptions.Update(inscription);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation(
+                    "Virement bancaire enregistré - Transaction: {TransactionId}",
+                    inscription.TransactionId);
+
+                // En production: envoyer email avec détails du virement
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors du traitement du virement bancaire");
                 return false;
             }
         }

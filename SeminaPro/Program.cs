@@ -42,17 +42,45 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-    // Recréer la base de données pour appliquer les nouveaux schémas
+    // Appliquer les migrations en attente
     try
     {
-        db.Database.EnsureDeleted();
-        db.Database.EnsureCreated();
+        // En development : supprimer et recréer si les migrations échouent
+        var isDevelopment = app.Environment.IsDevelopment();
+
+        try
+        {
+            db.Database.Migrate();
+            Console.WriteLine("Migrations appliquées avec succès");
+        }
+        catch (Exception migrationEx)
+        {
+            if (isDevelopment)
+            {
+                Console.WriteLine($"Erreur lors de l'application des migrations: {migrationEx.Message}");
+                Console.WriteLine("En mode développement: suppression et recréation de la base de données...");
+
+                try
+                {
+                    db.Database.EnsureDeleted();
+                    db.Database.Migrate();
+                    Console.WriteLine("Base de données recréée et migrations appliquées avec succès");
+                }
+                catch (Exception recreateEx)
+                {
+                    Console.WriteLine($"Erreur lors de la recréation de la base: {recreateEx.Message}");
+                    throw;
+                }
+            }
+            else
+            {
+                throw;
+            }
+        }
     }
     catch (Exception ex)
     {
-        // Continuer si le fichier est verrouillé
-        Console.WriteLine($"Impossible de recréer la base de données: {ex.Message}");
-        db.Database.EnsureCreated();
+        Console.WriteLine($"Erreur critique lors de la migration de la base de données: {ex.Message}");
     }
 
     // Ajouter des données de test si la BD est vide

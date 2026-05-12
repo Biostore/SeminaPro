@@ -106,6 +106,7 @@ namespace SeminaPro.Pages.Seminaires
             // SORT
             // =========================
             Seminaires = query
+                .ToList()
                 .OrderBy(s => s.DateSeminaire)
                 .ToList();
         }

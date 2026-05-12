@@ -1,6 +1,7 @@
 using SeminaPro.Data;
 using SeminaPro.Models;
 using SeminaPro.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace SeminaPro.Services.Implementations
 {
@@ -311,8 +312,16 @@ namespace SeminaPro.Services.Implementations
             try
             {
                 // En production, utilisez SelectPdf, iTextSharp, ou Puppeteer
-                // Pour l'instant, retourner une version HTML encodée
+                // Pour l'instant, retourner une version HTML encodée en UTF-8
+
+                // Vous pouvez remplacer cette implémentation par une vraie conversion PDF
+                // Exemple avec iTextSharp:
+                // var document = new Document();
+                // var writer = PdfWriter.GetInstance(document, stream);
+                // // ... ajouter contenu ...
+
                 var htmlBytes = System.Text.Encoding.UTF8.GetBytes(htmlContent);
+                _logger.LogInformation("Contenu HTML converti: {Size} bytes", htmlBytes.Length);
                 return htmlBytes;
             }
             catch (Exception ex)
@@ -349,6 +358,134 @@ namespace SeminaPro.Services.Implementations
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erreur lors de l'enregistrement de la facture");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Récupère une facture par son numéro
+        /// </summary>
+        public async Task<Inscription?> GetInvoiceAsync(string invoiceNumber)
+        {
+            try
+            {
+                var inscription = await _context.Inscriptions
+                    .Include(i => i.Participant)
+                    .Include(i => i.Seminaire)
+                    .FirstOrDefaultAsync(i => i.FactureNumero == invoiceNumber);
+
+                if (inscription == null)
+                {
+                    _logger.LogWarning("Facture non trouvée: {InvoiceNumber}", invoiceNumber);
+                }
+
+                return inscription;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors de la récupération de la facture");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Récupère toutes les factures d'un participant
+        /// </summary>
+        public async Task<List<Inscription>> GetParticipantInvoicesAsync(int participantId)
+        {
+            try
+            {
+                var invoices = await _context.Inscriptions
+                    .Where(i => i.ParticipantId == participantId && i.FactureNumero != null)
+                    .Include(i => i.Seminaire)
+                    .OrderByDescending(i => i.DateFacture)
+                    .ToListAsync();
+
+                _logger.LogInformation(
+                    "Récupération de {Count} factures pour participant {Id}",
+                    invoices.Count,
+                    participantId);
+
+                return invoices;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors de la récupération des factures du participant");
+                return new List<Inscription>();
+            }
+        }
+
+        /// <summary>
+        /// Annule une facture (génère un avoir)
+        /// </summary>
+        public async Task<bool> CancelInvoiceAsync(int inscriptionId, string? reason = null)
+        {
+            try
+            {
+                var inscription = await _context.Inscriptions.FindAsync(inscriptionId);
+                if (inscription == null)
+                {
+                    _logger.LogWarning("Inscription non trouvée pour l'annulation: {Id}", inscriptionId);
+                    return false;
+                }
+
+                // Créer un avoir
+                var creditNoteNumber = $"AVOIR-{inscription.FactureNumero}";
+                inscription.FactureNumero = creditNoteNumber;
+                inscription.PaymentStatus = "Annulée";
+
+                _context.Inscriptions.Update(inscription);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation(
+                    "Facture annulée - Créé avoir: {CreditNote} - Raison: {Reason}",
+                    creditNoteNumber,
+                    reason ?? "Non spécifiée");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors de l'annulation de la facture");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Relance une facture impayée
+        /// </summary>
+        public async Task<bool> RemindInvoiceAsync(int inscriptionId)
+        {
+            try
+            {
+                var inscription = await _context.Inscriptions
+                    .Include(i => i.Participant)
+                    .Include(i => i.Seminaire)
+                    .FirstOrDefaultAsync(i => i.Id == inscriptionId);
+
+                if (inscription == null)
+                {
+                    _logger.LogWarning("Inscription non trouvée pour relance: {Id}", inscriptionId);
+                    return false;
+                }
+
+                if (inscription.PaymentStatus == "Payée")
+                {
+                    _logger.LogWarning("La facture est déjà payée - pas de relance: {Id}", inscriptionId);
+                    return false;
+                }
+
+                // En production: envoyer email de relance
+                _logger.LogInformation(
+                    "Relance facture pour: {Invoice} - Email: {Email}",
+                    inscription.FactureNumero,
+                    inscription.Participant?.Email);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors de la relance de facture");
                 return false;
             }
         }
