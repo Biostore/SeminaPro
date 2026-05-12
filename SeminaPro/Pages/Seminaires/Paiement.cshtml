@@ -519,6 +519,8 @@
 </div>
 
 <script>
+    let isProcessingPayment = false;
+
     // Masquer/afficher les détails de la carte selon la sélection
     document.querySelectorAll('input[name="selectedPaymentMethod"]').forEach(radio => {
         radio.addEventListener('change', function() {
@@ -558,6 +560,137 @@
     // Validation du CVV
     document.getElementById('cardCvc')?.addEventListener('input', function(e) {
         e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+    });
+
+    // Validation Luhn du numéro de carte
+    function validateCardNumber(num) {
+        let sum = 0;
+        let isEven = false;
+        for (let i = num.length - 1; i >= 0; i--) {
+            let digit = parseInt(num.charAt(i), 10);
+            if (isEven) {
+                digit *= 2;
+                if (digit > 9) {
+                    digit -= 9;
+                }
+            }
+            sum += digit;
+            isEven = !isEven;
+        }
+        return (sum % 10) === 0;
+    }
+
+    // Gestionnaire du formulaire de paiement
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            if (isProcessingPayment) {
+                return;
+            }
+
+            const paymentMethod = document.querySelector('input[name="selectedPaymentMethod"]:checked').value;
+            const termsCheckbox = document.getElementById('terms');
+
+            // Vérifier les conditions d'utilisation
+            if (!termsCheckbox.checked) {
+                alert('Veuillez accepter les conditions d\'utilisation');
+                return;
+            }
+
+            // Validation spécifique par méthode
+            if (paymentMethod === 'card') {
+                const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+                const cardName = document.getElementById('cardName').value.trim();
+                const cardExpiry = document.getElementById('cardExpiry').value;
+                const cardCvc = document.getElementById('cardCvc').value;
+
+                // Valider le numéro de carte
+                if (!cardNumber || cardNumber.length < 13 || cardNumber.length > 19) {
+                    alert('Numéro de carte invalide');
+                    return;
+                }
+
+                // Valider Luhn
+                if (!validateCardNumber(cardNumber)) {
+                    alert('Numéro de carte invalide (Luhn check)');
+                    return;
+                }
+
+                // Valider le nom
+                if (!cardName || cardName.length < 3) {
+                    alert('Nom sur la carte invalide');
+                    return;
+                }
+
+                // Valider la date d'expiration
+                if (!cardExpiry || cardExpiry.length !== 5) {
+                    alert('Date d\'expiration invalide');
+                    return;
+                }
+
+                const [month, year] = cardExpiry.split('/');
+                const expMonth = parseInt(month, 10);
+                const expYear = parseInt('20' + year, 10);
+                const now = new Date();
+                const currentYear = now.getFullYear();
+                const currentMonth = now.getMonth() + 1;
+
+                if (expYear < currentYear || (expYear === currentYear && expMonth < currentMonth)) {
+                    alert('Carte expirée');
+                    return;
+                }
+
+                // Valider le CVV
+                if (!cardCvc || cardCvc.length < 3 || cardCvc.length > 4) {
+                    alert('CVV invalide');
+                    return;
+                }
+            }
+
+            // Désactiver le bouton et afficher un message
+            isProcessingPayment = true;
+            const submitBtn = document.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Traitement du paiement...';
+
+            try {
+                // Simuler le traitement du paiement
+                await processPayment(paymentMethod);
+
+                // Soumettre le formulaire
+                form.submit();
+            } catch (error) {
+                console.error('Erreur lors du paiement:', error);
+                alert('Une erreur est survenue lors du paiement. Veuillez réessayer.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+                isProcessingPayment = false;
+            }
+        });
+    }
+
+    // Simulation du traitement du paiement
+    async function processPayment(method) {
+        return new Promise((resolve, reject) => {
+            // Simuler un délai de traitement
+            setTimeout(() => {
+                // En production, intégrer Stripe, PayPal, etc.
+                console.log(`Paiement via ${method} traité`);
+                resolve();
+            }, 1500);
+        });
+    }
+
+    // Animation au chargement
+    document.addEventListener('DOMContentLoaded', function() {
+        // Afficher/masquer les détails de la carte au démarrage
+        const cardRadio = document.getElementById('card');
+        if (cardRadio && cardRadio.checked) {
+            document.getElementById('cardDetails').style.display = 'block';
+        }
     });
 </script>
 
