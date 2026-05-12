@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SeminaPro.Data;
+using SeminaPro.Services.Interfaces;
+using SeminaPro.Services.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,13 @@ builder.Services.AddSession(options =>
     options.Cookie.Name = ".SeminaPro.Session";
     options.Cookie.HttpOnly = true;
 });
+
+// ==========================================
+// ENREGISTRER LES SERVICES PERSONNALISÉS
+// ==========================================
+builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+builder.Services.AddScoped<IPaymentService, StripePaymentService>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();

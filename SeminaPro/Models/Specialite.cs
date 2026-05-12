@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SeminaPro.Models
 {
+    /// <summary>
+    /// Modèle pour représenter une spécialité avec logo/icône
+    /// </summary>
     public class Specialite
     {
         [Key]
@@ -17,6 +20,12 @@ namespace SeminaPro.Models
 
         [StringLength(10)]
         public string? Abbreviation { get; set; }
+
+        /// <summary>
+        /// URL du logo ou icône de la spécialité
+        /// </summary>
+        [StringLength(300)]
+        public string? ImageUrl { get; set; } = "/images/default-speciality.png";
 
         // Alias (optionnel, rétrocompatibilité)
         [NotMapped]

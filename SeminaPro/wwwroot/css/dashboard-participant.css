@@ -184,12 +184,13 @@ html, body {
    MAIN CONTENT — SEUL ÉLÉMENT QUI SCROLL
    ======================================== */
 .main-content {
-    margin-left: var(--sidebar-width);
     flex: 1;
     height: calc(100vh - var(--navbar-height));
     overflow-y: auto;
     overflow-x: hidden;
+    margin-left: var(--sidebar-width);
     padding: 2rem;
+    padding-right: 2rem;
     background: #f8fafc;
 }
 
@@ -570,6 +571,10 @@ html, body {
         max-height: none;
     }
 
+    /* Override margin-left for pages with their own dashboard-content-wrapper (e.g., Settings) */
+    .dashboard-content-wrapper .main-content {
+        margin-left: 0;
+    }
     .navbar-dashboard .nav-link {
         font-size: 0.85rem;
     }

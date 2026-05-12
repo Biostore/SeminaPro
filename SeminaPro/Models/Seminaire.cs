@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SeminaPro.Models.Enums;
 
 namespace SeminaPro.Models
 {
@@ -36,7 +37,15 @@ namespace SeminaPro.Models
 
         public ICollection<Inscription> Inscriptions { get; set; } = new List<Inscription>();
 
+        public ICollection<MediaFile> MediaFiles { get; set; } = new List<MediaFile>();
+
         [StringLength(300)]
         public string? ImageUrl { get; set; }
+
+        [NotMapped]
+        public int NombreInscrits => Inscriptions?.Count ?? 0;
+
+        [NotMapped]
+        public bool EstComplet => NombreInscrits >= NombreMaximal;
     }
 }

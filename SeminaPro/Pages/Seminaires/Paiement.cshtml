@@ -1,0 +1,582 @@
+@page "{id}"
+@model SeminaPro.Pages.Seminaires.PaiementModel
+
+@{
+    ViewData["Title"] = "Paiement de l'inscription";
+}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+    :root {
+        --primary: #0f6bff;
+        --success: #22c55e;
+        --danger: #ef4444;
+        --dark: #1e293b;
+        --light: #f1f5f9;
+        --muted: #64748b;
+        --border: #e2e8f0;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, var(--light) 0%, #e0f2ff 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+
+    .paiement-wrapper {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .paiement-container {
+        display: grid;
+        grid-template-columns: 1fr 350px;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .paiement-form {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        padding: 2.5rem;
+    }
+
+    .paiement-summary {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+        height: fit-content;
+        position: sticky;
+        top: 2rem;
+    }
+
+    .form-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-subtitle {
+        color: var(--muted);
+        margin-bottom: 2rem;
+        font-size: 0.95rem;
+    }
+
+    .form-section {
+        margin-bottom: 2.5rem;
+    }
+
+    .section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--border);
+    }
+
+    .payment-methods {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .payment-option {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .payment-option input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .payment-label {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.25rem;
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        background: var(--light);
+    }
+
+    .payment-option input[type="radio"]:checked + .payment-label {
+        border-color: var(--primary);
+        background: rgba(15, 107, 255, 0.05);
+    }
+
+    .payment-icon {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--light);
+        border-radius: 8px;
+        font-size: 1.5rem;
+    }
+
+    .payment-info h4 {
+        color: var(--dark);
+        margin-bottom: 0.25rem;
+    }
+
+    .payment-info p {
+        color: var(--muted);
+        font-size: 0.85rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--dark);
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 0.875rem;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(15, 107, 255, 0.1);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1rem;
+    }
+
+    .summary-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .summary-title {
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 1rem;
+    }
+
+    .seminaire-info {
+        background: var(--light);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .seminaire-title {
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .seminaire-detail {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin: 0.3rem 0;
+    }
+
+    .pricing-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .pricing-row:last-child {
+        border-bottom: none;
+    }
+
+    .pricing-label {
+        color: var(--muted);
+        font-size: 0.9rem;
+    }
+
+    .pricing-value {
+        color: var(--dark);
+        font-weight: 500;
+    }
+
+    .total-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 0;
+        border-top: 2px solid var(--border);
+        margin-top: 1.25rem;
+    }
+
+    .total-label {
+        font-weight: 600;
+        color: var(--dark);
+        font-size: 1rem;
+    }
+
+    .total-amount {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 1rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+        width: 100%;
+    }
+
+    .btn-primary:hover {
+        background: #0a54d4;
+        box-shadow: 0 4px 12px rgba(15, 107, 255, 0.3);
+    }
+
+    .btn-secondary {
+        background: var(--light);
+        color: var(--dark);
+        margin-top: 0.75rem;
+        width: 100%;
+    }
+
+    .btn-secondary:hover {
+        background: var(--border);
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: var(--light);
+        border-radius: 8px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: var(--primary);
+    }
+
+    .checkbox-group label {
+        margin: 0;
+        cursor: pointer;
+        font-size: 0.9rem;
+        color: var(--muted);
+    }
+
+    .alert {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+
+    .alert-danger {
+        background: #fee2e2;
+        color: #991b1b;
+        border-left: 4px solid var(--danger);
+    }
+
+    .alert-success {
+        background: #dcfce7;
+        color: #166534;
+        border-left: 4px solid var(--success);
+    }
+</style>
+
+<div class="paiement-wrapper">
+    <!-- Messages -->
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-circle"></i>
+            @TempData["Error"]
+        </div>
+    }
+
+    <form method="post" class="paiement-container">
+
+        <!-- Formulaire de Paiement -->
+        <div class="paiement-form">
+
+            <h1 class="form-title">Paiement de l'Inscription</h1>
+            <p class="form-subtitle">Choisissez votre méthode de paiement préférée</p>
+
+            <!-- Sélection du Mode de Paiement -->
+            <div class="form-section">
+                <h3 class="section-title">Méthode de Paiement</h3>
+
+                <div class="payment-methods">
+                    <!-- Carte Bancaire -->
+                    <div class="payment-option">
+                        <input type="radio" id="card" name="selectedPaymentMethod" value="card" checked />
+                        <label for="card" class="payment-label">
+                            <div class="payment-icon">
+                                <i class="bi bi-credit-card"></i>
+                            </div>
+                            <div class="payment-info">
+                                <h4>Carte Bancaire</h4>
+                                <p>Visa, Mastercard, American Express</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- PayPal -->
+                    <div class="payment-option">
+                        <input type="radio" id="paypal" name="selectedPaymentMethod" value="paypal" />
+                        <label for="paypal" class="payment-label">
+                            <div class="payment-icon">
+                                <i class="bi bi-wallet2"></i>
+                            </div>
+                            <div class="payment-info">
+                                <h4>PayPal</h4>
+                                <p>Paiement sécurisé via PayPal</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Virement -->
+                    <div class="payment-option">
+                        <input type="radio" id="transfer" name="selectedPaymentMethod" value="transfer" />
+                        <label for="transfer" class="payment-label">
+                            <div class="payment-icon">
+                                <i class="bi bi-bank"></i>
+                            </div>
+                            <div class="payment-info">
+                                <h4>Virement Bancaire</h4>
+                                <p>Virement SEPA en 1-2 jours</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Détails Carte (montré si carte sélectionnée) -->
+            <div class="form-section" id="cardDetails">
+                <h3 class="section-title">Détails de la Carte</h3>
+
+                <div class="form-group">
+                    <label for="cardName">Nom sur la Carte</label>
+                    <input type="text" id="cardName" name="cardName" placeholder="Jean Dupont" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cardNumber">Numéro de Carte</label>
+                    <input type="text" id="cardNumber" name="cardNumber" placeholder="4242 4242 4242 4242" 
+                           maxlength="19" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cardExpiry">Date d'Expiration</label>
+                        <input type="text" id="cardExpiry" name="cardExpiry" placeholder="MM/YY" 
+                               maxlength="5" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cardCvc">CVV</label>
+                        <input type="text" id="cardCvc" name="cardCvc" placeholder="123" 
+                               maxlength="4" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conditions d'Utilisation -->
+            <div class="checkbox-group">
+                <input type="checkbox" id="terms" name="terms" required>
+                <label for="terms">
+                    J'accepte les <a href="#">conditions d'utilisation</a> et la 
+                    <a href="#">politique de confidentialité</a>
+                </label>
+            </div>
+
+            <!-- Boutons -->
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-lock"></i>
+                Procéder au Paiement
+            </button>
+            <a href="/Seminaires/Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i>
+                Annuler
+            </a>
+
+        </div>
+
+        <!-- Résumé -->
+        <div class="paiement-summary">
+
+            <div class="summary-section">
+                <h3 class="summary-title">Résumé de la Commande</h3>
+
+                @if (Model.Seminaire != null)
+                {
+                    <div class="seminaire-info">
+                        <div class="seminaire-title">
+                            @Model.Seminaire.Titre
+                        </div>
+                        <div class="seminaire-detail">
+                            <span><i class="bi bi-calendar-event"></i> Date</span>
+                            <strong>@Model.Seminaire.DateSeminaire.ToString("dd/MM/yyyy")</strong>
+                        </div>
+                        <div class="seminaire-detail">
+                            <span><i class="bi bi-geo-alt"></i> Lieu</span>
+                            <strong>@Model.Seminaire.Lieu</strong>
+                        </div>
+                        <div class="seminaire-detail">
+                            <span><i class="bi bi-clock"></i> Heure</span>
+                            <strong>@Model.Seminaire.DateSeminaire.ToString("HH:mm")</strong>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="summary-section">
+                <div class="pricing-row">
+                    <span class="pricing-label">Frais d'inscription</span>
+                    <span class="pricing-value">@(Model.Seminaire?.Tarif.ToString("N2") ?? "0,00") €</span>
+                </div>
+                <div class="pricing-row">
+                    <span class="pricing-label">Frais de traitement</span>
+                    <span class="pricing-value">0,00 €</span>
+                </div>
+                <div class="pricing-row">
+                    <span class="pricing-label">TVA</span>
+                    <span class="pricing-value">0,00 €</span>
+                </div>
+            </div>
+
+            <div class="total-row">
+                <span class="total-label">Total</span>
+                <span class="total-amount">@(Model.Seminaire?.Tarif.ToString("N2") ?? "0,00") €</span>
+            </div>
+
+            <!-- Sécurité -->
+            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); text-align: center; color: var(--muted); font-size: 0.85rem;">
+                <p>
+                    <i class="bi bi-shield-lock"></i>
+                    Paiement 100% sécurisé
+                </p>
+                <p style="margin-top: 0.5rem;">
+                    Vos données sont chiffrées et protégées
+                </p>
+            </div>
+
+        </div>
+
+    </form>
+</div>
+
+<script>
+    // Masquer/afficher les détails de la carte selon la sélection
+    document.querySelectorAll('input[name="selectedPaymentMethod"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const cardDetails = document.getElementById('cardDetails');
+            if (this.value === 'card') {
+                cardDetails.style.display = 'block';
+                document.getElementById('cardName').required = true;
+                document.getElementById('cardNumber').required = true;
+                document.getElementById('cardExpiry').required = true;
+                document.getElementById('cardCvc').required = true;
+            } else {
+                cardDetails.style.display = 'none';
+                document.getElementById('cardName').required = false;
+                document.getElementById('cardNumber').required = false;
+                document.getElementById('cardExpiry').required = false;
+                document.getElementById('cardCvc').required = false;
+            }
+        });
+    });
+
+    // Validation du numéro de carte
+    document.getElementById('cardNumber')?.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\s+/g, '').replace(/[^\d]/g, '');
+        let formattedValue = value.replace(/(\d{4})/g, '$1 ').trim();
+        e.target.value = formattedValue;
+    });
+
+    // Validation de la date d'expiration
+    document.getElementById('cardExpiry')?.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length >= 2) {
+            value = value.substring(0, 2) + '/' + value.substring(2, 4);
+        }
+        e.target.value = value;
+    });
+
+    // Validation du CVV
+    document.getElementById('cardCvc')?.addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+    });
+</script>
+
+<style>
+    @@media (max-width: 768px) {
+        .paiement-container {
+            grid-template-columns: 1fr;
+        }
+
+        .paiement-summary {
+            position: static;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .paiement-form {
+            padding: 1.5rem;
+        }
+    }
+</style>

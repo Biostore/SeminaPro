@@ -146,40 +146,11 @@ namespace SeminaPro.Pages.Seminaires
             }
 
             // =================================================
-            // AJOUT INSCRIPTION
+            // REDIRECTION VERS PAIEMENT
             // =================================================
 
-            try
-            {
-                var inscription = new Inscription
-                {
-                    ParticipantId = participant.Id,
-                    SeminaireId = Seminaire.Id,
-                    DateInscription = DateTime.Now,
-                    AffichageConfirmation = true
-                };
-
-                _context.Inscriptions.Add(inscription);
-
-                _context.SaveChanges();
-
-                TempData["Message"] =
-                    "Inscription réussie avec succès";
-
-                return RedirectToPage("/Dashboard/Index");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(
-                    ex,
-                    "Erreur lors de l'inscription"
-                );
-
-                TempData["Message"] =
-                    "Une erreur est survenue";
-
-                return Page();
-            }
+            // Rediriger vers la page de paiement au lieu de créer l'inscription directement
+            return RedirectToPage("/Seminaires/Paiement", new { id });
         }
     }
 }

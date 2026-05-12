@@ -17,6 +17,7 @@ namespace SeminaPro.Data
         public DbSet<Inscription> Inscriptions { get; set; } = null!;
         public DbSet<Universitaire> Universitaires { get; set; } = null!;
         public DbSet<Industriel> Industriels { get; set; } = null!;
+        public DbSet<MediaFile> MediaFiles { get; set; } = null!;
         public object Admins { get; internal set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -79,6 +80,27 @@ namespace SeminaPro.Data
             modelBuilder.Entity<Specialite>()
                 .HasIndex(s => s.Libelle)
                 .IsUnique();
+
+            // =========================
+            // MEDIAFILE RELATIONS
+            // =========================
+            modelBuilder.Entity<MediaFile>()
+                .HasOne(m => m.Participant)
+                .WithMany()
+                .HasForeignKey(m => m.ParticipantId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<MediaFile>()
+                .HasOne(m => m.Seminaire)
+                .WithMany(s => s.MediaFiles)
+                .HasForeignKey(m => m.SeminaireId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<MediaFile>()
+                .HasOne(m => m.Specialite)
+                .WithMany()
+                .HasForeignKey(m => m.SpecialiteId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             // =========================
             // IGNORE PROPRIÉTÉS NON DB

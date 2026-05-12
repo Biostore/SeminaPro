@@ -1,0 +1,637 @@
+@page
+@model SeminaPro.Pages.Dashboard.MesSeminairesModel
+@{
+    ViewData["Title"] = "Mes Séminaires";
+    Layout = "_DashboardLayout";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<div class="dashboard-container">
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-dashboard sticky-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="/">
+                <img src="/images/logo semina.png" alt="SeminaPro" height="40" class="d-inline-block align-text-top">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center gap-3">
+                    <li class="nav-item"><a class="nav-link" href="/"><i class="bi bi-house"></i> Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Seminaires/Index"><i class="bi bi-book"></i> Séminaires</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/About"><i class="bi bi-info-circle"></i> À Propos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Contact"><i class="bi bi-envelope"></i> Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Dashboard/Index"><i class="bi bi-speedometer2"></i> Mon Tableau</a></li>
+                    <li class="nav-item"><span class="nav-text">Connecté: <strong>Participant</strong></span></li>
+                    <li class="nav-item">
+                        <a href="/Account/Logout" class="btn btn-outline-light btn-sm">
+                            <i class="bi bi-box-arrow-right"></i> DÉCONNEXION
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-content-wrapper">
+        <!-- SIDEBAR FIXED -->
+        <aside class="sidebar sidebar-modern">
+            <div class="sidebar-header">
+                <h5 class="fw-bold mb-0" style="font-family:'Syne',sans-serif;color:#fff;">👤 PARTICIPANT</h5>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/Dashboard/Index" class="sidebar-item">
+                    <i class="bi bi-speedometer2"></i><span>Tableau de Bord</span>
+                </a>
+                <a href="/Dashboard/MesSeminaires" class="sidebar-item active">
+                    <i class="bi bi-book"></i><span>Mes Séminaires</span>
+                </a>
+                <a href="/Dashboard/ProfilParticipant" class="sidebar-item">
+                    <i class="bi bi-person-circle"></i><span>Mon Profil</span>
+                </a>
+                <a href="/Seminaires/Index" class="sidebar-item">
+                    <i class="bi bi-search"></i><span>Parcourir</span>
+                </a>
+                <a href="/Dashboard/Settings" class="sidebar-item">
+                    <i class="bi bi-gear-fill"></i><span>Paramètres</span>
+                </a>
+                <a href="/" class="sidebar-item">
+                    <i class="bi bi-house"></i><span>Accueil</span>
+                </a>
+                <a href="/Account/Logout" class="sidebar-item sidebar-item-danger">
+                    <i class="bi bi-box-arrow-right"></i><span>Déconnexion</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="content-area">
+
+<style>
+    :root {
+        --primary: #0f6bff;
+        --success: #22c55e;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1e293b;
+        --light: #f1f5f9;
+        --muted: #64748b;
+        --gold: #fbbf24;
+    }
+
+    .seminaires-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        animation: fadeIn 0.5s ease;
+    }
+
+    /* HEADER */
+    .seminaires-header {
+        margin-bottom: 2rem;
+    }
+
+    .seminaires-header h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--dark);
+        margin: 0 0 0.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .seminaires-header p {
+        color: var(--muted);
+        font-size: 0.95rem;
+        margin: 0;
+    }
+
+    /* STATS */
+    .seminaires-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        margin: 0 0 0.75rem 0;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .stat-card.primary .stat-icon {
+        background: rgba(15, 107, 255, 0.1);
+        color: var(--primary);
+    }
+
+    .stat-card.success .stat-icon {
+        background: rgba(34, 197, 94, 0.1);
+        color: var(--success);
+    }
+
+    .stat-card.warning .stat-icon {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+    }
+
+    .stat-card.danger .stat-icon {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--dark);
+        margin: 0;
+    }
+
+    .stat-label {
+        color: var(--muted);
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin: 0.5rem 0 0 0;
+    }
+
+    /* ALERT */
+    .alert {
+        padding: 1rem 1.25rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .alert-success {
+        background: rgba(34, 197, 94, 0.1);
+        color: #15803d;
+        border-left: 4px solid var(--success);
+    }
+
+    .alert-danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: #991b1b;
+        border-left: 4px solid var(--danger);
+    }
+
+    /* SECTIONS */
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 2rem 0 1.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .section-title i {
+        color: var(--primary);
+        font-size: 1.5rem;
+    }
+
+    /* SEMINAIRE CARD */
+    .seminaire-card {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+        display: flex;
+    }
+
+    .seminaire-card:hover {
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        border-color: var(--primary);
+    }
+
+    .seminaire-image {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .seminaire-content {
+        flex: 1;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .seminaire-header {
+        margin-bottom: 1rem;
+    }
+
+    .seminaire-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0 0 0.5rem 0;
+    }
+
+    .seminaire-code {
+        color: var(--muted);
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .seminaire-info {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .info-item i {
+        color: var(--primary);
+        width: 20px;
+    }
+
+    .info-item strong {
+        font-weight: 600;
+        color: var(--dark);
+    }
+
+    .info-item span {
+        color: var(--muted);
+    }
+
+    .seminaire-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .seminaire-price {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: var(--primary);
+    }
+
+    .seminaire-actions {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .btn {
+        padding: 0.6rem 1.2rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), #3b82f6);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #0d5ae8, #2563eb);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(15, 107, 255, 0.3);
+    }
+
+    .btn-danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+    }
+
+    .btn-danger:hover {
+        background: rgba(239, 68, 68, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+        background: var(--light);
+        color: var(--dark);
+    }
+
+    .btn-secondary:hover {
+        background: #e2e8f0;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        justify-content: flex-end;
+    }
+
+    /* STATUS BADGE */
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.4rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .badge-success {
+        background: rgba(34, 197, 94, 0.1);
+        color: var(--success);
+    }
+
+    .badge-warning {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+    }
+
+    .badge-muted {
+        background: rgba(100, 116, 139, 0.1);
+        color: var(--muted);
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        color: var(--muted);
+        margin-bottom: 1rem;
+    }
+
+    .empty-state-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0;
+    }
+
+    .empty-state-text {
+        color: var(--muted);
+        margin: 0.5rem 0 0 0;
+    }
+
+    /* RESPONSIVE */
+    @@media (max-width: 1024px) {
+        .seminaires-stats {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .seminaires-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .seminaire-card {
+            flex-direction: column;
+        }
+
+        .seminaire-image {
+            width: 100%;
+            height: 200px;
+        }
+
+        .seminaire-footer {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .seminaire-actions {
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .seminaire-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-group {
+            flex-direction: column;
+        }
+
+        .btn-group .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<!-- ALERTS -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        <i class="bi bi-check-circle"></i>
+        <span>@TempData["SuccessMessage"]</span>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        <i class="bi bi-exclamation-circle"></i>
+        <span>@TempData["ErrorMessage"]</span>
+    </div>
+}
+
+<div class="seminaires-container">
+
+    <!-- HEADER -->
+    <div class="seminaires-header">
+        <h1><i class="bi bi-book"></i> Mes Séminaires</h1>
+        <p>Gérez vos inscriptions aux séminaires</p>
+    </div>
+
+    <!-- STATS -->
+    <div class="seminaires-stats">
+        <div class="stat-card primary">
+            <div class="stat-icon">
+                <i class="bi bi-bookmark"></i>
+            </div>
+            <p class="stat-value">@Model.TotalInscrits</p>
+            <p class="stat-label">Total Inscrits</p>
+        </div>
+        <div class="stat-card success">
+            <div class="stat-icon">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+            <p class="stat-value">@Model.SeminairesAVenir.Count</p>
+            <p class="stat-label">À Venir</p>
+        </div>
+        <div class="stat-card warning">
+            <div class="stat-icon">
+                <i class="bi bi-check-all"></i>
+            </div>
+            <p class="stat-value">@Model.SeminairesPasses.Count</p>
+            <p class="stat-label">Passés</p>
+        </div>
+        <div class="stat-card danger">
+            <div class="stat-icon">
+                <i class="bi bi-cash-coin"></i>
+            </div>
+            <p class="stat-value">@Model.DepenseTotal.ToString("N0")</p>
+            <p class="stat-label">Dépense Total (DH)</p>
+        </div>
+    </div>
+
+    <!-- SEMINAIRES A VENIR -->
+    @if (Model.SeminairesAVenir.Any())
+    {
+        <h2 class="section-title">
+            <i class="bi bi-calendar-event"></i> Séminaires à Venir
+        </h2>
+        @foreach (var seminaire in Model.SeminairesAVenir)
+        {
+            var inscription = Model.MesInscriptions.FirstOrDefault(i => i.SeminaireId == seminaire.Id);
+            <div class="seminaire-card">
+                <img src="@(seminaire.ImageUrl ?? "/images/default-seminaire.png")" 
+                     alt="@seminaire.Titre" class="seminaire-image" />
+                <div class="seminaire-content">
+                    <div class="seminaire-header">
+                        <h3 class="seminaire-title">@seminaire.Titre</h3>
+                        <p class="seminaire-code"><i class="bi bi-hash"></i> @seminaire.Code</p>
+                    </div>
+                    <div class="seminaire-info">
+                        <div class="info-item">
+                            <i class="bi bi-calendar"></i>
+                            <span><strong>Date:</strong> @seminaire.DateSeminaire.ToString("dd MMMM yyyy")</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="bi bi-geo-alt"></i>
+                            <span><strong>Lieu:</strong> @seminaire.Lieu</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="bi bi-people"></i>
+                            <span><strong>Places:</strong> @seminaire.Inscriptions.Count / @seminaire.NombreMaximal</span>
+                        </div>
+                    </div>
+                    <div class="seminaire-footer">
+                        <div class="seminaire-price">@seminaire.Tarif.ToString("N2") DH</div>
+                        <div class="seminaire-actions">
+                            <a href="/Seminaires/Inscription?seminaireId=@seminaire.Id" class="btn btn-primary">
+                                <i class="bi bi-eye"></i> Détails
+                            </a>
+                            <form method="post" asp-page-handler="Desinscrire" style="display: inline;">
+                                <input type="hidden" name="inscriptionId" value="@inscription?.Id" />
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir vous désinscrire?')">
+                                    <i class="bi bi-x-circle"></i> Désinscrire
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+    <!-- SEMINAIRES PASSES -->
+    @if (Model.SeminairesPasses.Any())
+    {
+        <h2 class="section-title">
+            <i class="bi bi-check-circle"></i> Séminaires Passés
+        </h2>
+        @foreach (var seminaire in Model.SeminairesPasses)
+        {
+            <div class="seminaire-card" style="opacity: 0.8;">
+                <img src="@(seminaire.ImageUrl ?? "/images/default-seminaire.png")" 
+                     alt="@seminaire.Titre" class="seminaire-image" />
+                <div class="seminaire-content">
+                    <div class="seminaire-header">
+                        <h3 class="seminaire-title">@seminaire.Titre</h3>
+                        <p class="seminaire-code"><i class="bi bi-hash"></i> @seminaire.Code</p>
+                    </div>
+                    <div class="seminaire-info">
+                        <div class="info-item">
+                            <i class="bi bi-calendar"></i>
+                            <span><strong>Date:</strong> @seminaire.DateSeminaire.ToString("dd MMMM yyyy")</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="bi bi-geo-alt"></i>
+                            <span><strong>Lieu:</strong> @seminaire.Lieu</span>
+                        </div>
+                        <span class="badge badge-muted">
+                            <i class="bi bi-check"></i> Complété
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+    <!-- EMPTY STATE -->
+    @if (!Model.SeminairesAVenir.Any() && !Model.SeminairesPasses.Any())
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="bi bi-inbox"></i>
+            </div>
+            <h3 class="empty-state-title">Aucun Séminaire</h3>
+            <p class="empty-state-text">Vous n'êtes pas encore inscrit à un séminaire</p>
+            <div class="btn-group">
+                <a href="/Seminaires" class="btn btn-primary">
+                    <i class="bi bi-search"></i> Découvrir les séminaires
+                </a>
+            </div>
+        </div>
+    }
+
+    <!-- NAVIGATION -->
+    <div class="btn-group" style="margin-top: 2rem;">
+        <a href="/Dashboard" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Retour au Tableau de Bord
+        </a>
+    </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
