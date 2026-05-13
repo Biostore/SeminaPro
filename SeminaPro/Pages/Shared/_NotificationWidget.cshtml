@@ -1,0 +1,386 @@
+@* Notification Widget pour la Navbar *@
+
+<style>
+    .notification-widget {
+        position: relative;
+    }
+
+    .notification-bell {
+        position: relative;
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: #64748b;
+        transition: all 0.3s ease;
+    }
+
+    .notification-bell:hover {
+        color: #0f6bff;
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #ef4444;
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .notification-dropdown {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        width: 380px;
+        max-height: 500px;
+        overflow-y: auto;
+        z-index: 1000;
+        margin-top: 0.5rem;
+    }
+
+    .notification-dropdown.active {
+        display: block;
+        animation: slideDown 0.3s ease;
+    }
+
+    @@keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .notification-header {
+        padding: 1rem;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .notification-header h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: #1e293b;
+    }
+
+    .notification-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .notification-actions button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #64748b;
+        font-size: 1rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
+
+    .notification-actions button:hover {
+        background: #f1f5f9;
+        color: #0f6bff;
+    }
+
+    .notification-list {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .notification-item {
+        padding: 1rem;
+        border-bottom: 1px solid #f1f5f9;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .notification-item:hover {
+        background: #f9fafb;
+    }
+
+    .notification-item.unread {
+        background: #f0f9ff;
+    }
+
+    .notification-item.unread::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: #0f6bff;
+    }
+
+    .notification-title {
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 0.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .notification-type {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .notification-type.info {
+        background: #e0f2ff;
+        color: #0369a1;
+    }
+
+    .notification-type.success {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .notification-type.warning {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .notification-type.error {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .notification-message {
+        color: #64748b;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        line-height: 1.4;
+    }
+
+    .notification-time {
+        color: #94a3b8;
+        font-size: 0.8rem;
+    }
+
+    .notification-footer {
+        padding: 1rem;
+        border-top: 1px solid #e2e8f0;
+        text-align: center;
+    }
+
+    .notification-footer a {
+        color: #0f6bff;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .notification-footer a:hover {
+        color: #0a54d4;
+    }
+
+    .notification-empty {
+        padding: 2rem 1rem;
+        text-align: center;
+        color: #94a3b8;
+    }
+
+    .notification-empty i {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        opacity: 0.5;
+    }
+</style>
+
+<div class="notification-widget">
+    <!-- Bell Icon -->
+    <div class="notification-bell" onclick="toggleNotificationDropdown()" id="notificationBell">
+        <i class="bi bi-bell"></i>
+        <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+    </div>
+
+    <!-- Notification Dropdown -->
+    <div class="notification-dropdown" id="notificationDropdown">
+        <!-- Header -->
+        <div class="notification-header">
+            <h3>Notifications</h3>
+            <div class="notification-actions">
+                <button onclick="markAllAsRead()" title="Marquer tout comme lu">
+                    <i class="bi bi-check-all"></i>
+                </button>
+                <button onclick="deleteAllNotifications()" title="Supprimer tout">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Notifications List -->
+        <div class="notification-list" id="notificationList">
+            <div class="notification-empty">
+                <i class="bi bi-inbox"></i>
+                <p>Pas de notifications</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="notification-footer">
+            <a href="/Dashboard/Notifications">Voir toutes les notifications</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Toggle dropdown
+    function toggleNotificationDropdown() {
+        const dropdown = document.getElementById('notificationDropdown');
+        dropdown.classList.toggle('active');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const widget = document.querySelector('.notification-widget');
+        if (!widget.contains(event.target)) {
+            document.getElementById('notificationDropdown').classList.remove('active');
+        }
+    });
+
+    // Load notifications on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadNotifications();
+        // Refresh every 30 seconds
+        setInterval(loadNotifications, 30000);
+    });
+
+    async function loadNotifications() {
+        try {
+            const response = await fetch('/api/notifications/recent/5');
+            if (!response.ok) throw new Error('Network response was not ok');
+
+            const notifications = await response.json();
+            updateNotificationDropdown(notifications);
+
+            // Update badge count
+            const countResponse = await fetch('/api/notifications/unread-count');
+            if (countResponse.ok) {
+                const data = await countResponse.json();
+                updateBadge(data.count);
+            }
+        } catch (error) {
+            console.error('Erreur lors du chargement des notifications:', error);
+        }
+    }
+
+    function updateNotificationDropdown(notifications) {
+        const list = document.getElementById('notificationList');
+
+        if (!notifications || notifications.length === 0) {
+            list.innerHTML = `
+                <div class="notification-empty">
+                    <i class="bi bi-inbox"></i>
+                    <p>Pas de notifications</p>
+                </div>
+            `;
+            return;
+        }
+
+        list.innerHTML = notifications.map(n => `
+            <div class="notification-item ${!n.isRead ? 'unread' : ''}" onclick="markAsRead(${n.id})">
+                <div class="notification-title">
+                    <span>${n.titre}</span>
+                    <span class="notification-type ${n.type?.toLowerCase() || 'info'}">${n.type || 'Info'}</span>
+                </div>
+                <div class="notification-message">${n.message}</div>
+                <div class="notification-time">${formatDate(n.dateCreation)}</div>
+            </div>
+        `).join('');
+    }
+
+    function updateBadge(count) {
+        const badge = document.getElementById('notificationBadge');
+        if (count > 0) {
+            badge.textContent = count;
+            badge.style.display = 'flex';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+    async function markAsRead(notificationId) {
+        try {
+            const response = await fetch(`/api/notifications/${notificationId}/mark-as-read`, {
+                method: 'POST'
+            });
+
+            if (response.ok) {
+                loadNotifications();
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+        }
+    }
+
+    async function markAllAsRead() {
+        try {
+            const response = await fetch('/api/notifications/mark-all-as-read', {
+                method: 'POST'
+            });
+
+            if (response.ok) {
+                loadNotifications();
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+        }
+    }
+
+    async function deleteAllNotifications() {
+        if (confirm('Êtes-vous sûr de vouloir supprimer toutes les notifications ?')) {
+            try {
+                const response = await fetch('/api/notifications/delete-all', {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    loadNotifications();
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diff = now - date;
+
+        const minutes = Math.floor(diff / 60000);
+        const hours = Math.floor(diff / 3600000);
+        const days = Math.floor(diff / 86400000);
+
+        if (minutes < 1) return 'À l\'instant';
+        if (minutes < 60) return `${minutes}m`;
+        if (hours < 24) return `${hours}h`;
+        if (days < 7) return `${days}j`;
+
+        return date.toLocaleDateString('fr-FR');
+    }
+</script>

@@ -1,0 +1,276 @@
+@page
+@model SeminaPro.Pages.Dashboard.NotificationsModel
+@{
+    ViewData["Title"] = "Mes Notifications";
+}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<div class="notifications-container">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-12">
+                <!-- Header -->
+                <div class="notifications-header mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h1 class="notifications-title">
+                            <i class="bi bi-bell-fill"></i> Mes Notifications
+                        </h1>
+                        @if (Model.Notifications.Any())
+                        {
+                            <button class="btn btn-sm btn-outline-secondary" id="markAllRead">
+                                <i class="bi bi-check2-all"></i> Marquer tous comme lus
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                <!-- Notifications List -->
+                <div class="notifications-list">
+                    @if (!Model.Notifications.Any())
+                    {
+                        <div class="alert alert-info text-center py-5">
+                            <i class="bi bi-bell-slash" style="font-size: 2rem;"></i>
+                            <p class="mt-3">Aucune notification pour le moment</p>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var notification in Model.Notifications)
+                        {
+                            <div class="notification-item @(notification.IsRead ? "read" : "unread")" data-id="@notification.Id">
+                                <div class="notification-content">
+                                    <!-- Icon -->
+                                    <div class="notification-icon">
+                                        @switch (notification.Type)
+                                        {
+                                            case "Inscription":
+                                                <i class="bi bi-calendar-check"></i>
+                                                break;
+                                            case "Paiement":
+                                                <i class="bi bi-credit-card"></i>
+                                                break;
+                                            case "Séminaire":
+                                                <i class="bi bi-book"></i>
+                                                break;
+                                            case "Facture":
+                                                <i class="bi bi-file-earmark-pdf"></i>
+                                                break;
+                                            case "Rappel":
+                                                <i class="bi bi-alarm"></i>
+                                                break;
+                                            default:
+                                                <i class="bi bi-info-circle"></i>
+                                                break;
+                                        }
+                                    </div>
+
+                                    <!-- Details -->
+                                    <div class="notification-details">
+                                        <div class="notification-header-text">
+                                            <h5 class="notification-title mb-1">@notification.Titre</h5>
+                                            <span class="notification-type badge bg-secondary">@notification.Type</span>
+                                        </div>
+                                        <p class="notification-message mb-2">@notification.Message</p>
+                                        <small class="notification-date text-muted">
+                                            @notification.DateCreation.ToString("dd/MM/yyyy HH:mm")
+                                        </small>
+                                    </div>
+
+                                    <!-- Status Indicator -->
+                                    @if (!notification.IsRead)
+                                    {
+                                        <div class="notification-unread-indicator"></div>
+                                    }
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="notification-actions">
+                                    @if (!notification.IsRead)
+                                    {
+                                        <button class="btn btn-sm btn-outline-primary mark-read" 
+                                                onclick="markAsRead(@notification.Id)">
+                                            <i class="bi bi-check"></i>
+                                        </button>
+                                    }
+                                    @if (!string.IsNullOrEmpty(notification.Lien))
+                                    {
+                                        <a href="@notification.Lien" class="btn btn-sm btn-outline-info">
+                                            <i class="bi bi-arrow-right"></i>
+                                        </a>
+                                    }
+                                    <button class="btn btn-sm btn-outline-danger" 
+                                            onclick="deleteNotification(@notification.Id)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .notifications-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px 0;
+    }
+
+    .notifications-header {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .notifications-title {
+        color: #333;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .notifications-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .notification-item {
+        background: white;
+        border-left: 4px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+
+    .notification-item:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        transform: translateY(-2px);
+    }
+
+    .notification-item.unread {
+        border-left-color: #667eea;
+        background: #f8faff;
+    }
+
+    .notification-item.read {
+        opacity: 0.7;
+    }
+
+    .notification-content {
+        display: flex;
+        gap: 15px;
+        flex: 1;
+        align-items: flex-start;
+    }
+
+    .notification-icon {
+        font-size: 24px;
+        color: #667eea;
+        min-width: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .notification-details {
+        flex: 1;
+    }
+
+    .notification-header-text {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+
+    .notification-title {
+        color: #333;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .notification-type {
+        font-size: 11px;
+        padding: 2px 6px;
+    }
+
+    .notification-message {
+        color: #666;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .notification-date {
+        font-size: 12px;
+    }
+
+    .notification-unread-indicator {
+        width: 10px;
+        height: 10px;
+        background: #667eea;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .notification-actions {
+        display: flex;
+        gap: 8px;
+        margin-left: 15px;
+    }
+
+    .notification-actions .btn {
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        function markAsRead(notificationId) {
+            fetch(`/api/notifications/${notificationId}/marquer-lue`, {
+                method: 'PUT'
+            })
+            .then(response => response.json())
+            .then(data => {
+                location.reload();
+            })
+            .catch(error => console.error('Erreur:', error));
+        }
+
+        function deleteNotification(notificationId) {
+            if (confirm('Êtes-vous sûr?')) {
+                fetch(`/api/notifications/${notificationId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    location.reload();
+                })
+                .catch(error => console.error('Erreur:', error));
+            }
+        }
+
+        document.getElementById('markAllRead')?.addEventListener('click', function() {
+            const participantId = @Model.ParticipantId;
+            fetch(`/api/notifications/marquer-tous-lues/${participantId}`, {
+                method: 'PUT'
+            })
+            .then(response => response.json())
+            .then(data => {
+                location.reload();
+            })
+            .catch(error => console.error('Erreur:', error));
+        });
+    </script>
+}

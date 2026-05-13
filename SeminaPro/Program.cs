@@ -31,6 +31,9 @@ builder.Services.AddSession(options =>
 builder.Services.AddScoped<IFileUploadService, FileUploadService>();
 builder.Services.AddScoped<IPaymentService, StripePaymentService>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IReminderService, ReminderService>();
+builder.Services.AddHostedService<ReminderBackgroundService>();
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();

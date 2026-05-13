@@ -35,8 +35,16 @@ namespace SeminaPro.Pages.Seminaires
         // GET
         // =====================================================
 
-        public IActionResult OnGet(int id)
+        public IActionResult OnGet(int? id, int? seminaireId)
         {
+            // Accepter soit le paramètre de route (id) soit le query string (seminaireId)
+            int actualId = id ?? seminaireId ?? 0;
+
+            if (actualId == 0)
+            {
+                return BadRequest("ID du séminaire requis");
+            }
+
             // Vérifier connexion
             var userEmail =
                 HttpContext.Session.GetString("UserEmail");
@@ -48,7 +56,7 @@ namespace SeminaPro.Pages.Seminaires
 
             // Récupérer séminaire
             Seminaire = _context.Seminaires
-                .FirstOrDefault(s => s.Id == id);
+                .FirstOrDefault(s => s.Id == actualId);
 
             if (Seminaire == null)
             {

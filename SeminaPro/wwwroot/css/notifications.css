@@ -1,0 +1,20 @@
+/* Notifications Responsive */
+@media (max-width: 768px) {
+    .notification-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .notification-actions {
+        margin-left: 55px;
+        margin-top: 10px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .notification-dropdown {
+        width: calc(100vw - 40px);
+        right: -20px;
+    }
+}

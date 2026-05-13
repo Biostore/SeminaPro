@@ -14,6 +14,7 @@ namespace SeminaPro.Pages.Seminaires
         private readonly ApplicationDbContext _context;
         private readonly IPaymentService _paymentService;
         private readonly IInvoiceService _invoiceService;
+        private readonly INotificationService _notificationService;
         private readonly ILogger<PaiementModel> _logger;
         private readonly IConfiguration _configuration;
 
@@ -37,12 +38,16 @@ namespace SeminaPro.Pages.Seminaires
             ApplicationDbContext context,
             IPaymentService paymentService,
             IInvoiceService invoiceService,
+            INotificationService notificationService,
             ILogger<PaiementModel> logger,
             IConfiguration configuration)
         {
             _context = context;
             _paymentService = paymentService;
             _invoiceService = invoiceService;
+            _notificationService = notificationService;
+            _logger = logger;
+            _configuration = configuration;
             _logger = logger;
             _configuration = configuration;
         }
@@ -158,6 +163,31 @@ namespace SeminaPro.Pages.Seminaires
                 {
                     // Paiement réussi - générer la facture
                     await GenerateAndSaveInvoiceAsync(inscription);
+
+                    // Créer les notifications
+                    await _notificationService.AjouterNotificationAsync(
+                        Participant.Id,
+                        titre: "Inscription Confirmée",
+                        message: $"Vous êtes maintenant inscrit au séminaire: {Seminaire.Titre}",
+                        type: "Inscription",
+                        lien: "/Dashboard/MesSeminaires"
+                    );
+
+                    await _notificationService.AjouterNotificationAsync(
+                        Participant.Id,
+                        titre: "Paiement Validé",
+                        message: $"Votre paiement de {Seminaire.Tarif:C} a été confirmé pour {Seminaire.Titre}",
+                        type: "Paiement",
+                        lien: "/Dashboard/MesSeminaires"
+                    );
+
+                    await _notificationService.AjouterNotificationAsync(
+                        Participant.Id,
+                        titre: "Facture Disponible",
+                        message: $"Votre facture pour {Seminaire.Titre} est prête",
+                        type: "Facture",
+                        lien: $"/Seminaires/TelechargerFacture?id={inscription.Id}"
+                    );
 
                     _logger.LogInformation(
                         "Paiement réussi pour inscription {InscriptionId}",

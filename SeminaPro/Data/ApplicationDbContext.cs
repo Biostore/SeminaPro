@@ -18,6 +18,7 @@ namespace SeminaPro.Data
         public DbSet<Universitaire> Universitaires { get; set; } = null!;
         public DbSet<Industriel> Industriels { get; set; } = null!;
         public DbSet<MediaFile> MediaFiles { get; set; } = null!;
+        public DbSet<Notification> Notifications { get; set; } = null!;
         public object Admins { get; internal set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -41,6 +42,15 @@ namespace SeminaPro.Data
                 .WithMany(sp => sp.Participants)
                 .HasForeignKey(p => p.SpecialiteId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // =========================
+            // NOTIFICATION RELATIONS
+            // =========================
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.Participant)
+                .WithMany()
+                .HasForeignKey(n => n.ParticipantId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // =========================
             // INSCRIPTION RELATIONS

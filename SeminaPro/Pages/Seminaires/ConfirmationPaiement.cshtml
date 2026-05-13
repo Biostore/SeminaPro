@@ -10,12 +10,17 @@
 <style>
     :root {
         --primary: #0f6bff;
+        --primary-light: #e0f2ff;
+        --primary-dark: #0a54d4;
         --success: #22c55e;
-        --danger: #ef4444;
+        --success-light: #dcfce7;
+        --warning: #f59e0b;
         --dark: #1e293b;
+        --dark-light: #334155;
         --light: #f1f5f9;
         --muted: #64748b;
         --border: #e2e8f0;
+        --white: #ffffff;
     }
 
     * {
@@ -25,30 +30,42 @@
     }
 
     body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, var(--light) 0%, #e0f2ff 100%);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+        background: linear-gradient(135deg, var(--light) 0%, var(--primary-light) 50%, #e0f2ff 100%);
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 2rem 0;
+        padding: 1.5rem;
     }
 
     .confirmation-container {
-        max-width: 500px;
+        max-width: 600px;
         width: 100%;
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-        padding: 3rem 2rem;
+        background: var(--white);
+        border-radius: 20px;
+        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.12), 0 0 1px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        animation: slideUp 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Header decoratif */
+    .confirmation-container::before {
+        content: '';
+        display: block;
+        height: 8px;
+        background: linear-gradient(90deg, var(--primary) 0%, var(--success) 100%);
+    }
+
+    .confirmation-content {
+        padding: 3.5rem 2.5rem;
         text-align: center;
-        animation: slideUp 0.6s ease-out;
     }
 
     @@keyframes slideUp {
         from {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(40px);
         }
         to {
             opacity: 1;
@@ -57,164 +74,293 @@
     }
 
     .success-icon {
-        width: 80px;
-        height: 80px;
+        width: 100px;
+        height: 100px;
         background: linear-gradient(135deg, var(--success) 0%, #16a34a 100%);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto 2rem;
-        font-size: 3rem;
-        color: white;
-        animation: scaleIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        margin: 0 auto 2.5rem;
+        font-size: 3.5rem;
+        color: var(--white);
+        animation: scaleIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both;
+        box-shadow: 0 10px 30px rgba(34, 197, 94, 0.3);
     }
 
     @@keyframes scaleIn {
         from {
-            transform: scale(0);
+            opacity: 0;
+            transform: scale(0.5);
         }
         to {
+            opacity: 1;
             transform: scale(1);
         }
     }
 
+    @@keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+
     h1 {
-        font-size: 2rem;
+        font-size: 2.2rem;
         color: var(--dark);
         margin-bottom: 0.5rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
     }
 
     .subtitle {
         color: var(--muted);
-        font-size: 1rem;
-        margin-bottom: 2rem;
+        font-size: 1.05rem;
+        margin-bottom: 2.5rem;
+        font-weight: 400;
+        line-height: 1.6;
     }
 
+    /* Confirmation Details */
     .confirmation-details {
-        background: var(--light);
-        border-radius: 12px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
+        background: linear-gradient(135deg, var(--light) 0%, #e8f1ff 100%);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2.5rem;
         text-align: left;
+        border: 1px solid var(--border);
+        animation: fadeIn 0.8s ease-out 0.3s both;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .detail-row {
         display: flex;
         justify-content: space-between;
-        padding: 0.75rem 0;
+        align-items: center;
+        padding: 1rem 0;
         border-bottom: 1px solid var(--border);
     }
 
     .detail-row:last-child {
         border-bottom: none;
+        padding-bottom: 0;
     }
 
     .detail-label {
         color: var(--muted);
         font-weight: 500;
+        font-size: 0.95rem;
     }
 
     .detail-value {
         color: var(--dark);
-        font-weight: 600;
+        font-weight: 700;
+        font-size: 1.05rem;
     }
 
+    .detail-value.highlight {
+        color: var(--primary);
+        font-size: 1.3rem;
+    }
+
+    .detail-value.success-text {
+        color: var(--success);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Invoice Section */
     .invoice-section {
-        background: #f0f9ff;
-        border-left: 4px solid var(--primary);
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f7ff 100%);
+        border-left: 5px solid var(--primary);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2.5rem;
         text-align: left;
+        border: 1px solid #bae6fd;
+        animation: fadeIn 0.8s ease-out 0.4s both;
     }
 
     .invoice-section h3 {
-        color: var(--dark);
+        color: var(--dark-light);
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .invoice-section h3 i {
+        color: var(--primary);
+        font-size: 1.4rem;
+    }
+
+    .invoice-description {
+        color: var(--muted);
         margin-bottom: 1rem;
-        font-size: 1.1rem;
+        font-size: 0.95rem;
     }
 
     .invoice-number {
-        font-family: monospace;
-        font-size: 1.3rem;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        font-size: 1.6rem;
         color: var(--primary);
         font-weight: 700;
+        background: rgba(15, 107, 255, 0.1);
+        padding: 1rem;
+        border-radius: 10px;
+        letter-spacing: 2px;
+        margin-bottom: 1.5rem;
+        word-break: break-all;
     }
 
     .download-btn {
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        background: var(--primary);
-        color: white;
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
+        justify-content: center;
+        gap: 0.75rem;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: var(--white);
+        padding: 0.9rem 2rem;
+        border-radius: 10px;
         border: none;
         cursor: pointer;
-        font-weight: 600;
-        font-size: 0.95rem;
+        font-weight: 700;
+        font-size: 1rem;
         text-decoration: none;
-        transition: all 0.3s ease;
-        margin-top: 1rem;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 4px 15px rgba(15, 107, 255, 0.3);
+        width: 100%;
     }
 
     .download-btn:hover {
-        background: #0a54d4;
-        box-shadow: 0 4px 12px rgba(15, 107, 255, 0.3);
-        transform: translateY(-2px);
+        background: linear-gradient(135deg, var(--primary-dark) 0%, #0847b8 100%);
+        box-shadow: 0 8px 25px rgba(15, 107, 255, 0.4);
+        transform: translateY(-3px);
     }
 
-    .action-buttons {
+    .download-btn:active {
+        transform: translateY(-1px);
+    }
+
+    .download-btn i {
+        font-size: 1.2rem;
+    }
+
+    /* Info Message */
+    .info-message {
+        background: linear-gradient(135deg, #fef3c7 0%, #fef08a 100%);
+        color: #92400e;
+        padding: 1.25rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        font-size: 0.95rem;
+        border-left: 5px solid var(--warning);
+        border: 1px solid #fcd34d;
         display: flex;
+        align-items: flex-start;
         gap: 1rem;
-        margin-top: 2rem;
+        animation: fadeIn 0.8s ease-out 0.5s both;
+    }
+
+    .info-message i {
+        font-size: 1.3rem;
+        flex-shrink: 0;
+    }
+
+    .info-message strong {
+        font-weight: 700;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+        margin-top: 2.5rem;
+        animation: fadeIn 0.8s ease-out 0.6s both;
     }
 
     .btn {
-        flex: 1;
-        padding: 1rem;
+        padding: 1.1rem 1.5rem;
         border: none;
-        border-radius: 8px;
-        font-weight: 600;
+        border-radius: 10px;
+        font-weight: 700;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         text-decoration: none;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.5rem;
+        gap: 0.75rem;
+        font-size: 1rem;
     }
 
     .btn-primary {
-        background: var(--primary);
-        color: white;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: var(--white);
+        box-shadow: 0 4px 15px rgba(15, 107, 255, 0.3);
     }
 
     .btn-primary:hover {
-        background: #0a54d4;
+        background: linear-gradient(135deg, var(--primary-dark) 0%, #0847b8 100%);
+        box-shadow: 0 8px 25px rgba(15, 107, 255, 0.4);
+        transform: translateY(-3px);
     }
 
     .btn-secondary {
         background: var(--light);
         color: var(--dark);
+        border: 2px solid var(--border);
     }
 
     .btn-secondary:hover {
         background: var(--border);
+        border-color: var(--muted);
+        transform: translateY(-3px);
     }
 
-    .info-message {
-        background: #fef3c7;
-        color: #92400e;
-        padding: 1rem;
-        border-radius: 8px;
-        margin-top: 1.5rem;
-        font-size: 0.9rem;
+    .btn:active {
+        transform: translateY(-1px);
     }
 
-    .info-message i {
-        margin-right: 0.5rem;
+    .btn i {
+        font-size: 1.2rem;
+    }
+
+    /* Responsive */
+    @@media (max-width: 640px) {
+        .confirmation-content {
+            padding: 2.5rem 1.5rem;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+        }
+
+        .action-buttons {
+            grid-template-columns: 1fr;
+        }
+
+        .confirmation-details,
+        .invoice-section {
+            padding: 1.5rem;
+        }
     }
 </style>
 
@@ -224,58 +370,82 @@
         <i class="bi bi-check-circle-fill"></i>
     </div>
 
-    <!-- Titre -->
-    <h1>Paiement Réussi !</h1>
-    <p class="subtitle">Votre inscription a été confirmée avec succès</p>
+    <div class="confirmation-content">
+        <!-- Titre -->
+        <h1>Paiement Réussi !</h1>
+        <p class="subtitle">Votre inscription au séminaire a été confirmée avec succès</p>
 
-    <!-- Détails de confirmation -->
-    <div class="confirmation-details">
-        <div class="detail-row">
-            <span class="detail-label">Séminaire</span>
-            <span class="detail-value">@Model.Seminaire?.Titre</span>
+        <!-- Détails de confirmation -->
+        <div class="confirmation-details">
+            <div class="detail-row">
+                <span class="detail-label">
+                    <i class="bi bi-calendar-event" style="margin-right: 0.5rem; color: var(--primary);"></i>
+                    Séminaire
+                </span>
+                <span class="detail-value">@Model.Seminaire?.Titre</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">
+                    <i class="bi bi-clock" style="margin-right: 0.5rem; color: var(--primary);"></i>
+                    Date & Heure
+                </span>
+                <span class="detail-value">@Model.Seminaire?.DateSeminaire.ToString("dd MMMM yyyy HH:mm", new System.Globalization.CultureInfo("fr-FR"))</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">
+                    <i class="bi bi-geo-alt" style="margin-right: 0.5rem; color: var(--primary);"></i>
+                    Lieu
+                </span>
+                <span class="detail-value">@Model.Seminaire?.Lieu</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">
+                    <i class="bi bi-credit-card" style="margin-right: 0.5rem; color: var(--success);"></i>
+                    Montant payé
+                </span>
+                <span class="detail-value highlight">@Model.Seminaire?.Tarif.ToString("0.00") €</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">
+                    <i class="bi bi-shield-check" style="margin-right: 0.5rem; color: var(--success);"></i>
+                    Statut du paiement
+                </span>
+                <span class="detail-value success-text">
+                    <i class="bi bi-check-circle-fill"></i> Confirmé
+                </span>
+            </div>
         </div>
-        <div class="detail-row">
-            <span class="detail-label">Date</span>
-            <span class="detail-value">@Model.Seminaire?.DateSeminaire.ToString("dd/MM/yyyy HH:mm")</span>
-        </div>
-        <div class="detail-row">
-            <span class="detail-label">Montant payé</span>
-            <span class="detail-value">@Model.Seminaire?.Tarif.ToString("N2") €</span>
-        </div>
-        <div class="detail-row">
-            <span class="detail-label">Statut</span>
-            <span class="detail-value" style="color: var(--success);">
-                <i class="bi bi-check-circle"></i> Confirmé
-            </span>
-        </div>
-    </div>
 
-    <!-- Section Facture -->
-    <div class="invoice-section">
-        <h3><i class="bi bi-receipt"></i> Votre Facture</h3>
-        <p style="color: var(--muted); margin-bottom: 1rem;">Numéro de facture</p>
-        <div class="invoice-number">@Model.Inscription?.FactureNumero</div>
-        <a href="/Seminaires/TelechargerFacture/@Model.Inscription?.Id" class="download-btn">
-            <i class="bi bi-download"></i>
-            Télécharger la facture
-        </a>
-    </div>
+        <!-- Section Facture -->
+        <div class="invoice-section">
+            <h3><i class="bi bi-receipt-cutoff"></i> Votre Facture</h3>
+            <p class="invoice-description">Numéro de facture unique</p>
+            <div class="invoice-number">@Model.Inscription?.FactureNumero</div>
+            <a href="/Seminaires/TelechargerFacture/@Model.Inscription?.Id" class="download-btn">
+                <i class="bi bi-download"></i>
+                Télécharger la facture PDF
+            </a>
+        </div>
 
-    <!-- Message d'information -->
-    <div class="info-message">
-        <i class="bi bi-info-circle"></i>
-        Un email de confirmation a été envoyé à <strong>@Model.Participant?.Email</strong>
-    </div>
+        <!-- Message d'information -->
+        <div class="info-message">
+            <i class="bi bi-info-circle-fill"></i>
+            <div>
+                <strong>Confirmation envoyée</strong><br>
+                Un email de confirmation avec les détails de votre inscription et votre facture a été envoyé à <strong>@Model.Participant?.Email</strong>
+            </div>
+        </div>
 
-    <!-- Boutons d'action -->
-    <div class="action-buttons">
-        <a href="/Dashboard/Index" class="btn btn-primary">
-            <i class="bi bi-speedometer2"></i>
-            Retour au Dashboard
-        </a>
-        <a href="/Seminaires/Index" class="btn btn-secondary">
-            <i class="bi bi-calendar-event"></i>
-            Autres Séminaires
-        </a>
+        <!-- Boutons d'action -->
+        <div class="action-buttons">
+            <a href="/Dashboard/Index" class="btn btn-primary">
+                <i class="bi bi-speedometer2"></i>
+                Mon Dashboard
+            </a>
+            <a href="/Seminaires/Index" class="btn btn-secondary">
+                <i class="bi bi-calendar-event"></i>
+                Autres Séminaires
+            </a>
+        </div>
     </div>
 </div>

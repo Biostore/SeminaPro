@@ -1,0 +1,273 @@
+@model SeminaPro.Pages.Shared.NotificationDropdownModel
+
+<div class="notification-dropdown-container">
+    <!-- Notification Bell Icon -->
+    <div class="notification-trigger" id="notificationBell">
+        <i class="bi bi-bell-fill"></i>
+        @if (Model.UnreadCount > 0)
+        {
+            <span class="notification-badge">@Model.UnreadCount</span>
+        }
+    </div>
+
+    <!-- Dropdown Menu -->
+    <div class="notification-dropdown" id="notificationDropdown">
+        <div class="notification-dropdown-header">
+            <h6>Notifications</h6>
+            <button class="btn-close" id="closeNotificationDropdown"></button>
+        </div>
+
+        <div class="notification-dropdown-body" id="notificationList">
+            @if (!Model.Notifications.Any())
+            {
+                <div class="empty-state">
+                    <i class="bi bi-bell-slash"></i>
+                    <p>Aucune notification</p>
+                </div>
+            }
+            else
+            {
+                @foreach (var notification in Model.Notifications)
+                {
+                    <div class="notification-dropdown-item @(notification.IsRead ? "read" : "unread")" data-id="@notification.Id">
+                        <div class="notification-item-header">
+                            <strong>@notification.Titre</strong>
+                            @if (!notification.IsRead)
+                            {
+                                <span class="unread-dot"></span>
+                            }
+                        </div>
+                        <p class="notification-item-message">@notification.Message</p>
+                        <small class="notification-item-date">
+                            @notification.DateCreation.ToString("dd/MM/yyyy HH:mm")
+                        </small>
+                        @if (!string.IsNullOrEmpty(notification.Lien))
+                        {
+                            <a href="@notification.Lien" class="notification-item-link">
+                                Voir plus →
+                            </a>
+                        }
+                    </div>
+                }
+            }
+        </div>
+
+        @if (Model.Notifications.Any())
+        {
+            <div class="notification-dropdown-footer">
+                <a href="/Dashboard/Notifications" class="notification-view-all">
+                    Voir toutes les notifications
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .notification-dropdown-container {
+        position: relative;
+    }
+
+    .notification-trigger {
+        position: relative;
+        cursor: pointer;
+        font-size: 20px;
+        color: #333;
+        transition: color 0.3s ease;
+    }
+
+    .notification-trigger:hover {
+        color: #667eea;
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #d32f2f;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .notification-dropdown {
+        position: absolute;
+        top: 40px;
+        right: 0;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        width: 380px;
+        max-height: 500px;
+        display: none;
+        flex-direction: column;
+        z-index: 1000;
+    }
+
+    .notification-dropdown.show {
+        display: flex;
+    }
+
+    .notification-dropdown-header {
+        padding: 15px;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .notification-dropdown-header h6 {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .btn-close {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        color: #999;
+    }
+
+    .notification-dropdown-body {
+        overflow-y: auto;
+        max-height: 350px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 30px;
+        color: #999;
+    }
+
+    .empty-state i {
+        font-size: 40px;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .notification-dropdown-item {
+        padding: 12px 15px;
+        border-bottom: 1px solid #f0f0f0;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .notification-dropdown-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .notification-dropdown-item.unread {
+        background-color: #f0f4ff;
+    }
+
+    .notification-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+
+    .notification-item-header strong {
+        font-size: 14px;
+        color: #333;
+    }
+
+    .unread-dot {
+        width: 8px;
+        height: 8px;
+        background: #667eea;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .notification-item-message {
+        font-size: 13px;
+        color: #666;
+        margin: 5px 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .notification-item-date {
+        font-size: 12px;
+        color: #999;
+    }
+
+    .notification-item-link {
+        display: block;
+        margin-top: 8px;
+        color: #667eea;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .notification-item-link:hover {
+        text-decoration: underline;
+    }
+
+    .notification-dropdown-footer {
+        padding: 12px 15px;
+        border-top: 1px solid #e0e0e0;
+        text-align: center;
+    }
+
+    .notification-view-all {
+        color: #667eea;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .notification-view-all:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const bell = document.getElementById('notificationBell');
+        const dropdown = document.getElementById('notificationDropdown');
+        const closeBtn = document.getElementById('closeNotificationDropdown');
+
+        bell?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdown.classList.toggle('show');
+        });
+
+        closeBtn?.addEventListener('click', function() {
+            dropdown.classList.remove('show');
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!dropdown.contains(e.target) && !bell.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Marquer comme lue en cliquant
+        document.querySelectorAll('.notification-dropdown-item.unread').forEach(item => {
+            item.addEventListener('click', function(e) {
+                if (!e.target.closest('a')) {
+                    const id = this.dataset.id;
+                    fetch(`/api/notifications/${id}/marquer-lue`, {
+                        method: 'PUT'
+                    })
+                    .then(() => {
+                        this.classList.remove('unread');
+                        this.classList.add('read');
+                    })
+                    .catch(err => console.error(err));
+                }
+            });
+        });
+    });
+</script>
