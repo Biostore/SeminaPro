@@ -63,6 +63,13 @@ namespace SeminaPro.Pages.Seminaires
                 return NotFound();
             }
 
+            // Vérifier si la date du séminaire est passée
+            if (Seminaire.DateSeminaire < DateTime.Now)
+            {
+                TempData["Message"] = "Cette date de séminaire est déjà passée. Vous ne pouvez plus vous inscrire.";
+                return RedirectToPage("/Seminaires/Index");
+            }
+
             // Récupérer participant
             var participant = _context.Participants
                 .FirstOrDefault(p => p.Email == userEmail);
@@ -118,6 +125,17 @@ namespace SeminaPro.Pages.Seminaires
             }
 
             // =================================================
+            // VALIDATION: Vérifier que le séminaire n'est pas passé
+            // =================================================
+            if (Seminaire.DateSeminaire < DateTime.Now)
+            {
+                TempData["Message"] =
+                    "Ce séminaire est déjà passé. Vous ne pouvez plus vous inscrire.";
+
+                return RedirectToPage("/Seminaires/Index");
+            }
+
+            // =================================================
             // DÉJÀ INSCRIT
             // =================================================
 
@@ -148,7 +166,7 @@ namespace SeminaPro.Pages.Seminaires
             if (inscriptionCount >= Seminaire.NombreMaximal)
             {
                 TempData["Message"] =
-                    "Le séminaire est complet";
+                    "Le séminaire est complet. Il n'y a plus de places disponibles.";
 
                 return RedirectToPage("/Seminaires/Index");
             }

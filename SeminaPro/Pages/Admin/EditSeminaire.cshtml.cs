@@ -38,6 +38,32 @@ namespace SeminaPro.Pages.Admin
             if (seminaireInDb == null)
                 return NotFound();
 
+            // =====================================================
+            // VALIDATION: Date du séminaire ne doit pas être passée
+            // =====================================================
+            if (Seminaire.DateSeminaire < DateTime.Now)
+            {
+                ModelState.AddModelError("Seminaire.DateSeminaire",
+                    "La date du séminaire ne peut pas être dans le passé.");
+                return Page();
+            }
+
+            // =====================================================
+            // VALIDATION: Pas deux séminaires avec mêmes coordonnées
+            // =====================================================
+            var existingWithSameCoordinates = _context.Seminaires
+                .FirstOrDefault(s =>
+                    s.Id != Seminaire.Id &&
+                    s.Lieu == Seminaire.Lieu &&
+                    s.DateSeminaire == Seminaire.DateSeminaire);
+
+            if (existingWithSameCoordinates != null)
+            {
+                ModelState.AddModelError("",
+                    "Un séminaire existe déjà avec ces mêmes coordonnées (lieu et date).");
+                return Page();
+            }
+
             // -------------------------
             // UPDATE BASIC FIELDS
             // -------------------------

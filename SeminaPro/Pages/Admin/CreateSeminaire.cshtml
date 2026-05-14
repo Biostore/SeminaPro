@@ -4,87 +4,316 @@
     ViewData["Title"] = "Ajouter un Séminaire";
 }
 
-<div class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header bg-success text-white">
-                    <h4 class="mb-0"><i class="bi bi-plus-circle"></i> Ajouter un Séminaire</h4>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+    body {
+        background: linear-gradient(135deg, #0f172a, #1e3a8a);
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .create-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 15px;
+    }
+
+    .card {
+        border-radius: 18px;
+        padding: 40px;
+        background: white;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        border: none;
+    }
+
+    .card-header-custom {
+        background: linear-gradient(135deg, #1e3a8a, #2563eb);
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        color: white;
+        text-align: center;
+    }
+
+    .card-header-custom h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .card-header-custom p {
+        font-size: 1rem;
+        opacity: 0.95;
+        margin: 0;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #0f172a;
+        margin-bottom: 8px;
+        display: block;
+        font-size: 0.95rem;
+    }
+
+    .form-control,
+    .form-select {
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 12px 15px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background-color: #f9fafb;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #2563eb;
+        background-color: white;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        outline: none;
+    }
+
+    .form-control::placeholder {
+        color: #9ca3af;
+    }
+
+    .row {
+        margin-bottom: 0;
+    }
+
+    .col-md-6 {
+        margin-bottom: 25px;
+    }
+
+    .required-indicator {
+        color: #ef4444;
+    }
+
+    .text-danger {
+        color: #ef4444;
+        font-size: 0.85rem;
+        margin-top: 5px;
+        display: block;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 35px;
+        justify-content: center;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #1e3a8a, #2563eb);
+        color: white;
+        padding: 12px 35px;
+        border-radius: 10px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-submit:hover {
+        background: linear-gradient(135deg, #1e40af, #1d4ed8);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-cancel {
+        background: #e5e7eb;
+        color: #0f172a;
+        padding: 12px 35px;
+        border-radius: 10px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-cancel:hover {
+        background: #d1d5db;
+        transform: translateY(-2px);
+    }
+
+    .alert {
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+        border: none;
+    }
+
+    .alert-danger {
+        background: #fee2e2;
+        color: #991b1b;
+        border-left: 4px solid #ef4444;
+    }
+
+    .form-row-title {
+        color: #0f172a;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 20px;
+        margin-bottom: 15px;
+    }
+</style>
+
+<div class="create-container">
+    <div class="card">
+        <div class="card-header-custom">
+            <h2><i class="bi bi-plus-circle"></i> Ajouter un Séminaire</h2>
+            <p>Créez un nouveau séminaire pour vos participants</p>
+        </div>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            @foreach (var modelState in ViewData.ModelState.Values)
+            {
+                foreach (var error in modelState.Errors)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <i class="bi bi-exclamation-circle-fill"></i>
+                        @error.ErrorMessage
+                    </div>
+                }
+            }
+        }
+
+        <form method="post" enctype="multipart/form-data">
+            <!-- SECTION 1: INFORMATIONS DE BASE -->
+            <div class="form-row-title">Informations de base</div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="code" class="form-label">Code <span class="required-indicator">*</span></label>
+                        <input type="text" class="form-control" id="code" name="code"
+                               asp-for="Seminaire.Code" required placeholder="Ex: SEM001">
+                        <span class="text-danger" asp-validation-for="Seminaire.Code"></span>
+                    </div>
                 </div>
-                <div class="card-body p-5">
-                    <form method="post" enctype="multipart/form-data">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="code" class="form-label">Code *</label>
-                                <input type="text" class="form-control" id="code" name="code" 
-                                       asp-for="Seminaire.Code" required>
-                                <span class="text-danger" asp-validation-for="Seminaire.Code"></span>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="titre" class="form-label">Titre *</label>
-                                <input type="text" class="form-control" id="titre" name="titre" 
-                                       asp-for="Seminaire.Titre" required>
-                                <span class="text-danger" asp-validation-for="Seminaire.Titre"></span>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="lieu" class="form-label">Lieu *</label>
-                            <input type="text" class="form-control" id="lieu" name="lieu" 
-                                   asp-for="Seminaire.Lieu" required>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="tarif" class="form-label">Tarif *</label>
-                                <input type="number" step="0.01" class="form-control" id="tarif" name="tarif" 
-                                       asp-for="Seminaire.Tarif" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="nombreMaximal" class="form-label">Nombre Max *</label>
-                                <input type="number" class="form-control" id="nombreMaximal" name="nombreMaximal" 
-                                       asp-for="Seminaire.NombreMaximal" required>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="dateSeminaire" class="form-label">Date du Séminaire *</label>
-                            <input type="datetime-local" class="form-control" id="dateSeminaire" name="dateSeminaire" 
-                                   asp-for="Seminaire.DateSeminaire" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="specialiteId" class="form-label">Spécialité *</label>
-                            <select class="form-select" id="specialiteId" name="specialiteId" 
-                                    asp-for="Seminaire.SpecialiteId" required>
-                                <option value="">-- Sélectionner --</option>
-                                @foreach (var specialite in Model.Specialites ?? new List<Specialite>())
-                                {
-                                    <option value="@specialite.Id">@specialite.Libelle</option>
-                                }
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="imageFile" class="form-label">Image du séminaire</label>
-                            <input type="file" class="form-control" id="imageFile" name="imageFile" accept="image/*">
-                        </div>
-
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-check-circle"></i> Ajouter
-                            </button>
-                            <a href="/Admin/Seminaires" class="btn btn-secondary">
-                                <i class="bi bi-arrow-left"></i> Retour
-                            </a>
-                        </div>
-                    </form>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="titre" class="form-label">Titre <span class="required-indicator">*</span></label>
+                        <input type="text" class="form-control" id="titre" name="titre"
+                               asp-for="Seminaire.Titre" required placeholder="Ex: Introduction à l'IA">
+                        <span class="text-danger" asp-validation-for="Seminaire.Titre"></span>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <!-- SECTION 2: LOCALISATION ET TARIF -->
+            <div class="form-row-title">Localisation et tarification</div>
+
+            <div class="form-group">
+                <label for="lieu" class="form-label">Lieu <span class="required-indicator">*</span></label>
+                <input type="text" class="form-control" id="lieu" name="lieu"
+                       asp-for="Seminaire.Lieu" required placeholder="Ex: Paris, Salle A101">
+                <span class="text-danger" asp-validation-for="Seminaire.Lieu"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="tarif" class="form-label">Tarif (€) <span class="required-indicator">*</span></label>
+                        <input type="number" step="0.01" class="form-control" id="tarif" name="tarif"
+                               asp-for="Seminaire.Tarif" required placeholder="0.00">
+                        <span class="text-danger" asp-validation-for="Seminaire.Tarif"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="nombreMaximal" class="form-label">Nombre Max de Participants <span class="required-indicator">*</span></label>
+                        <input type="number" class="form-control" id="nombreMaximal" name="nombreMaximal"
+                               asp-for="Seminaire.NombreMaximal" required placeholder="100">
+                        <span class="text-danger" asp-validation-for="Seminaire.NombreMaximal"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 3: DATE ET SPÉCIALITÉ -->
+            <div class="form-row-title">Dates et catégorie</div>
+
+            <div class="form-group">
+                <label for="dateSeminaire" class="form-label">Date du Séminaire <span class="required-indicator">*</span></label>
+                <input type="datetime-local" class="form-control" id="dateSeminaire" name="dateSeminaire"
+                       asp-for="Seminaire.DateSeminaire" required>
+                <span class="text-danger" asp-validation-for="Seminaire.DateSeminaire"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="specialiteId" class="form-label">Spécialité <span class="required-indicator">*</span></label>
+                <select class="form-select" id="specialiteId" name="specialiteId"
+                        asp-for="Seminaire.SpecialiteId" required>
+                    <option value="">-- Sélectionner une spécialité --</option>
+                    @foreach (var specialite in Model.Specialites ?? new List<Specialite>())
+                    {
+                        <option value="@specialite.Id">@specialite.Libelle</option>
+                    }
+                </select>
+                <span class="text-danger" asp-validation-for="Seminaire.SpecialiteId"></span>
+            </div>
+
+            <!-- SECTION 4: MÉDIA -->
+            <div class="form-row-title">Image du séminaire</div>
+
+            <div class="form-group">
+                <label for="imageFile" class="form-label">Télécharger une image</label>
+                <input type="file" class="form-control" id="imageFile" name="imageFile" accept="image/*">
+                <small class="text-muted d-block mt-2">Formats acceptés: JPG, PNG, GIF (max 5MB)</small>
+            </div>
+
+            <!-- BOUTONS D'ACTION -->
+            <div class="button-group">
+                <button type="submit" class="btn-submit">
+                    <i class="bi bi-check-circle"></i> Créer le Séminaire
+                </button>
+                <a href="/Admin/Seminaires" class="btn-cancel">
+                    <i class="bi bi-arrow-left"></i> Annuler
+                </a>
+            </div>
+        </form>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Validation côté client pour la date
+        document.getElementById('dateSeminaire').addEventListener('change', function () {
+            const selectedDate = new Date(this.value);
+            const now = new Date();
+
+            if (selectedDate < now) {
+                this.classList.add('is-invalid');
+                if (!document.getElementById('dateError')) {
+                    const error = document.createElement('div');
+                    error.id = 'dateError';
+                    error.className = 'text-danger';
+                    error.textContent = 'La date du séminaire ne peut pas être dans le passé.';
+                    this.parentElement.appendChild(error);
+                }
+            } else {
+                this.classList.remove('is-invalid');
+                const error = document.getElementById('dateError');
+                if (error) error.remove();
+            }
+        });
+    </script>
 }

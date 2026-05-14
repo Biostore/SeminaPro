@@ -39,6 +39,33 @@ namespace SeminaPro.Pages.Admin
                 return Page();
             }
 
+            // =====================================================
+            // VALIDATION: Date du séminaire ne doit pas être passée
+            // =====================================================
+            if (Seminaire.DateSeminaire < DateTime.Now)
+            {
+                ModelState.AddModelError("Seminaire.DateSeminaire", 
+                    "La date du séminaire ne peut pas être dans le passé.");
+                Specialites = _context.Specialites.ToList();
+                return Page();
+            }
+
+            // =====================================================
+            // VALIDATION: Pas deux séminaires avec mêmes coordonnées
+            // =====================================================
+            var existingWithSameCoordinates = _context.Seminaires
+                .FirstOrDefault(s =>
+                    s.Lieu == Seminaire.Lieu &&
+                    s.DateSeminaire == Seminaire.DateSeminaire);
+
+            if (existingWithSameCoordinates != null)
+            {
+                ModelState.AddModelError("", 
+                    "Un séminaire existe déjà avec ces mêmes coordonnées (lieu et date).");
+                Specialites = _context.Specialites.ToList();
+                return Page();
+            }
+
             // Gestion de l'upload d'image
             var file = Request.Form.Files["imageFile"];
             if (file != null && file.Length > 0)
