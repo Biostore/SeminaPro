@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SeminaPro.Data;
 using SeminaPro.Models;
+using SeminaPro.Services.Interfaces;
 
 namespace SeminaPro.Pages.Account
 {
@@ -9,6 +10,7 @@ namespace SeminaPro.Pages.Account
     {
         private readonly ILogger<LoginModel> _logger;
         private readonly ApplicationDbContext _context;
+        private readonly IPasswordService _passwordService;
 
         // Utilisateurs par défaut (à remplacer par une vraie authentification)
         private static readonly Dictionary<string, (string password, string role)> DefaultUsers = new()
@@ -17,10 +19,11 @@ namespace SeminaPro.Pages.Account
             { "user@seminapro.com", ("user123", "User") }
         };
 
-        public LoginModel(ILogger<LoginModel> logger, ApplicationDbContext context)
+        public LoginModel(ILogger<LoginModel> logger, ApplicationDbContext context, IPasswordService passwordService)
         {
             _logger = logger;
             _context = context;
+            _passwordService = passwordService;
         }
 
         [BindProperty]
@@ -69,14 +72,18 @@ namespace SeminaPro.Pages.Account
             try
             {
                 var participant = _context.Participants.FirstOrDefault(p => p.Email == Email);
-                if (participant != null)
+                if (participant != null && !string.IsNullOrEmpty(participant.PasswordHash))
                 {
-                    // Authentifier l'utilisateur inscrit
-                    HttpContext.Session.SetString("UserId", Email);
-                    HttpContext.Session.SetString("UserRole", "User");
-                    HttpContext.Session.SetString("UserEmail", Email);
+                    // Vérifier le mot de passe hachéavec BCrypt
+                    if (_passwordService.VerifyPassword(Password, participant.PasswordHash))
+                    {
+                        // Authentifier l'utilisateur inscrit
+                        HttpContext.Session.SetString("UserId", Email);
+                        HttpContext.Session.SetString("UserRole", "User");
+                        HttpContext.Session.SetString("UserEmail", Email);
 
-                    return RedirectToPage("/Dashboard/Index");
+                        return RedirectToPage("/Dashboard/Index");
+                    }
                 }
             }
             catch (Exception ex)

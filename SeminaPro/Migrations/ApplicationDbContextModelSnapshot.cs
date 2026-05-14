@@ -182,6 +182,9 @@ namespace SeminaPro.Migrations
                     b.Property<string>("NumeroTelephone")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("ParticipantType")
                         .IsRequired()
                         .HasMaxLength(13)

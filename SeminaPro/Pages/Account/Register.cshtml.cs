@@ -2,16 +2,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SeminaPro.Data;
 using SeminaPro.Models;
+using SeminaPro.Services.Interfaces;
 
 namespace SeminaPro.Pages.Account
 {
     public class RegisterModel : PageModel
     {
         private readonly ApplicationDbContext _context;
+        private readonly IPasswordService _passwordService;
 
-        public RegisterModel(ApplicationDbContext context)
+        public RegisterModel(ApplicationDbContext context, IPasswordService passwordService)
         {
             _context = context;
+            _passwordService = passwordService;
         }
 
         // ================= BASIC =================
@@ -100,7 +103,8 @@ namespace SeminaPro.Pages.Account
                 Prenom = FirstName,
                 Email = Email,
                 NumeroTelephone = Phone,
-                SpecialiteId = SpecialiteId
+                SpecialiteId = SpecialiteId,
+                PasswordHash = _passwordService.HashPassword(Password)
             };
 
             // SAVE DB

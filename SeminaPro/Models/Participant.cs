@@ -19,6 +19,8 @@ namespace SeminaPro.Models
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
+        public string? PasswordHash { get; set; }
+
         public string? NumeroTelephone { get; set; }
 
         // ✅ IMAGE CORRECTE (c'est celle que tu utilises partout)

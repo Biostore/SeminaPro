@@ -28,6 +28,7 @@ builder.Services.AddSession(options =>
 // ==========================================
 // ENREGISTRER LES SERVICES PERSONNALISÉS
 // ==========================================
+builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IFileUploadService, FileUploadService>();
 builder.Services.AddScoped<IPaymentService, StripePaymentService>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
